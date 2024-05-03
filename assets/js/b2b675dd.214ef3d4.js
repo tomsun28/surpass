@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktancloud=self.webpackChunktancloud||[]).push([[1991],{9775:e=>{e.exports=JSON.parse('{"permalink":"/blog","page":1,"postsPerPage":1,"totalPages":1,"totalCount":1,"blogDescription":"The news and updates from TanCloud.","blogTitle":"TanCloud Blog"}')}}]);

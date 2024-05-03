@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktancloud=self.webpackChunktancloud||[]).push([[7472],{5513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"HertzBeat v1.2.3\uff01Support Prometheus,ShenYu and IotDb","permalink":"/blog/2022/12/28/hertzbeat-v1.2.3"}]}')}}]);
