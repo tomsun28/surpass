@@ -1,6 +1,6 @@
 {
-  "name": "TANCLOUD探云",
-  "short_name": "TANCLOUD",
+  "name": "Based on Apache HertzBeat & TanCloud is Next Generation Observability Cloud Service",
+  "short_name": "TanCloud",
   "theme_color": "#ea5a07",
   "background_color": "#efefef",
   "display": "standalone",
