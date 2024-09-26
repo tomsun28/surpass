@@ -1,29 +1,11 @@
-自荐下我们新的全职开源项目  **[HertzBeat赫兹节拍](https://gitee.com/dromara/hertzbeat)** - 易用友好的高性能监控告警系统。  
-网站监测，PING连通性，端口可用性，数据库监控，API监控，操作系统，中间件，自定义监控，阈值告警，告警通知。
-
-> 易用友好的云监控系统，无需Agent，强大自定义监控能力。   
-
-**代码仓库: [GITHUB](https://github.com/dromara/hertzbeat) | [GITEE](https://gitee.com/dromara/hertzbeat)**   
-**官网: [hertzbeat.com](https://hertzbeat.com) | [tancloud.cn](https://tancloud.cn)**  
-**[在线使用](https://console.tancloud.cn)** https://console.tancloud.cn
-
-欢迎使用，点赞，推荐，灰常感谢🙏。
-
-----   
 
 ## Bootshiro  
 
-[演示环境](http://47.110.55.246)
-
-此项目正在由sureness替换apache shiro重构进行中，若您需使用apache shiro版本，请见[shiro分支](https://gitee.com/tomsun28/bootshiro/tree/shiro/)   
-
-- ```bootshiro```是基于```springboot+sureness```的面向```REST API```资源无状态认证权限管理系统的后端,前端为另一个项目[usthe](https://gitee.com/tomsun28/usthe)  
+- ```bootshiro```是基于```springboot+sureness```的面向```REST API```资源无状态认证权限管理系统的后端
+- 提供基于OAuth2和JWT的单点登录功能
+- 基于角色访问控制RBAC，提供对系统的权限控制 
 - 提供页面可配置式的,动态的 ```API``` 权限安全管理支持  
 - 数据传输动态秘钥加密,```JWT```过期刷新,用户操作监控等加固应用安全  
-
-
-
-
 
 #### 前端 usthe   
 
@@ -46,10 +28,11 @@ bootshiro.yaml
 ## 开源推荐   
 
 * **```JustAuth```** 小而全而美的第三方登录开源组件: [https://gitee.com/yadong.zhang/JustAuth](https://gitee.com/yadong.zhang/JustAuth)   
-* **```MaxKey```** 业界领先的企业级开源IAM身份管理和身份认证产品: [https://gitee.com/dromara/MaxKey](https://gitee.com/dromara/MaxKey)    
-* **```PhalApi```** 一个轻量级PHP开源接口框架: [https://www.phalapi.net/](https://www.phalapi.net/)       
-
-
+* **```MaxKey```** 业界领先的IAM身份管理和身份认证产品: [https://www.maxkey.top/](https://www.maxkey.top/)    
+* **```PhalApi```** 一个轻量级PHP开源接口框架: [https://www.phalapi.net/](https://www.phalapi.net/)      
+* **```tancloud```** Saas监控平台 [https://console.tancloud.cn](https://console.tancloud.cn)
+* **```HertzBeat赫兹节拍```** 易用友好的高性能监控告警系统。 [https://hertzbeat.apache.org/](https://hertzbeat.apache.org/)
+ 
 
 
 ======================================
@@ -68,7 +51,6 @@ bootshiro.yaml
 ![image6](/image/image6.PNG)   
 
 ![image7](/image/image7.PNG)   
-
 
 
 Thanks:
