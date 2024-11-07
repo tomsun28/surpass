@@ -1,7 +1,7 @@
 
-## Bootshiro  
+## surpass(Bootshiro)  
 
-- ```bootshiro```是基于```springboot+sureness```的面向```REST API```资源无状态认证权限管理系统的后端
+- ```surpass(Bootshiro)```是基于```springboot+sureness```的面向```REST API```资源无状态认证权限管理系统的后端
 - 提供基于OAuth2和JWT的单点登录功能
 - 基于角色访问控制RBAC，提供对系统的权限控制 
 - 提供页面可配置式的,动态的 ```API``` 权限安全管理支持  
