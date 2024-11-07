@@ -27,6 +27,17 @@ bootshiro.yaml
 详细实现技术见另一篇:  [docker学习](https://segmentfault.com/a/1190000013088818)
 
 
+### 效果展示  
+
+![image4](/image/image4.PNG)   
+
+![image5](/image/image5.PNG)   
+
+![image6](/image/image6.PNG)   
+
+![image7](/image/image7.PNG)   
+
+
 ## 开源推荐   
 
 * **```JustAuth```** 小而全而美的第三方登录开源组件: [https://gitee.com/yadong.zhang/JustAuth](https://gitee.com/yadong.zhang/JustAuth)   
@@ -43,17 +54,6 @@ bootshiro.yaml
 
 <br>
 <br>
-
-### 效果展示  
-
-![image4](/image/image4.PNG)   
-
-![image5](/image/image5.PNG)   
-
-![image6](/image/image6.PNG)   
-
-![image7](/image/image7.PNG)   
-
 
 Thanks:
 
