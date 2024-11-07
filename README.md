@@ -7,6 +7,8 @@
 - 提供页面可配置式的,动态的 ```API``` 权限安全管理支持  
 - 数据传输动态秘钥加密,```JWT```过期刷新,用户操作监控等加固应用安全  
 
+[gitee]( https://gitee.com/tomsun28/bootshiro) | [github]( https://github.com/tomsun28/surpass)
+
 #### 前端 usthe   
 
 [仓库地址](https://gitee.com/tomsun28/usthe)  
