@@ -48,16 +48,6 @@ bootshiro.yaml
  
 
 
-======================================
+## 🛡️ License
 
-欢迎一起完善哦^^  
-
-<br>
-<br>
-
-Thanks:
-
-Thanks Open Source license support by   [![jetBrains Open Source](/image/jetbrains.svg)](https://www.jetbrains.com/?from=bootshiro)
-<br>
-
-[![Giteye chart](https://chart.giteye.net/gitee/tomsun28/bootshiro/C99BWU39.png)](https://giteye.net/chart/C99BWU39)   
+[`Apache License, Version 2.0`](https://www.apache.org/licenses/LICENSE-2.0.html)
