@@ -24,3 +24,6 @@ nbdist/
 .nb-gradle/
 
 logs/
+
+.metadata/
+.sonarlint/
