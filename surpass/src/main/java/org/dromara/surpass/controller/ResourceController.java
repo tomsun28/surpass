@@ -1,7 +1,5 @@
 package org.dromara.surpass.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 import org.dromara.surpass.pojo.dto.Message;
@@ -14,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 /**
  * @author tomsun28
@@ -22,13 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/resource")
 @RestController
 @Slf4j
-@Api(tags = "资源管理")
+@Tag(name  = "资源管理")
 public class ResourceController {
 
     @Autowired
     private ResourceService resourceService;
 
-    @ApiOperation(value = "新增资源")
+    @Operation(summary = "新增资源")
     @PostMapping
     public ResponseEntity<Message> addResource(@RequestBody @Validated AuthResource authResource) {
         if (resourceService.addResource(authResource)) {
@@ -42,7 +43,7 @@ public class ResourceController {
         }
     }
 
-    @ApiOperation(value = "更新资源")
+    @Operation(summary = "更新资源")
     @PutMapping
     public ResponseEntity<Message> updateResource(@RequestBody @Validated AuthResource authResource) {
         if (resourceService.updateResource(authResource)) {
@@ -56,7 +57,7 @@ public class ResourceController {
         }
     }
 
-    @ApiOperation(value = "删除资源")
+    @Operation(summary = "删除资源")
     @DeleteMapping("/{resourceId}")
     public ResponseEntity<Message> deleteResource(@PathVariable Long resourceId ) {
         if (resourceService.deleteResource(resourceId)) {
@@ -71,7 +72,7 @@ public class ResourceController {
         }
     }
 
-    @ApiOperation(value = "获取资源")
+    @Operation(summary = "获取资源")
     @GetMapping
     public ResponseEntity<Message> getResource(@RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "8") Integer pageSize) {
         Page<AuthResource> resourcePage = resourceService.getPageResource(currentPage, pageSize);

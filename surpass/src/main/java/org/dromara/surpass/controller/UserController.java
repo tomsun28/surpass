@@ -2,8 +2,9 @@ package org.dromara.surpass.controller;
 
 import com.usthe.sureness.subject.SubjectSum;
 import com.usthe.sureness.util.SurenessContextHolder;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.dromara.surpass.pojo.dto.Message;
 import org.dromara.surpass.service.AccountService;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
-@Api(tags = "用户管理")
+@Tag(name  = "用户管理")
 public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
@@ -31,7 +32,7 @@ public class UserController {
     @Autowired
     private AccountService accountService;
 
-    @ApiOperation(value = "获取用户拥有角色")
+    @Operation(summary = "获取用户拥有角色")
     @GetMapping("/role")
     public ResponseEntity<Message> getUserRoles() {
         SubjectSum subject = SurenessContextHolder.getBindSubject();
@@ -43,7 +44,7 @@ public class UserController {
         return ResponseEntity.ok(Message.builder().data(roles).build());
     }
 
-    @ApiOperation(value = "新增用户角色")
+    @Operation(summary = "新增用户角色")
     @PostMapping("/authority/role/{appId}/{roleId}")
     public ResponseEntity<Message> authorityUserRole(@PathVariable String appId, @PathVariable Long roleId) {
         SubjectSum subject = SurenessContextHolder.getBindSubject();
@@ -59,7 +60,7 @@ public class UserController {
         return flag ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    @ApiOperation(value = "删除用户角色")
+    @Operation(summary = "删除用户角色")
     @DeleteMapping("/authority/role/{appId}/{roleId}")
     public ResponseEntity<Message> deleteAuthorityUserRole(@PathVariable String appId, @PathVariable Long roleId) {
         SubjectSum subject = SurenessContextHolder.getBindSubject();

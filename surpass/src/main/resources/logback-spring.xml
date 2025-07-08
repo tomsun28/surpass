@@ -2,7 +2,7 @@
 <configuration scan="true">
 
 	<!-- 日志输出上下文名称 -->
-	<contextName>usthe</contextName>
+	<contextName>surpass</contextName>
 	<!-- 输出日志到控制台 ConsoleAppender -->
 	<appender name="ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -24,7 +24,7 @@
 			<fileNamePattern>logs/SystemOut-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 			<!-- 除按日志记录之外，还配置了日志文件不能超过2M，若超过2M，日志文件会以索引0开始 -->
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>2MB</maxFileSize>
+				<maxFileSize>32MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
 		</rollingPolicy>
 		<!-- 追加方式记录日志 -->
@@ -53,7 +53,7 @@
 			<fileNamePattern>logs/SystemErrOut-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 			<!-- 除按日志记录之外，还配置了日志文件不能超过2M，若超过2M，日志文件会以索引0开始 -->
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>2MB</maxFileSize>
+				<maxFileSize>8MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
 		</rollingPolicy>
 		<!-- 追加方式记录日志 -->
@@ -82,7 +82,7 @@
 			<fileNamePattern>logs/SystemSqlOut-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 			<!-- 除按日志记录之外，还配置了日志文件不能超过2M，若超过2M，日志文件会以索引0开始 -->
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>2MB</maxFileSize>
+				<maxFileSize>16MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
 		</rollingPolicy>
 		<!-- 追加方式记录日志 -->

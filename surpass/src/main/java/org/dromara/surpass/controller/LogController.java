@@ -1,7 +1,8 @@
 package org.dromara.surpass.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.dromara.surpass.pojo.dto.Message;
 import org.dromara.surpass.pojo.entity.AuthAccountLog;
@@ -20,13 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/log")
-@Api(tags = "日志管理")
+@Tag(name  = "日志管理")
 public class LogController {
 
     @Autowired
     LogService logService;
 
-    @ApiOperation(value = "获取日志记录", httpMethod = "GET")
+    @Operation(summary = "获取日志记录", method = "GET")
     @RequestMapping("/account")
     public ResponseEntity<Message> getAccountLogList(@RequestParam(defaultValue = "0") Integer currentPage,
                                                      @RequestParam(defaultValue = "8") Integer pageSize) {
@@ -35,7 +36,7 @@ public class LogController {
         return ResponseEntity.ok().body(message);
     }
 
-    @ApiOperation(value = "获取用户操作api日志列表", httpMethod = "GET")
+    @Operation(summary = "获取用户操作api日志列表", method = "GET")
     @RequestMapping("/operation")
     public ResponseEntity<Message> getOperationLogList(@RequestParam(defaultValue = "0") Integer currentPage,
                                                        @RequestParam(defaultValue = "8") Integer pageSize) {

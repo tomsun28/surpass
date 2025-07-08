@@ -4,8 +4,9 @@ package org.dromara.surpass.controller;
 
 import com.usthe.sureness.util.JsonWebTokenUtil;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import org.dromara.surpass.pojo.dto.Account;
@@ -23,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/auth")
 @Slf4j
-@Api(tags = "注册认证")
+@Tag(name = "注册认证")
 public class AccountController {
 
     @Autowired
@@ -43,7 +43,7 @@ public class AccountController {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    @ApiOperation(value = "站内登录,签发token", notes = "适用 username|email|phone + password")
+    @Operation(summary = "站内登录,签发token", description = "适用 username|email|phone + password")
     @PostMapping("/token")
     public ResponseEntity<Message> issueJwtToken(@RequestBody @Validated Account account, HttpServletRequest request) {
         if (account.getUserKey() != null) {
@@ -78,7 +78,7 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 
-    @ApiOperation(value = "站内注册", notes = "适用 username|email|phone + password")
+    @Operation(summary = "站内注册", description = "适用 username|email|phone + password")
     @PostMapping("/register")
     public ResponseEntity<Message> accountRegister(@RequestBody @Validated Account account, HttpServletRequest request) {
         if (account.getUserKey() != null) {
@@ -106,7 +106,7 @@ public class AccountController {
         }
     }
 
-    @ApiOperation(value = "获取账户信息传输密钥", notes = "适用 password 加密")
+    @Operation(summary = "获取账户信息传输密钥", description = "适用 password 加密")
     @GetMapping("/transfer/key")
     public ResponseEntity<Message> transferKey(HttpServletRequest request) {
         // 动态生成秘钥，redis存储秘钥供之后秘钥验证使用，设置有效期30秒用完即丢弃

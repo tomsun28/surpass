@@ -2,7 +2,8 @@ package org.dromara.surpass.util;
 
 import org.apache.commons.lang.text.StrTokenizer;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.regex.Pattern;
 
 /**

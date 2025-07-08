@@ -3,27 +3,27 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.usthe</groupId>
-	<artifactId>tom</artifactId>
+	<groupId>org.dromara</groupId>
+	<artifactId>surpass</artifactId>
 	<version>1.1.0</version>
 	<packaging>jar</packaging>
 
-	<name>tom</name>
-	<description>security project for Spring Boot | sureness</description>
+	<name>surpass</name>
+	<description>security project for Spring Boot | surpass</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.6.RELEASE</version>
+		<version>3.4.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<druid.version>1.1.6</druid.version>
-		<mysql.version>8.0.16</mysql.version>
+		<java.version>17</java.version>
+		<druid.version>1.2.23</druid.version>
+		<mysql.version>8.4.0</mysql.version>
 
 		<commons-lang.version>2.6</commons-lang.version>
 	</properties>
@@ -32,15 +32,31 @@
 		<dependency>
 			<groupId>com.usthe.sureness</groupId>
 			<artifactId>sureness-core</artifactId>
-			<version>1.0.5</version>
+			<version>1.1.0</version>
 		</dependency>
 
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-boot-starter</artifactId>
-			<version>3.0.0</version>
+		    <groupId>org.springdoc</groupId>
+		    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+		    <version>2.8.9</version>
 		</dependency>
 
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>1.18.0</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>jakarta.validation</groupId>
+		    <artifactId>jakarta.validation-api</artifactId>
+		    <version>3.1.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.hibernate.validator</groupId>
+		    <artifactId>hibernate-validator</artifactId>
+		    <version>9.0.1.Final</version>
+		</dependency>
 		<!-- redis cache -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -73,8 +89,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
 			<version>${mysql.version}</version>
 			<!--<scope>runtime</scope>-->
 		</dependency>
@@ -101,7 +117,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.6</version>
 			<scope>provided</scope>
 		</dependency>
 
