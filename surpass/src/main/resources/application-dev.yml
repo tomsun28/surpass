@@ -1,0 +1,26 @@
+jasypt:
+  encryptor:
+    password: e!swhdg&d763jo
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: surpass
+    password: surpass
+    url: jdbc:mysql://localhost:3306/surpass?allowPublicKeyRetrieval=true&autoReconnect=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    platform: mysql
+    schema: classpath:db/schema.sql
+    data: classpath:db/data.sql
+    # 每次重启都会根据data.sql schema.sql重建表数据, 设置 NEVER 就不启动重建
+    # Each restart will rebuild the table data according to data.sql schema.sql
+    # setting NEVER will not start the reconstruction
+    initialization-mode: always
+  jpa:
+    database: mysql
+    show-sql: true
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: password
+  cache:
+    type: redis
