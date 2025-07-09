@@ -1,0 +1,20 @@
+jasypt:
+  encryptor:
+    password: e!swhdg&d763jo
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: surpass
+    password: surpass
+    url: jdbc:mysql://localhost:3306/surpass?allowPublicKeyRetrieval=true&autoReconnect=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    platform: mysql
+  jpa:
+    database: mysql
+    show-sql: true
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: password
+  cache:
+    type: redis

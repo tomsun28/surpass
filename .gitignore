@@ -27,3 +27,6 @@ logs/
 
 .metadata/
 .sonarlint/
+
+.pmd
+.pmdruleset.xml

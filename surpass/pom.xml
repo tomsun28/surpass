@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.dromara</groupId>
-	<artifactId>surpass</artifactId>
+	<groupId>org.dromara.surpass</groupId>
+	<artifactId>surpass-parent</artifactId>
 	<version>1.1.0</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>surpass</name>
 	<description>security project for Spring Boot | surpass</description>
@@ -18,6 +18,15 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
+	<!--modules -->
+	<modules>
+		<module>surpass-admin</module>
+		<module>surpass-api</module>
+		<module>surpass-core</module>
+		<module>surpass-dao</module>
+		<module>surpass-pojo</module>
+		<module>surpass-utils</module>
+	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
