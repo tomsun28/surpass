@@ -8,6 +8,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import jakarta.servlet.Filter;
+
 import java.util.Collections;
 
 /**
@@ -17,17 +19,16 @@ import java.util.Collections;
 @Configuration
 public class SecurityCorsConfiguration {
 
-    @SuppressWarnings("unchecked")
     @Bean
-    public FilterRegistrationBean corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    FilterRegistrationBean<Filter> corsFilter() {
+        UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(Collections.singletonList(CorsConfiguration.ALL));
         corsConfiguration.setAllowedHeaders(Collections.singletonList(CorsConfiguration.ALL));
         corsConfiguration.setAllowedMethods(Collections.singletonList(CorsConfiguration.ALL));
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+        configSource.registerCorsConfiguration("/**", corsConfiguration);
+        FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>(new CorsFilter(configSource));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }

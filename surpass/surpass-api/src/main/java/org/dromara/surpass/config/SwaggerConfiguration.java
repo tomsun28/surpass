@@ -8,7 +8,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  *  swagger配置 默认地址 http://localhost:8081/swagger-ui/index.html
@@ -31,7 +31,7 @@ public class SwaggerConfiguration {
 				.termsOfService("http://www.dromara.org")
 				.license(
 					new License()
-						.name("Copyright (c) 2018 - %s , Apache v2".formatted(new Date().getYear()))
+						.name("Copyright (c) 2018 - %s , Apache v2".formatted(LocalDateTime.now().getYear()))
 						.url("http://www.dromara.org")
 				);
 	}
