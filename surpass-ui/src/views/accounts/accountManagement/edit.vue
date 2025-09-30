@@ -1,0 +1,287 @@
+<template>
+  <el-drawer v-model="dialogStatus" :close-on-click-modal="false" size="45%"
+             @close="dialogOfClosedMethods(false)">
+    <template #header>
+      <h4>{{ title }}</h4>
+    </template>
+    <template #default>
+      <el-form ref="accountRef" :model="form" :rules="rules" label-width="110px">
+        <el-form-item :label="t('jbx.apps.name')" :required="true" prop="appName">
+          <el-input v-model="form.appName" disabled/>
+        </el-form-item>
+        <el-form-item :label="t('jbx.users.displayName')" :required="true" prop="displayName">
+          <el-input v-model="form.displayName" readonly>
+            <template #append v-if="!formId">
+              <el-button @click="selectOneUser">{{t('jbx.text.select')}}</el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="t('jbx.users.username')" :required="true" prop="username">
+          <el-input v-model="form.username" disabled/>
+        </el-form-item>
+        <el-form-item :label="t('jbx.accountsstrategy.name')" prop="strategyName">
+          <el-input v-model="form.strategyName" readonly>
+            <template #append>
+              <el-button @click="selectOneStg">{{t('jbx.text.select')}}</el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="t('jbx.accounts.relatedUsername')" :required="true" prop="relatedUsername">
+          <el-input v-model="form.relatedUsername" :disabled="formId">
+            <template #append v-if="!formId">
+              <el-button @click="generateStrategyFun">{{t('jbx.text.generate')}}</el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="t('jbx.accounts.relatedPassword')" :required="true" prop="relatedPassword">
+          <el-input v-model="form.relatedPassword">
+            <template #append>
+              <el-button @click="randomPasswordFun">{{t('jbx.text.generate')}}</el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+      </el-form>
+    </template>
+    <template #footer>
+      <div style="flex: auto">
+        <el-button @click="dialogOfClosedMethods(false)">{{ t('org.cancel') }}</el-button>
+        <el-button type="primary" @click="submitForm">{{ t('org.confirm') }}</el-button>
+      </div>
+    </template>
+  </el-drawer>
+  <el-dialog v-model="dialogOpen" width="1100" :title="dialogTitle" align-center :close-on-click-modal="false">
+    <select-user ref="selectUserComponent" :title="dialogTitle" :open="dialogOpen"
+                 :tree-data="treeData"
+                 :deptOptions="deptOptions"
+                 @inputUserValue="inputUserValue"
+    @updateFlag="updateFlag"></select-user>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" :disabled="confirmFlag" @click="confirmSelect">{{ t('jbx.text.confirm') }}</el-button>
+        <el-button @click="cancelAdd">{{ t('systemCancel') }}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <el-dialog v-model="dialogOpenStg" width="1100" :title="dialogTitle" align-center :close-on-click-modal="false">
+    <select-strategy ref="selectStgComponent" :title="dialogTitle" :open="dialogOpenStg"
+                     :app-id="appId"
+                 @inputStgValue="inputStgValue"
+                 @updateFlag="updateFlag"></select-strategy>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" :disabled="confirmFlag" @click="confirmSelectStg">{{ t('jbx.text.confirm') }}</el-button>
+        <el-button @click="cancelAdd">{{ t('systemCancel') }}</el-button>
+      </div>
+    </template>
+  </el-dialog>
+</template>
+
+<script setup lang="ts">
+import { ElForm } from "element-plus";
+import modal from "@/plugins/modal";
+import {ref, getCurrentInstance, reactive, toRefs, watch, defineComponent} from "vue";;
+import {useI18n} from "vue-i18n";
+import {ElMessage} from "element-plus";
+import selectUser from './select-users.vue'
+import selectStrategy from './select-strategy.vue'
+import {addAccounts, generateStrategy, getOneAccount, updateAccounts} from "@/api/system/account.js";
+import {randomPassword} from "@/api/system/user";
+
+
+const {t} = useI18n()
+defineOptions({
+  name: 'AccountEdit'
+})
+const {proxy} = getCurrentInstance()!;
+const accountRef = ref<InstanceType<typeof ElForm> | null>(null);
+const props: any = defineProps({
+  title: {
+    type: String,
+    default: ""
+  },
+  open: {
+    type: Boolean,
+    default: false
+  },
+  appId: {
+    type: String,
+    default: undefined
+  },
+  appName: {
+    type: String,
+    default: undefined
+  },
+  formId: {
+    default: undefined
+  },
+  deptOptions: {
+    type: Array,
+    default: []
+  },
+  treeData: {
+    type: Array,
+    default: []
+  }
+});
+
+const emit: any = defineEmits(['dialogOfClosedMethods']);
+const data: any = reactive({
+  form: {
+    appId: props.appId,
+    appName: props.appName,
+    strategyId: '',
+    createType: "manual",
+    sortIndex: 1,
+    status: 1
+  },
+  rules: {
+    displayName: [
+      {required: true, message: t('jbx.users.displayNameError'), trigger: "blur"},
+    ],
+    relatedUsername: [
+      {required: true, message: t('hintAppNameError'), trigger: "blur"},
+    ],
+    relatedPassword: [
+      {required: true, message: t('hintAppPasswordError'), trigger: "blur"},
+    ],
+  }
+})
+const {form, rules} = toRefs(data)
+const dialogStatus: any = ref(false);
+const dialogOpen: any = ref(false)
+const dialogOpenStg: any = ref(false)
+const dialogTitle: any = t('jbx.text.select')
+const confirmFlag: any = ref(true);
+
+// 监听 open 变化
+watch(
+    () => props.open,
+    (val: any) => {
+      if (val) {
+        dialogStatus.value = props.open;
+        if (props.formId) {
+          getOneAccount(props.formId).then((res: any) =>  {
+            form.value = res.data;
+          })
+        } else {
+          reset();
+        }
+      } else {
+        reset();
+      }
+    },
+    {immediate: true}
+);
+
+
+/** 重置操作表单 */
+function reset(): any {
+  form.value = {
+    appId: props.appId,
+    appName: props.appName,
+    strategyId: '',
+    createType: "manual",
+    sortIndex: 1,
+    status: 1
+  };
+  accountRef?.value?.resetFields();;
+}
+
+function dialogOfClosedMethods(val: any): any {
+  dialogStatus.value = false;
+  emit('dialogOfClosedMethods', val);
+}
+
+function selectOneUser(): any {
+  dialogOpen.value = true;
+}
+
+function selectOneStg(): any {
+  dialogOpenStg.value = true;
+}
+
+function submitForm(): any {
+  const handleResponse: any = (res: any, successMessage: any) => {
+    if (res.code === 0) {
+      modal.msgSuccess(successMessage);
+      dialogOfClosedMethods(true);
+      reset();
+    } else {
+      ElMessage({
+        message: res.message, // 这里的 res.message 是后端返回的 HTML 字符串
+        type: 'error',
+        dangerouslyUseHTMLString: true
+      });
+    }
+  };
+
+  accountRef?.value?.validate((valid: any) =>  {
+    if (valid) {
+      const operation: any = props.formId ? updateAccounts : addAccounts;
+      const successMessage: any = props.formId ? t('org.success.update') : t('org.success.add');
+
+      operation(form.value).then((res: any) =>  handleResponse(res, successMessage));
+
+      dialogOfClosedMethods(true);
+    }
+  });
+}
+
+
+function cancelAdd(): any {
+  confirmFlag.value = true;
+  dialogOpen.value = false;
+  dialogOpenStg.value = false;
+}
+
+function updateFlag(val: any): any {
+  confirmFlag.value = val;
+}
+
+function confirmSelect(): any {
+  proxy.$refs.selectUserComponent.confirmSelect();
+}
+
+function confirmSelectStg(): any {
+  proxy.$refs.selectStgComponent.confirmSelect();
+}
+
+function inputUserValue(val: any): any {
+  form.value.userId = val.id;
+  form.value.username = val.username;
+  form.value.displayName = val.displayName;
+  confirmFlag.value = true;
+  dialogOpen.value = false;
+}
+
+function inputStgValue(val: any): any {
+  form.value.strategyId = val.id;
+  form.value.strategyName = val.name;
+  confirmFlag.value = true;
+  dialogOpenStg.value = false;
+  //修改状态
+  if (props.formId) {
+    generateStrategyFun();
+  }
+}
+
+function generateStrategyFun(): any {
+  generateStrategy({strategyId: form.value.strategyId, userId: form.value.userId}).then((res: any) =>  {
+    if (res.code === 0) {
+      form.value.relatedUsername = res.data
+    } else {
+      modal.msgError(t('hintGenerateAppAccount'))
+    }
+  })
+}
+
+function randomPasswordFun(): any {
+  randomPassword().then((res: any) =>  {
+    if (res.code === 0) {
+      form.value.relatedPassword = res.data
+    } else {
+      modal.msgError(res.message)
+    }
+  })
+}
+</script>

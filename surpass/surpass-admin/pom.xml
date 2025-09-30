@@ -7,7 +7,7 @@
 		<artifactId>surpass-parent</artifactId>
 		<version>1.1.0</version>
 	</parent>
-	
+
 	<!--self -->
 	<artifactId>surpass-admin</artifactId>
 	<name>surpass-admin</name>
@@ -31,7 +31,7 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<testResources>
 			<testResource>

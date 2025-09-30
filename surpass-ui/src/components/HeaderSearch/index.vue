@@ -1,0 +1,190 @@
+<template>
+  <div :class="{ 'show': show }" class="header-search">
+    <svg-icon class-name="search-icon" icon-class="search" @click.stop="click" />
+    <el-select
+      ref="headerSearchSelectRef"
+      v-model="search"
+      :remote-method="querySearch"
+      filterable
+      default-first-option
+      remote
+      placeholder="Search"
+      class="header-search-select"
+      @change="change"
+    >
+      <el-option v-for="option in options" :key="option.item.path" :value="option.item" :label="option.item.title.join(' > ')" />
+    </el-select>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useRoute, useRouter } from "vue-router";
+import {ref, getCurrentInstance, reactive, toRefs, watch, defineComponent, watchEffect} from "vue";
+import modal from "@/plugins/modal";
+import Fuse from "fuse"
+import { getNormalPath } from '@/utils/Jinbooks'
+import { isHttp } from '@/utils/Validate'
+import usePermissionStore from '@/store/modules/permission'
+
+const search: any = ref('');
+const options: any = ref<any>([]);
+const searchPool: any = ref<any>([]);
+const show: any = ref(false);
+const fuse: any = ref(undefined);
+const headerSearchSelectRef: any = ref(undefined);
+const router: any = useRouter();
+const routes: any = computed(() => usePermissionStore().routes);
+
+function click(): any {
+  show.value = !show.value
+  if (show.value) {
+    headerSearchSelectRef.value && headerSearchSelectRef.value.focus()
+  }
+};
+function close(): any {
+  headerSearchSelectRef.value && headerSearchSelectRef.value.blur()
+  options.value = []
+  show.value = false
+}
+function change(val: any): any {
+  const path: any = val.path;
+  const query: any = val.query;
+  if (isHttp(path)) {
+    // http(s):// 路径新窗口打开
+    const pindex: any = path.indexOf("http");
+    window.open(path.substr(pindex, path.length), "_blank");
+  } else {
+    if (query) {
+      router.push({ path: path, query: JSON.parse(query) });
+    } else {
+      router.push(path)
+    }
+  }
+
+  search.value = ''
+  options.value = []
+  nextTick(() => {
+    show.value = false
+  })
+}
+function initFuse(list: any): any {
+  fuse.value = new Fuse(list, {
+    shouldSort: true,
+    threshold: 0.4,
+    location: 0,
+    distance: 100,
+    minMatchCharLength: 1,
+    keys: [{
+      name: 'title',
+      weight: 0.7
+    }, {
+      name: 'path',
+      weight: 0.3
+    }]
+  })
+}
+// Filter out the routes that can be displayed in the sidebar
+// And generate the internationalized title
+function generateRoutes(routes: any, basePath = '': any, prefixTitle = []: any): any {
+  let res: any = []
+
+  for (const r of routes) {
+    // skip hidden router
+    if (r.hidden) { continue }
+    const p: any = r.path.length > 0 && r.path[0] === '/' ? r.path : '/' + r.path;
+    const data: any = {
+      path: !isHttp(r.path) ? getNormalPath(basePath + p) : r.path,
+      title: [...prefixTitle]
+    }
+
+    if (r.meta && r.meta.title) {
+      data.title = [...data.title, r.meta.title]
+
+      if (r.redirect !== 'noRedirect') {
+        // only push the routes with title
+        // special case: need to exclude parent router without redirect
+        res.push(data)
+      }
+    }
+    if (r.query) {
+      data.query = r.query
+    }
+
+    // recursive child routes
+    if (r.children) {
+      const tempRoutes: any = generateRoutes(r.children, data.path, data.title)
+      if (tempRoutes.length >= 1) {
+        res = [...res, ...tempRoutes]
+      }
+    }
+  }
+  return res
+}
+function querySearch(query: any): any {
+  if (query !== '') {
+    options.value = fuse.value.search(query)
+  } else {
+    options.value = []
+  }
+}
+
+onMounted(() => {
+  searchPool.value = generateRoutes(routes.value);
+})
+
+watchEffect(() => {
+  searchPool.value = generateRoutes(routes.value)
+})
+
+watch(show, (value: any) => {
+  if (value) {
+    document.body.addEventListener('click', close)
+  } else {
+    document.body.removeEventListener('click', close)
+  }
+})
+
+watch(searchPool, (list: any) => {
+  initFuse(list)
+})
+</script>
+
+<style lang='scss' scoped>
+.header-search {
+  font-size: 0 !important;
+
+  .search-icon {
+    cursor: pointer;
+    font-size: 18px;
+    vertical-align: middle;
+  }
+
+  .header-search-select {
+    font-size: 18px;
+    transition: width 0.2s;
+    width: 0;
+    overflow: hidden;
+    background: transparent;
+    border-radius: 0;
+    display: inline-block;
+    vertical-align: middle;
+
+    :deep(.el-input__inner) {
+      border-radius: 0;
+      border: 0;
+      padding-left: 0;
+      padding-right: 0;
+      box-shadow: none !important;
+      border-bottom: 1px solid #d9d9d9;
+      vertical-align: middle;
+    }
+  }
+
+  &.show {
+    .header-search-select {
+      width: 210px;
+      margin-left: 10px;
+    }
+  }
+}
+</style>

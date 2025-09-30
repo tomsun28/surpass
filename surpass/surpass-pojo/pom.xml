@@ -7,7 +7,7 @@
 		<artifactId>surpass-parent</artifactId>
 		<version>1.1.0</version>
 	</parent>
-	
+
 	<!--self -->
 	<artifactId>surpass-pojo</artifactId>
 	<name>surpass-pojo</name>
@@ -15,9 +15,18 @@
 	<url>https://github.com/dromara/surpass</url>
 
 	<dependencies>
-
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-commons-core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-commons-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<testResources>
 			<testResource>

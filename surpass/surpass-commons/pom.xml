@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.dromara.surpass</groupId>
+        <artifactId>surpass-parent</artifactId>
+        <version>1.1.0</version>
+    </parent>
+
+    <artifactId>surpass-commons</artifactId>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>surpass-commons-core</module>
+        <module>surpass-authn-core</module>
+        <module>surpass-commons-common</module>
+        <module>surpass-authn-provider</module>
+        <module>surpass-commons-crypto</module>
+    </modules>
+</project>

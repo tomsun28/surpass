@@ -1,0 +1,59 @@
+{
+  "name": "jinbooks",
+  "version": "v1.2.0",
+  "description": "jinbooks",
+  "author": "jinbooks",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "2.3.1",
+    "@vueup/vue-quill": "1.2.0",
+    "@vueuse/core": "10.11.0",
+    "axios": "1.8.2",
+    "dayjs": "^1.11.13",
+    "decimal.js": "^10.5.0",
+    "echarts": "^5.6.0",
+    "element-plus": "2.9.9",
+    "file-saver": "^2.0.5",
+    "fuse.js": "6.6.2",
+    "jinbooks": "file:",
+    "js-cookie": "3.0.5",
+    "jsencrypt": "3.3.2",
+    "lucide-vue-next": "^0.475.0",
+    "nprogress": "0.2.0",
+    "pinia": "2.1.7",
+    "vue": "3.4.31",
+    "vue-count-to": "^1.0.13",
+    "vue-cropper": "1.1.1",
+    "vue-i18n": "^10.0.0",
+    "vue-router": "4.4.0",
+    "vue3-treeselect": "^0.1.10",
+    "vuedraggable": "^4.1.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.7",
+    "@types/js-cookie": "^3.0.6",
+    "@types/nprogress": "^0.2.3",
+    "@vitejs/plugin-vue": "5.0.5",
+    "@vue/tsconfig": "^0.6.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "sass": "1.79.0",
+    "tailwindcss": "^4.0.5",
+    "typescript": "^5.6.3",
+    "unplugin-auto-import": "0.17.6",
+    "unplugin-vue-setup-extend-plus": "1.0.1",
+    "vite": "5.4.19",
+    "vite-plugin-compression": "0.5.1",
+    "vite-plugin-svg-icons": "2.0.1"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "*"
+  }
+}

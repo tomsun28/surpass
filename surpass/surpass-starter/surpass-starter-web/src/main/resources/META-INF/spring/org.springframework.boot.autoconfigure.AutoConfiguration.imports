@@ -1,0 +1,10 @@
+#org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration
+com.jinbooks.autoconfigure.ApplicationAutoConfiguration
+com.jinbooks.autoconfigure.MvcAutoConfiguration
+com.jinbooks.autoconfigure.MvcCorsAutoConfiguration
+com.jinbooks.autoconfigure.MvcDateTimeAutoConfiguration
+com.jinbooks.autoconfigure.MvcInstAutoConfiguration
+com.jinbooks.autoconfigure.MvcResourceAutoConfiguration
+com.jinbooks.autoconfigure.MvcRestrictHostAutoConfiguration
+com.jinbooks.autoconfigure.RedisAutoConfiguration
+com.jinbooks.autoconfigure.SwaggerAutoConfiguration

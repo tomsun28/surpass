@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+//    "target": "es6",
+//    "module": "commonjs",
+    //    "allowJs": true,
+    //    "checkJs": true,
+//    "outDir": "./dist",
+//    "rootDir": "./src",
+//    "typeRoots": ["./types", "./node_modules/@types"],
+//    "declaration": true,
+//    "declarationDir": "./types",
+
+    "target": "esnext",
+    "module": "ESNext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "types": [],
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "shims-vue.d.ts",
+    "node_modules/unplugin-auto-import/auto-imports.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

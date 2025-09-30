@@ -1,0 +1,2 @@
+com.jinbooks.autoconfigure.AuthnProviderAutoConfiguration
+com.jinbooks.autoconfigure.CasAuthnAutoConfiguration
