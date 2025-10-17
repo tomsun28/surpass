@@ -216,7 +216,14 @@
 			<version>2.3.0</version>
 		</dependency>
 
-        <!--test-->
+		<dependency>
+			<groupId>org.passay</groupId>
+			<artifactId>passay</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+
+
+		<!--test-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

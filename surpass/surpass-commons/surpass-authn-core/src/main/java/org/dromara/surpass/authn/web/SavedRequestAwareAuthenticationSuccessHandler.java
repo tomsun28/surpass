@@ -22,15 +22,17 @@
 
 package org.dromara.surpass.authn.web;
 
-import com.jinbooks.web.WebConstants;
-import com.jinbooks.web.WebContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dromara.surpass.web.WebConstants;
+import org.dromara.surpass.web.WebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
@@ -72,7 +74,7 @@ import java.io.IOException;
  * @since 3.0
  */
 public class SavedRequestAwareAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    protected static final Logger logger = LoggerFactory.getLogger(SavedRequestAwareAuthenticationSuccessHandler.class);
+    protected static final Logger dsLogger = LoggerFactory.getLogger(SavedRequestAwareAuthenticationSuccessHandler.class);
 
     private RequestCache requestCache = new HttpSessionRequestCache();
 
@@ -102,14 +104,14 @@ public class SavedRequestAwareAuthenticationSuccessHandler extends SimpleUrlAuth
         String targetUrl = savedRequest.getRedirectUrl();
 
      // is cas login , with service parameter
-        logger.trace("CAS " + request.getParameter(WebConstants.CAS_SERVICE_PARAMETER));
+        dsLogger.trace("CAS " + request.getParameter(WebConstants.CAS_SERVICE_PARAMETER));
         if (request.getParameter(WebConstants.CAS_SERVICE_PARAMETER) != null
                 && request.getParameter(WebConstants.CAS_SERVICE_PARAMETER).startsWith("http")) {
             targetUrl = WebContext.getContextPath(true) + "/authz/cas/login?service="
                     + request.getParameter(WebConstants.CAS_SERVICE_PARAMETER);
         }
         targetUrl = targetUrl == null ? "/forwardindex" : targetUrl;
-        logger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);
+        dsLogger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 

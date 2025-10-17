@@ -18,8 +18,11 @@ package org.dromara.surpass.controller;
 
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.aspectj.bridge.Message;
-import org.dromara.surpass.pojo.dto.LoginConfigDto;
+import org.dromara.surpass.configuration.ApplicationConfig;
 import org.dromara.surpass.pojo.entity.Institutions;
+import org.dromara.surpass.pojo.entity.config.ConfigLoginPolicy;
+import org.dromara.surpass.web.WebConstants;
+import org.dromara.surpass.web.WebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +52,7 @@ public class LoginEndpoint {
 	AuthTokenService authTokenService;
 
 	@Autowired
-  	ApplicationConfig applicationConfig;
+	ApplicationConfig applicationConfig;
 
 	@Autowired
 	LoginConfig loginConfig;
@@ -72,7 +75,7 @@ public class LoginEndpoint {
 		logger.debug("/login.");
 		LoginConfigDto conf = new LoginConfigDto();
 		ConfigLoginPolicy loginPolicy = loginService.getConfigLoginPolicy();
-		Institutions inst = (Institutions)WebContext.getAttribute(WebConstants.CURRENT_INST);
+		Institutions inst = (Institutions) WebContext.getAttribute(WebConstants.CURRENT_INST);
 		conf.setInst(inst);
 		conf.setCaptcha(loginPolicy.getCaptchaMgt().toUpperCase());
 		conf.setState(authTokenService.genRandomJwt());
