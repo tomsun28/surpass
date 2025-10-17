@@ -23,10 +23,13 @@
 package org.dromara.surpass.authn.provider;
 
 
+import com.jinbooks.password.onetimepwd.AbstractOtpAuthn;
+import com.jinbooks.password.onetimepwd.MailOtpAuthnService;
 import org.dromara.surpass.authn.LoginCredential;
 import org.dromara.surpass.authn.SignedPrincipal;
 import org.dromara.surpass.authn.jwt.service.AuthTokenService;
 import org.dromara.surpass.authn.realm.AbstractAuthenticationRealm;
+import org.dromara.surpass.authn.session.Session;
 import org.dromara.surpass.authn.session.SessionManager;
 import org.dromara.surpass.authn.web.AuthorizationUtils;
 import org.dromara.surpass.constants.ConstsLoginType;
@@ -35,7 +38,10 @@ import org.dromara.surpass.constants.ConstsStatus;
 import org.dromara.surpass.entity.client.ClientResolve;
 import org.dromara.surpass.entity.client.ClientUserAgent;
 import org.dromara.surpass.entity.client.UserAgentParser;
+import org.dromara.surpass.ip2location.IpLocationParser;
+import org.dromara.surpass.ip2location.Region;
 import org.dromara.surpass.pojo.entity.idm.UserInfo;
+import org.dromara.surpass.service.LoginService;
 import org.dromara.surpass.web.WebConstants;
 import org.dromara.surpass.web.WebContext;
 import org.slf4j.Logger;
@@ -47,6 +53,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import java.util.List;
+
 /**
  * login Authentication abstract class.登录认证提供者抽象类
  *
@@ -259,7 +266,7 @@ public abstract class AbstractAuthenticationProvider {
     	ClientUserAgent clientUserAgent  = UserAgentParser.resolveUserAgent(WebContext.getRequest());
     	//ip address to region
     	String requestIpAddress = WebContext.getRequestIpAddress();
-        Region  region = ipLocationParser.region(requestIpAddress);
+        Region region = ipLocationParser.region(requestIpAddress);
         ClientResolve clientResolve = new ClientResolve(clientUserAgent);
         clientResolve.setIpAddr(requestIpAddress);
         clientResolve.setCountry(region.getCountry());

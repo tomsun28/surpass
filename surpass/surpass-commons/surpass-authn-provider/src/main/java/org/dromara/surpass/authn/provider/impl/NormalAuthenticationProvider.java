@@ -32,8 +32,10 @@ import org.dromara.surpass.authn.session.SessionManager;
 import org.dromara.surpass.constants.ConstsCaptchaType;
 import org.dromara.surpass.constants.ConstsLoginType;
 import org.dromara.surpass.entity.client.ClientResolve;
+import org.dromara.surpass.ip2location.IpLocationParser;
 import org.dromara.surpass.pojo.entity.config.ConfigLoginPolicy;
 import org.dromara.surpass.pojo.entity.idm.UserInfo;
+import org.dromara.surpass.service.LoginService;
 import org.dromara.surpass.web.WebConstants;
 import org.dromara.surpass.web.WebContext;
 import org.slf4j.Logger;
@@ -147,7 +149,7 @@ public class NormalAuthenticationProvider extends AbstractAuthenticationProvider
     /**
      * captcha validate .图片验证码校验
      *
-     * @param authType String
+     * @param state String
      * @param captcha String
      * @throws ParseException
      */

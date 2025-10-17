@@ -24,6 +24,8 @@ package org.dromara.surpass.authn.realm.jdbc;
 
 import org.dromara.surpass.authn.realm.AbstractAuthenticationRealm;
 import org.dromara.surpass.pojo.entity.idm.UserInfo;
+import org.dromara.surpass.service.LoginService;
+import org.dromara.surpass.service.PasswordPolicyValidatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;

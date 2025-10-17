@@ -26,6 +26,8 @@ import org.dromara.surpass.authn.SignedPrincipal;
 import org.dromara.surpass.entity.client.ClientResolve;
 import org.dromara.surpass.pojo.entity.history.HistoryLogin;
 import org.dromara.surpass.pojo.entity.idm.UserInfo;
+import org.dromara.surpass.service.LoginService;
+import org.dromara.surpass.service.PasswordPolicyValidatorService;
 import org.dromara.surpass.web.WebConstants;
 import org.dromara.surpass.web.WebContext;
 import org.slf4j.Logger;
@@ -115,7 +117,6 @@ public abstract class AbstractAuthenticationRealm {
         historyLogin.setUserId(userInfo.getId());
         historyLogin.setUsername(userInfo.getUsername());
         historyLogin.setDisplayName(userInfo.getDisplayName());
-        historyLogin.setBookId(userInfo.getBookId());
 
         historyLogin.setBrowser(client.getBrowser());
         historyLogin.setPlatform(client.getPlatform());

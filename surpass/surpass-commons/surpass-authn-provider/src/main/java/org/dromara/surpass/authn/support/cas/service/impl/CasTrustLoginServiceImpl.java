@@ -29,6 +29,7 @@ import org.dromara.surpass.authn.provider.AbstractAuthenticationProvider;
 import org.dromara.surpass.authn.session.Session;
 import org.dromara.surpass.authn.support.cas.service.CasTrustLoginService;
 import org.dromara.surpass.constants.ConstsLoginType;
+import org.dromara.surpass.entity.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

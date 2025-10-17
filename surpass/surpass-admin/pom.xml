@@ -30,6 +30,67 @@
 			<artifactId>surpass-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-commons-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-commons-core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-commons-crypto</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-authn-core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-authn-provider</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-starter-captcha</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-starter-ip2location</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-starter-oss</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-starter-otp</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-starter-sms</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-starter-web</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-starter-xss</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

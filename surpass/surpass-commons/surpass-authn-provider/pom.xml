@@ -25,6 +25,12 @@
         </dependency>
         <dependency>
             <groupId>org.dromara.surpass</groupId>
+            <artifactId>surpass-dao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dromara.surpass</groupId>
             <artifactId>surpass-commons-crypto</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -41,6 +47,22 @@
         <dependency>
             <groupId>org.dromara.surpass</groupId>
             <artifactId>surpass-authn-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dromara.surpass</groupId>
+            <artifactId>surpass-starter-ip2location</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dromara.surpass</groupId>
+            <artifactId>surpass-starter-otp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dromara.surpass</groupId>
+            <artifactId>surpass-starter-sms</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

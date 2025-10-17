@@ -27,6 +27,7 @@ import org.dromara.surpass.authn.provider.AbstractAuthenticationProvider;
 import org.dromara.surpass.authn.realm.AbstractAuthenticationRealm;
 import org.dromara.surpass.authn.session.SessionManager;
 import org.dromara.surpass.entity.client.ClientResolve;
+import org.dromara.surpass.ip2location.IpLocationParser;
 import org.dromara.surpass.pojo.entity.idm.UserInfo;
 import org.dromara.surpass.web.WebContext;
 import org.slf4j.Logger;

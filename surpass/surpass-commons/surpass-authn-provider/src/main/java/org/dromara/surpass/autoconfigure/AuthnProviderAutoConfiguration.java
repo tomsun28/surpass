@@ -22,15 +22,16 @@
 
 package org.dromara.surpass.autoconfigure;
 
-import com.jinbooks.authn.jwt.service.AuthTokenService;
-import com.jinbooks.authn.provider.AbstractAuthenticationProvider;
-import com.jinbooks.authn.provider.AuthenticationProviderFactory;
-import com.jinbooks.authn.provider.impl.NormalAuthenticationProvider;
-import com.jinbooks.authn.provider.impl.TrustedAuthenticationProvider;
-import com.jinbooks.authn.realm.AbstractAuthenticationRealm;
-import com.jinbooks.authn.session.SessionManager;
-import com.jinbooks.ip2location.IpLocationParser;
-import com.jinbooks.persistence.service.LoginService;
+
+import org.dromara.surpass.authn.jwt.service.AuthTokenService;
+import org.dromara.surpass.authn.provider.AbstractAuthenticationProvider;
+import org.dromara.surpass.authn.provider.AuthenticationProviderFactory;
+import org.dromara.surpass.authn.provider.impl.NormalAuthenticationProvider;
+import org.dromara.surpass.authn.provider.impl.TrustedAuthenticationProvider;
+import org.dromara.surpass.authn.realm.AbstractAuthenticationRealm;
+import org.dromara.surpass.authn.session.SessionManager;
+import org.dromara.surpass.ip2location.IpLocationParser;
+import org.dromara.surpass.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -49,7 +50,7 @@ public class AuthnProviderAutoConfiguration {
 
     @Bean
 	@Primary
-    AbstractAuthenticationProvider authenticationProvider(
+	AbstractAuthenticationProvider authenticationProvider(
     		NormalAuthenticationProvider normalAuthenticationProvider,
             TrustedAuthenticationProvider trustedAuthenticationProvider) {
     	AuthenticationProviderFactory provider = new AuthenticationProviderFactory();

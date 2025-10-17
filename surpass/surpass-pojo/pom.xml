@@ -17,7 +17,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.dromara.surpass</groupId>
-			<artifactId>surpass-commons-core</artifactId>
+			<artifactId>surpass-commons-crypto</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
