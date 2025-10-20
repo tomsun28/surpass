@@ -19,11 +19,12 @@
 
 package org.dromara.surpass.nanoid;
 
+import org.dromara.surpass.nanoid.exception.NanoIdIllegalInputException;
+import org.dromara.surpass.nanoid.exception.RandomGeneratorMissingException;
+
 import java.security.SecureRandom;
 import java.util.function.Function;
 
-import com.jinbooks.nanoid.exception.NanoIdIllegalInputException;
-import com.jinbooks.nanoid.exception.RandomGeneratorMissingException;
 
 /**
  * Class capable to generate {@link NanoId}

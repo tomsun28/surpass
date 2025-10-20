@@ -381,7 +381,7 @@ public final class UUIDGenerator {
     }
 
 
-    public static void version(com.jinbooks.util.UUIDGenerator generated){
+    public static void version(org.dromara.surpass.util.UUIDGenerator generated){
     	System.out.println("UUID            : " + generated.toString());
         System.out.println("raw bytes       : " + Arrays.toString(generated.getBytes()));
         System.out.println("process id      : " + generated.getProcessId());

@@ -18,7 +18,7 @@
 
 package org.dromara.surpass.util;
 
-import com.jinbooks.entity.PeriodStr;
+import org.dromara.surpass.entity.PeriodStr;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

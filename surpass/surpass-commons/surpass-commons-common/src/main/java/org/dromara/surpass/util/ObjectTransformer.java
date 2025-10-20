@@ -25,7 +25,8 @@
  */
 package org.dromara.surpass.util;
 
-import com.jinbooks.crypto.HexUtils;
+
+import org.dromara.surpass.crypto.HexUtils;
 
 import java.io.Serializable;
 

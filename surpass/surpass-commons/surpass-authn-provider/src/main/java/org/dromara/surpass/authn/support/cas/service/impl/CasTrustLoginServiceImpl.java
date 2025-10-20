@@ -22,6 +22,9 @@
 
 package org.dromara.surpass.authn.support.cas.service.impl;
 
+import org.apereo.cas.client.validation.Assertion;
+import org.apereo.cas.client.validation.Cas20ServiceTicketValidator;
+import org.apereo.cas.client.validation.TicketValidationException;
 import org.dromara.surpass.authn.LoginCredential;
 import org.dromara.surpass.authn.jwt.AuthJwt;
 import org.dromara.surpass.authn.jwt.service.AuthTokenService;

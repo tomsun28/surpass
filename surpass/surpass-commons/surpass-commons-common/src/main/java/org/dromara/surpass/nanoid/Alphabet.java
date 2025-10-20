@@ -20,9 +20,9 @@
 package org.dromara.surpass.nanoid;
 
 
-import java.util.ArrayList;
+import org.dromara.surpass.nanoid.exception.NanoIdIllegalInputException;
 
-import com.jinbooks.nanoid.exception.NanoIdIllegalInputException;
+import java.util.ArrayList;
 
 /**
  * Alphabet contains the characters that will used to generate {@link NanoId}

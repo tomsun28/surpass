@@ -80,7 +80,7 @@ public final class QRCode {
    *
    * @param matrix {@link BitMatrix} to write
    * @param format image format
-   * @param file file {@link Path} to write image to
+   * @param file file {@link File} to write image to
    * @throws IOException if writes to the stream fail
    * @see #toBufferedImage(BitMatrix)
    */
@@ -90,11 +90,11 @@ public final class QRCode {
 
 
   /**
-   * As {@link #writeToFile(BitMatrix, String, File)}, but allows customization of the output.
+   * As {@link #writeToPath(BitMatrix, String, File)}, but allows customization of the output.
    *
    * @param matrix {@link BitMatrix} to write
    * @param format image format
-   * @param file file {@link Path} to write image to
+   * @param file file {@link File} to write image to
    * @param config output configuration
    * @throws IOException if writes to the file fail
    */

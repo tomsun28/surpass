@@ -23,10 +23,12 @@
 package org.dromara.surpass.autoconfigure;
 
 
+import org.apereo.cas.client.validation.Cas20ServiceTicketValidator;
 import org.dromara.surpass.authn.jwt.service.AuthTokenService;
 import org.dromara.surpass.authn.provider.AbstractAuthenticationProvider;
 import org.dromara.surpass.authn.support.cas.service.CasTrustLoginService;
 import org.dromara.surpass.authn.support.cas.service.impl.CasTrustLoginServiceImpl;
+import org.dromara.surpass.configuration.LoginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

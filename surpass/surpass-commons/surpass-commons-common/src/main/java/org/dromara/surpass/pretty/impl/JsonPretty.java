@@ -26,11 +26,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
-import com.jinbooks.pretty.Pretty;
+import org.dromara.surpass.pretty.Pretty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JsonPretty  implements Pretty{
+public class JsonPretty  implements Pretty {
 	static final  Logger logger = LoggerFactory.getLogger(JsonPretty.class);
 	static JsonPretty instance ;
 
@@ -102,11 +102,11 @@ public class JsonPretty  implements Pretty{
 
 	/**
 	 * prettyJson use Gson
-	 * @param JSON String
+	 * @param jsonString String
 	 * @return String
 	 */
 	@Override
-	public  String format(String  jsonString){
+	public  String format(String jsonString){
 		return format(JsonParser.parseString(jsonString));
 	}
 

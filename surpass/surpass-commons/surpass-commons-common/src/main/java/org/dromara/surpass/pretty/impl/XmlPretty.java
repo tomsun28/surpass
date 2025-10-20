@@ -27,13 +27,12 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.dromara.surpass.pretty.Pretty;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
-import com.jinbooks.pretty.Pretty;
-
-public class XmlPretty implements Pretty{
+public class XmlPretty implements Pretty {
 
 	static XmlPretty instance ;
 

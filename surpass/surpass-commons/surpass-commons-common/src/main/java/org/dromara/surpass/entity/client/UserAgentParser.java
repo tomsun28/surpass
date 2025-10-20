@@ -20,9 +20,9 @@
 
 package org.dromara.surpass.entity.client;
 
-import com.jinbooks.crypto.DigestUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.surpass.crypto.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

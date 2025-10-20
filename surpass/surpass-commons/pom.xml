@@ -20,5 +20,6 @@
         <module>surpass-commons-common</module>
         <module>surpass-authn-provider</module>
         <module>surpass-commons-crypto</module>
+        <module>surpass-commons-libs</module>
     </modules>
 </project>

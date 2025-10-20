@@ -22,15 +22,15 @@
 
 package org.dromara.surpass.pretty.impl;
 
+import org.dromara.surpass.pretty.Pretty;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import com.jinbooks.pretty.Pretty;
-
-public class SqlPretty implements Pretty{
+public class SqlPretty implements Pretty {
 
 	static SqlPretty instance ;
 

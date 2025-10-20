@@ -30,8 +30,8 @@ import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
-import com.jinbooks.crypto.Base64Utils;
-import com.jinbooks.crypto.ReciprocalUtils.Algorithm;
+import org.dromara.surpass.crypto.Base64Utils;
+import org.dromara.surpass.crypto.ReciprocalUtils.Algorithm;
 
 public class StringGenerator {
 

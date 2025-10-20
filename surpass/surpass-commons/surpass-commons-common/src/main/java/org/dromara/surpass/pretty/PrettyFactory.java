@@ -22,9 +22,9 @@
 
 package org.dromara.surpass.pretty;
 
-import com.jinbooks.pretty.impl.JsonPretty;
-import com.jinbooks.pretty.impl.SqlPretty;
-import com.jinbooks.pretty.impl.XmlPretty;
+import org.dromara.surpass.pretty.impl.JsonPretty;
+import org.dromara.surpass.pretty.impl.SqlPretty;
+import org.dromara.surpass.pretty.impl.XmlPretty;
 
 public class PrettyFactory {
 

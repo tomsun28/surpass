@@ -28,10 +28,10 @@ import javax.naming.Context;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 
+import org.dromara.surpass.ldap.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jinbooks.ldap.LdapUtils;
 
 /**
  * @author Crystal

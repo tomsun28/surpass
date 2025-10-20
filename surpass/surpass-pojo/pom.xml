@@ -25,6 +25,11 @@
 			<artifactId>surpass-commons-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.dromara.surpass</groupId>
+			<artifactId>surpass-commons-libs</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -22,8 +22,10 @@
 
 package org.dromara.surpass.util;
 
-import com.jinbooks.entity.DbTableColumn;
-import com.jinbooks.entity.DbTableMetaData;
+
+
+import org.dromara.surpass.entity.DbTableColumn;
+import org.dromara.surpass.entity.DbTableMetaData;
 
 import java.sql.*;
 

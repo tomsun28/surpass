@@ -22,9 +22,9 @@
 
 package org.dromara.surpass.util;
 
-import com.jinbooks.crypto.Base64Utils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.surpass.crypto.Base64Utils;
 
 /**
  * @author Crystal.Sea
