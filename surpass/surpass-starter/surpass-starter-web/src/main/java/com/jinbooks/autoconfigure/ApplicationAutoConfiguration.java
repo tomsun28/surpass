@@ -28,14 +28,18 @@ import javax.sql.DataSource;
 
 import org.dromara.surpass.configuration.ApplicationConfig;
 import org.dromara.surpass.configuration.IdStrategyConfig;
+import org.dromara.surpass.crypto.password.MessageDigestPasswordEncoder;
+import org.dromara.surpass.crypto.password.NoOpPasswordEncoder;
 import org.dromara.surpass.crypto.password.PasswordReciprocal;
 import org.dromara.surpass.crypto.password.SM3PasswordEncoder;
 import org.dromara.surpass.persistence.cache.InMemoryCacheService;
 import org.dromara.surpass.persistence.cache.MemCacheService;
 import org.dromara.surpass.persistence.cache.RedisCacheService;
+import org.dromara.surpass.persistence.redis.connection.RedisConnectionFactory;
 import org.dromara.surpass.service.ConfigPasswordPolicyService;
 import org.dromara.surpass.service.PasswordPolicyValidatorService;
 import org.dromara.surpass.service.impl.PasswordPolicyValidatorServiceImpl;
+import org.dromara.surpass.util.IdGenerator;
 import org.dromara.surpass.util.SnowFlakeId;
 import org.dromara.surpass.web.WebContext;
 import org.slf4j.Logger;

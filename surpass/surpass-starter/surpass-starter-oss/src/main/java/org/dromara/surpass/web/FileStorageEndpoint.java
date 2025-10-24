@@ -31,7 +31,9 @@ import org.dromara.surpass.authn.annotation.CurrentUser;
 import org.dromara.surpass.crypto.Base64Utils;
 import org.dromara.surpass.entity.Message;
 import org.dromara.surpass.exception.BusinessException;
+import org.dromara.surpass.pojo.entity.FileStorage;
 import org.dromara.surpass.pojo.entity.idm.UserInfo;
+import org.dromara.surpass.service.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +81,7 @@ public class FileStorageEndpoint {
 		if(null!=fileStorage.getUploadFile()&&!fileStorage.getUploadFile().isEmpty()){
 			try {
 				fileStorage.setDataStored(fileStorage.getUploadFile().getBytes());
-				fileUploadService.save(fileStorage);
+				fileUploadService.insert(fileStorage);
 				logger.trace("FileUpload SUCCESS");
 			} catch (IOException e) {
 				logger.error("FileUpload IOException",e);
@@ -91,7 +93,7 @@ public class FileStorageEndpoint {
  	@GetMapping(value={"/image/{id}"})
  	@ResponseBody
  	public Message<String> view(@PathVariable("id") String id){
- 		FileStorage fileStorage = fileUploadService.getById(id);
+ 		FileStorage fileStorage = fileUploadService.get(id);
  		if(fileStorage != null && fileStorage.getDataStored() != null) {
  			return new Message<>(Base64Utils.encodeImage(fileStorage.getDataStored()));
  		} else {
@@ -101,7 +103,7 @@ public class FileStorageEndpoint {
 
  	@GetMapping(value={"/image/{id}.png"})
  	public String viewPng(@PathVariable("id") String id){
- 		FileStorage fileStorage = fileUploadService.getById(id);
+ 		FileStorage fileStorage = fileUploadService.get(id);
  		if(fileStorage != null && fileStorage.getDataStored() != null) {
  			return Base64Utils.encodeImage(fileStorage.getDataStored());
  		}
@@ -111,7 +113,7 @@ public class FileStorageEndpoint {
  	@GetMapping(value={"/image/getByIds"})
  	@ResponseBody
  	public Message<List<FileStorage>> getByIds(@RequestParam("ids") List<String> ids){
- 		List<FileStorage> fileStorageList = fileUploadService.listByIds(ids);
+ 		List<FileStorage> fileStorageList = fileUploadService.findByIds(ids);
  		for(FileStorage fileStorage : fileStorageList) {
 	 		if(fileStorage != null && fileStorage.getDataStored() != null) {
 	 			fileStorage.setImageBase64(Base64Utils.encodeImage(fileStorage.getDataStored()));
@@ -123,7 +125,7 @@ public class FileStorageEndpoint {
  	@DeleteMapping(value={"/image/delete"})
  	@ResponseBody
  	public Message<String> delete(@RequestParam("ids") List<String> ids){
- 		fileUploadService.removeBatchByIds(ids);
+ 		fileUploadService.deleteBatch(ids);
  		return new Message<>(Message.SUCCESS,"");
  	}
 

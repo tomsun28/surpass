@@ -17,7 +17,6 @@
 package org.dromara.surpass.controller;
 
 
-import org.aspectj.bridge.Message;
 import org.dromara.surpass.authn.LoginCredential;
 import org.dromara.surpass.authn.LoginSecretKey;
 import org.dromara.surpass.authn.dto.LoginConfigDto;
@@ -27,6 +26,7 @@ import org.dromara.surpass.authn.provider.AbstractAuthenticationProvider;
 import org.dromara.surpass.authn.secretkey.SecretKeyManager;
 import org.dromara.surpass.configuration.ApplicationConfig;
 import org.dromara.surpass.configuration.LoginConfig;
+import org.dromara.surpass.entity.Message;
 import org.dromara.surpass.pojo.entity.Institutions;
 import org.dromara.surpass.pojo.entity.config.ConfigLoginPolicy;
 import org.dromara.surpass.service.LoginService;

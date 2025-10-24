@@ -25,6 +25,7 @@ package com.jinbooks.password.onetimepwd;
 import com.jinbooks.password.onetimepwd.token.AbstractOtpTokenStore;
 import com.jinbooks.password.onetimepwd.token.InMemoryOtpTokenStore;
 import org.dromara.surpass.pojo.entity.idm.UserInfo;
+import org.dromara.surpass.util.StringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

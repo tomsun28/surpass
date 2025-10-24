@@ -22,8 +22,8 @@
 
 package org.dromara.surpass.persistence.cache;
 
-import com.jinbooks.persistence.redis.IRedisStatement;
-import com.jinbooks.persistence.redis.connection.RedisConnectionFactory;
+import org.dromara.surpass.persistence.redis.IRedisStatement;
+import org.dromara.surpass.persistence.redis.connection.RedisConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

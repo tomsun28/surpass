@@ -50,6 +50,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Table(name = "SURPASS_USERINFO")
+@Entity
 public class UserInfo extends JpaEntity implements Serializable {
 
     public static final String CLASS_TYPE = "UserInfo";

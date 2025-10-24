@@ -24,6 +24,8 @@ package com.jinbooks.autoconfigure;
 
 import jakarta.servlet.Filter;
 
+import org.dromara.surpass.configuration.ApplicationConfig;
+import org.dromara.surpass.service.InstitutionsService;
 import org.dromara.surpass.web.WebHttpInstRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +34,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.jinbooks.configuration.ApplicationConfig;
-import com.jinbooks.persistence.service.InstitutionsService;
+
 
 /**
  * 多租户机构读取的自动装配

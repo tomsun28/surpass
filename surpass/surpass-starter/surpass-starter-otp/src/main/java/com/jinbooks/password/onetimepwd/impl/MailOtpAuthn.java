@@ -27,13 +27,12 @@ import java.util.Properties;
 
 import com.jinbooks.password.onetimepwd.AbstractOtpAuthn;
 import jakarta.mail.internet.MimeMessage;
+import org.dromara.surpass.configuration.EmailConfig;
+import org.dromara.surpass.pojo.entity.idm.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
-import com.jinbooks.configuration.EmailConfig;
-import com.jinbooks.entity.idm.UserInfo;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 public class MailOtpAuthn extends AbstractOtpAuthn {
@@ -70,7 +69,7 @@ public class MailOtpAuthn extends AbstractOtpAuthn {
 
 
 	@Override
-    public boolean produce(UserInfo userInfo,String otpMsgType) {
+    public boolean produce(UserInfo userInfo, String otpMsgType) {
         try {
             String token = this.genToken(userInfo);
 

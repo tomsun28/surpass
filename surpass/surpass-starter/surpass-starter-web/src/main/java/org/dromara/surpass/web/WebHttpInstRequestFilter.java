@@ -31,20 +31,20 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.surpass.configuration.ApplicationConfig;
+import org.dromara.surpass.constants.ConstsHttpHeader;
+import org.dromara.surpass.pojo.entity.Institutions;
+import org.dromara.surpass.service.InstitutionsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.jinbooks.configuration.ApplicationConfig;
-import com.jinbooks.constants.ConstsHttpHeader;
-import com.jinbooks.entity.Institutions;
-import com.jinbooks.persistence.service.InstitutionsService;
 
 /**
  * 多租户机构读取Filter
  */
 public class WebHttpInstRequestFilter  extends GenericFilterBean {
-	static final  Logger logger = LoggerFactory.getLogger(WebHttpInstRequestFilter.class);
+	static final  Logger dsLogger = LoggerFactory.getLogger(WebHttpInstRequestFilter.class);
 
 	InstitutionsService institutionsService;
 
@@ -53,30 +53,30 @@ public class WebHttpInstRequestFilter  extends GenericFilterBean {
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
 			throws IOException, ServletException {
-		logger.trace("WebHttpInstRequestFilter");
+		dsLogger.trace("WebHttpInstRequestFilter");
 		HttpServletRequest request= ((HttpServletRequest)servletRequest);
 
 		if(request.getSession().getAttribute(WebConstants.CURRENT_INST) == null) {
-			if(logger.isTraceEnabled()) {WebContext.printRequest(request);}
+			if(dsLogger.isTraceEnabled()) {WebContext.printRequest(request);}
 			String host = request.getHeader(ConstsHttpHeader.HEADER_HOSTNAME);
-			logger.trace("hostname {}",host);
+			dsLogger.trace("hostname {}",host);
 			if(StringUtils.isEmpty(host)) {
 				host = request.getHeader(ConstsHttpHeader.HEADER_HOST);
-				logger.trace("host {}",host);
+				dsLogger.trace("host {}",host);
 			}
 			if(host.indexOf(":")> -1 ) {
 				host = host.split(":")[0];
-				logger.trace("domain split {}",host);
+				dsLogger.trace("domain split {}",host);
 			}
 			Institutions institution = institutionsService.getByInstIdOrDomain(host);
-			logger.trace("institution {}" ,institution);
+			dsLogger.trace("institution {}" ,institution);
 			request.getSession().setAttribute(WebConstants.CURRENT_INST, institution);
 
 			String origin = request.getHeader(ConstsHttpHeader.HEADER_ORIGIN);
 			if(StringUtils.isEmpty(origin)) {
 				origin = applicationConfig.getFrontendUri();
 			}
-			logger.trace("origin {}" ,origin);
+			dsLogger.trace("origin {}" ,origin);
 		}
         chain.doFilter(servletRequest, servletResponse);
 	}

@@ -22,9 +22,9 @@
 
 package org.dromara.surpass.web;
 
-import com.jinbooks.configuration.ApplicationConfig;
-import com.jinbooks.util.JdbcUtils;
 import jakarta.servlet.http.HttpServlet;
+import org.dromara.surpass.configuration.ApplicationConfig;
+import org.dromara.surpass.util.JdbcUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

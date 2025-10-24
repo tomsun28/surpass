@@ -23,9 +23,11 @@
 package org.dromara.surpass.autoconfigure;
 
 
+import org.dromara.surpass.configuration.LoginConfig;
 import org.dromara.surpass.ip2location.IpLocation;
 import org.dromara.surpass.ip2location.IpLocationParser;
 import org.dromara.surpass.ip2location.offline.Ip2regionV2;
+import org.lionsoul.ip2region.xdb.Searcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

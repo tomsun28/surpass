@@ -7,9 +7,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.dromara.mybatis.jpa.entity.JpaEntity;
+import org.dromara.surpass.pojo.entity.idm.UserInfo;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @description:
@@ -97,5 +99,4 @@ public class ConfigLoginPolicy extends JpaEntity implements Serializable {
     public boolean isTwoFactor(){
         return this.twoFactor > 0;
     }
-
 }

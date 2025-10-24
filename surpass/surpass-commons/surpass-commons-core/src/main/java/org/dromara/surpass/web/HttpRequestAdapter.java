@@ -22,9 +22,7 @@
 
 package org.dromara.surpass.web;
 
-import com.jinbooks.constants.ContentType;
-import com.jinbooks.util.AuthorizationHeaderUtils;
-import com.jinbooks.util.JsonUtils;
+
 import org.apache.hc.client5.http.classic.methods.*;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
@@ -40,6 +38,9 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.util.Timeout;
+import org.dromara.surpass.constants.ContentType;
+import org.dromara.surpass.util.AuthorizationHeaderUtils;
+import org.dromara.surpass.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

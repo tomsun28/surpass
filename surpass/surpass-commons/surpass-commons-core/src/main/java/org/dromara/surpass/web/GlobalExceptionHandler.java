@@ -21,10 +21,10 @@
 package org.dromara.surpass.web;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.jinbooks.entity.Message;
-import com.jinbooks.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.UnexpectedTypeException;
+import org.dromara.surpass.entity.Message;
+import org.dromara.surpass.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

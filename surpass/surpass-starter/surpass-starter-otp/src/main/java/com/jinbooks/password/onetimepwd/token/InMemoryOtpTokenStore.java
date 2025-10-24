@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.jinbooks.password.onetimepwd.OneTimePassword;
+import org.dromara.surpass.pojo.entity.idm.UserInfo;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
@@ -34,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.jinbooks.entity.idm.UserInfo;
 
 public class InMemoryOtpTokenStore  extends AbstractOtpTokenStore {
     private static final  Logger logger = LoggerFactory.getLogger(InMemoryOtpTokenStore.class);

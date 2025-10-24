@@ -22,9 +22,9 @@
 
 package org.dromara.surpass.configuration;
 
-import com.jinbooks.constants.ConstsCached;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.dromara.surpass.constants.ConstsCached;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;

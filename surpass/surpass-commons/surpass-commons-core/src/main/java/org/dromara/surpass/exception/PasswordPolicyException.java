@@ -22,7 +22,8 @@
 
 package org.dromara.surpass.exception;
 
-import com.jinbooks.web.WebContext;
+
+import org.dromara.surpass.web.WebContext;
 
 public class PasswordPolicyException extends Exception {
 

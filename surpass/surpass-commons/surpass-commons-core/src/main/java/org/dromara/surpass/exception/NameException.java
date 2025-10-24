@@ -22,7 +22,8 @@
 
 package org.dromara.surpass.exception;
 
-import com.jinbooks.web.WebContext;
+import org.dromara.surpass.web.WebContext;
+
 /**
  * 定义自定义异常
  * 异常包括三个属性，分别是对应在异常中，出现异常的属性field，和对于提示错误消息对应的属性文件的KEY。以及属性的错误数据value

@@ -22,9 +22,9 @@
 
 package org.dromara.surpass.web;
 
-import com.jinbooks.constants.ContentType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dromara.surpass.constants.ContentType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

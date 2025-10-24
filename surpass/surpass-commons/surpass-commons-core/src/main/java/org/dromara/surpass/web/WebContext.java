@@ -19,14 +19,14 @@
 
 package org.dromara.surpass.web;
 
-import com.jinbooks.entity.Institutions;
-import com.jinbooks.util.DateUtils;
-import com.jinbooks.util.IdGenerator;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.surpass.pojo.entity.Institutions;
+import org.dromara.surpass.util.DateUtils;
+import org.dromara.surpass.util.IdGenerator;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ public final class WebContext {
     /**
      * clear session Message ,session id is Constants.MESSAGE
      *
-     * @see WebConstants.MESSAGE
+     * @see WebConstants.CURRENT_MESSAGE
      */
     public static void clearMessage() {
         removeAttribute(WebConstants.CURRENT_MESSAGE);
@@ -118,7 +118,7 @@ public final class WebContext {
 
 	/**
      * get bean from spring configuration by bean id
-     * @param id
+     * @param name
      * @return Object
      */
     public static Object getBean(String name){

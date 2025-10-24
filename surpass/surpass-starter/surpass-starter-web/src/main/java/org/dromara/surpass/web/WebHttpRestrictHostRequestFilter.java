@@ -27,12 +27,10 @@ import java.util.concurrent.ConcurrentMap;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.surpass.constants.ConstsHttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.GenericFilterBean;
-
-import com.jinbooks.constants.ConstsHttpHeader;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -43,7 +41,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * 请求域名限定Filter
  */
 public class WebHttpRestrictHostRequestFilter  extends GenericFilterBean {
-	static final  Logger logger = LoggerFactory.getLogger(WebHttpRestrictHostRequestFilter.class);
+	static final  Logger dsLogger = LoggerFactory.getLogger(WebHttpRestrictHostRequestFilter.class);
 
 	ConcurrentMap<String,String> restrictHostMap ;
 
@@ -52,24 +50,24 @@ public class WebHttpRestrictHostRequestFilter  extends GenericFilterBean {
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
 			throws IOException, ServletException {
-		logger.trace("WebHttpRestrictHostRequestFilter");
+		dsLogger.trace("WebHttpRestrictHostRequestFilter");
 		HttpServletRequest request= ((HttpServletRequest)servletRequest);
-		if(logger.isTraceEnabled()) {WebContext.printRequest(request);}
+		if(dsLogger.isTraceEnabled()) {WebContext.printRequest(request);}
 
 		String host = request.getHeader(ConstsHttpHeader.HEADER_HOST);
 		if(StringUtils.isBlank(host)) {
 			host = request.getHeader(ConstsHttpHeader.HEADER_HOSTNAME);
 		}
-		logger.trace("host {}",host);
+		dsLogger.trace("host {}",host);
 
 		if(host.indexOf(":")> -1 ) {
 			host = host.split(":")[0];
-			logger.trace("host split {}",host);
+			dsLogger.trace("host split {}",host);
 		}
 
 		//限制条件true and host不为空 and 不在限制的host请求 需要过滤
 		if(isRestrict && StringUtils.isNotBlank(host) && !restrictHostMap.containsKey(host)) {
-			logger.error("host {} is restrict",host);
+			dsLogger.error("host {} is restrict",host);
 			return;
 		}
 
@@ -84,9 +82,9 @@ public class WebHttpRestrictHostRequestFilter  extends GenericFilterBean {
 				isRestrict = true;
 			}
 		}
-		logger.debug("isRestrict {}",isRestrict);
+		dsLogger.debug("isRestrict {}",isRestrict);
 		if(isRestrict) {
-			logger.debug("Restrict Host {}",restrictHostMap);
+			dsLogger.debug("Restrict Host {}",restrictHostMap);
 		}
 	}
 

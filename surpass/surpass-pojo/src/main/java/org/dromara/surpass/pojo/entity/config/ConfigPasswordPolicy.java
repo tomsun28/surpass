@@ -17,6 +17,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Table(name = "surpass_config_password_policy")
+@Entity
 public class ConfigPasswordPolicy extends JpaEntity{
     @Id
     @Column

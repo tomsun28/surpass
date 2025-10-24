@@ -22,13 +22,12 @@
 package org.dromara.surpass.schedule;
 
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.support.CronExpression;
-import org.springframework.scheduling.support.CronTrigger;
 
 public class ScheduleAdapterBuilder {
-	private static final  Logger logger = LoggerFactory.getLogger(ScheduleAdapterBuilder.class);
+	private static final Logger logger = LoggerFactory.getLogger(ScheduleAdapterBuilder.class);
 
 	Scheduler scheduler ;
 
@@ -110,5 +109,4 @@ public class ScheduleAdapterBuilder {
 			scheduler.scheduleJob(jobDetail,cronTrigger);
 		}
     }
-
 }

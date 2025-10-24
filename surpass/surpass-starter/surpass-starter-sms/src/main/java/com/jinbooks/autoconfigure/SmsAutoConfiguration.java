@@ -1,12 +1,12 @@
 /*
  * Copyright [2025] [JinBooks of copyright http://www.jinbooks.com]
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
- 
+
 
 
 
@@ -24,15 +24,16 @@ package com.jinbooks.autoconfigure;
 
 import com.jinbooks.password.onetimepwd.token.RedisOtpTokenStore;
 import com.jinbooks.password.sms.SmsOtpAuthnService;
+import org.dromara.surpass.configuration.ApplicationConfig;
+import org.dromara.surpass.persistence.redis.connection.RedisConnectionFactory;
+import org.dromara.surpass.service.ConfigEmailSendersService;
+import org.dromara.surpass.service.ConfigSmsProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import com.jinbooks.configuration.ApplicationConfig;
-import com.jinbooks.persistence.redis.connection.RedisConnectionFactory;
-import com.jinbooks.persistence.service.ConfigEmailSendersService;
-import com.jinbooks.persistence.service.ConfigSmsProviderService;
+
 
 @AutoConfiguration
 public class SmsAutoConfiguration {

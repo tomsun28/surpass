@@ -24,6 +24,7 @@ package com.jinbooks.autoconfigure;
 
 import jakarta.servlet.Filter;
 
+import org.dromara.surpass.configuration.ApplicationConfig;
 import org.dromara.surpass.web.WebHttpRestrictHostRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.jinbooks.configuration.ApplicationConfig;
 
 /**
  * 请求域名限定自动装配

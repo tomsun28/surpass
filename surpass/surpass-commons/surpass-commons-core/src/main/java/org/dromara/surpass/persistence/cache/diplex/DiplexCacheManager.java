@@ -19,7 +19,7 @@
 
 package org.dromara.surpass.persistence.cache.diplex;
 
-import com.jinbooks.persistence.redis.connection.RedisConnectionFactory;
+import org.dromara.surpass.persistence.redis.connection.RedisConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

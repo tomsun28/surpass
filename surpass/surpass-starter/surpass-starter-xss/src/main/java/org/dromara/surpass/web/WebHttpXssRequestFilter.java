@@ -33,7 +33,8 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.commons.text.StringEscapeUtils;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.GenericFilterBean;
@@ -42,7 +43,7 @@ import org.springframework.web.filter.GenericFilterBean;
  * XSS请求Filter，包括忽略地址、忽略请求参数、风险字符等
  */
 public class WebHttpXssRequestFilter  extends GenericFilterBean {
-	static final  Logger logger = LoggerFactory.getLogger(WebHttpXssRequestFilter.class);
+	static final  Logger dsLogger = LoggerFactory.getLogger(WebHttpXssRequestFilter.class);
 
 	static final ConcurrentHashMap <String,String> ignoreUrlMap = new  ConcurrentHashMap <>();
 
@@ -76,10 +77,10 @@ public class WebHttpXssRequestFilter  extends GenericFilterBean {
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		logger.trace("WebHttpXssRequestFilter");
+		dsLogger.trace("WebHttpXssRequestFilter");
 		boolean isWebXss = false;
 		HttpServletRequest request= ((HttpServletRequest)servletRequest);
-		if(logger.isTraceEnabled()) {WebContext.printRequest(request);}
+		if(dsLogger.isTraceEnabled()) {WebContext.printRequest(request);}
 		if(ignoreUrlMap.containsKey(request.getRequestURI().substring(request.getContextPath().length()))) {
 			//url ignore , do nothing
 		}else {
@@ -88,14 +89,14 @@ public class WebHttpXssRequestFilter  extends GenericFilterBean {
 	          String key = parameterNames.nextElement();
 	          if(!ignoreParameterName.containsKey(key)) {
 		          String value = request.getParameter(key);
-		          logger.trace("parameter name {} , value {}" ,key, value);
+				  dsLogger.trace("parameter name {} , value {}" ,key, value);
 		          String tempValue = value;
 		          if(!StringEscapeUtils.escapeHtml4(tempValue).equals(value)
 		        		  ||specialCharacterMatches(value)
 		        		  ||tempValue.toLowerCase().indexOf("script")>-1
 		        		  ||tempValue.toLowerCase().replace(" ", "").indexOf("eval(")>-1) {
 		        	  isWebXss = true;
-		        	  logger.error("parameter name {} , value {}, contains dangerous content ! ", key , value);
+					  dsLogger.error("parameter name {} , value {}, contains dangerous content ! ", key , value);
 		        	  break;
 		          }
 	          }

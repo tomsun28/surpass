@@ -22,9 +22,9 @@
 
 package org.dromara.surpass.web;
 
-import com.jinbooks.constants.ContentType;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dromara.surpass.constants.ContentType;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
