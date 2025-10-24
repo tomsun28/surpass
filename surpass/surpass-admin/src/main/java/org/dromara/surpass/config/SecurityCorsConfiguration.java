@@ -1,5 +1,6 @@
 package org.dromara.surpass.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +20,8 @@ import java.util.Collections;
 @Configuration
 public class SecurityCorsConfiguration {
 
-    @Bean
+    @Bean(name = "customCorsFilter")
+    @ConditionalOnMissingBean(name = "customCorsFilter")
     FilterRegistrationBean<Filter> corsFilter() {
         UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();

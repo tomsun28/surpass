@@ -3,11 +3,13 @@ jasypt:
     password: e!swhdg&d763jo
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: surpass
-    password: surpass
-    url: jdbc:mysql://localhost:3306/surpass?allowPublicKeyRetrieval=true&autoReconnect=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    password: Surpass321!
+    url: jdbc:mysql://192.168.31.233:3306/surpass?allowPublicKeyRetrieval=true&autoReconnect=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
     platform: mysql
   jpa:
     database: mysql
