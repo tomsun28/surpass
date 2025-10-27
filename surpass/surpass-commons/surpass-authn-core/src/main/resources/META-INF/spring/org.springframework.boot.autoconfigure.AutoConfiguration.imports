@@ -1,3 +1,0 @@
-org.dromara.surpass.autoconfigure.MvcCurrentUserAutoConfiguration
-org.dromara.surpass.autoconfigure.SessionAutoConfiguration
-org.dromara.surpass.autoconfigure.TokenAutoConfiguration
