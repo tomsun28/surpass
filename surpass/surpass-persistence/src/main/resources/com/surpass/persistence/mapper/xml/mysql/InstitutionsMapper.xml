@@ -25,7 +25,7 @@
 			resultType="com.surpass.entity.Institutions">
 		select ji.*, ju.username as ownerName
 		    from surpass_institutions ji
-		join jbx_userinfo ju on ji.owner_id = ju.id
+		join surpass_userinfo ju on ji.owner_id = ju.id
 		and ju.deleted = 'n'
 		where ji.deleted = 'n'
 		<if test="dto.instName != null and dto.instName != '' ">

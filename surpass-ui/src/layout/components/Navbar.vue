@@ -7,22 +7,6 @@
     </div>
 
     <div class="right-menu">
-      <div class="right-menu-item">
-        <span>当前账期：{{ termCurrent }}</span>
-        <el-divider direction="vertical"></el-divider>
-        <span>账套：</span>
-        <el-select
-            @change="handleSwitchBook"
-            v-model="currentSet"
-            style="width: 250px;">
-          <el-option
-              v-for="dict in currBookStore.setList"
-              :key="dict.id"
-              :label="dict.name"
-              :value="dict.id"
-          />
-        </el-select>
-      </div>
       <!--
       <el-tooltip content="选择语言" placement="top" effect="dark">
         <Language class="right-menu-item hover-effect"></Language>
@@ -98,36 +82,19 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue"
+
 import {ElMessageBox} from 'element-plus'
 import ScreenFull from '@/components/Screenfull/index.vue'
 import CleanSession from '@/components/CleanSession/index.vue'
-import Hamburger from '@/components/Hamburger/index.vue'
 import useAppStore from '@/store/modules/app'
 import * as userService from "@/api/system/user";
 import useUserStore from '@/store/modules/user'
-import bookStore from '@/store/modules/bookStore'
 import {logoutApi} from "@/api/login";
 import Logo from "./Sidebar/Logo.vue";
 import SvgIcon from "@/components/SvgIcon/index.vue";
-import {parseTime} from "@/utils/Surpass"
 
 const appStore = useAppStore()
 const userStore = useUserStore()
-const currBookStore = bookStore()
-
-const currentSet = computed({
-  get: () => currBookStore.bookId,
-  set: (id) => currBookStore.updateBookId(id),
-});
-const termCurrent = computed(() => {
-  console.log("currBookStore.termCurrent "+ currBookStore.termCurrent)
-  //return parseTime(currBookStore.termCurrent, "{y}年{m}期")
-  let  yyyyMM = (currBookStore.termCurrent+"").split("-");
-  return yyyyMM[0]+'年'+yyyyMM[1]+'期'
-})
-
-currentSet.value = userStore.bookId;
 
 function toggleSideBar() {
   appStore.toggleSideBar()
@@ -168,15 +135,6 @@ const emits = defineEmits(['setLayout'])
 
 function setLayout() {
   emits('setLayout');
-}
-
-function handleSwitchBook(val: any) {
-  console.log(currentSet.value)
-  currentSet.value = val;
-  userStore.bookId = val;
-  userService.switchBook(val).then((res: any) => {
-    window.location.reload()
-  })
 }
 
 </script>

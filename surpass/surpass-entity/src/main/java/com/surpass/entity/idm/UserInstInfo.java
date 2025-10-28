@@ -37,7 +37,7 @@ import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("JBX_USERINFO")
+@TableName("surpass_userinfo")
 public class UserInstInfo extends BaseEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 7092456146043154933L;

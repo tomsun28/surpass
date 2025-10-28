@@ -37,7 +37,7 @@ import java.util.Date;
  */
 @Data
 @NoArgsConstructor
-@TableName("JBX_ROLE_MEMBER")
+@TableName("surpass_role_member")
 public class RoleMember implements Serializable {
 
 	@Serial

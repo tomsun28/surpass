@@ -17,7 +17,7 @@
         select
         *
         from
-        jbx_roles
+        surpass_roles
         where book_id = #{bookId}
         <include refid="where_statement"/>
     </select>
@@ -26,7 +26,7 @@
         select
         *
         from
-        jbx_roles
+        surpass_roles
         where book_id = #{bookId}
         and category = 'dynamic'
         <include refid="where_statement"/>
@@ -34,9 +34,9 @@
 
     <select id="queryRolesByUserId" parameterType="string" resultType="Roles">
         select distinct r.*
-        from jbx_userinfo u,
-             jbx_roles r,
-             jbx_role_member rm
+        from surpass_userinfo u,
+             surpass_roles r,
+             surpass_role_member rm
         where u.book_id = #{bookId}
           and rm.book_id = #{bookId}
           and rm.memberid = #{value}

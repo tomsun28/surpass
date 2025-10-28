@@ -22,6 +22,7 @@
 
 package com.surpass.web.config.contorller;
 
+import java.awt.print.Book;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -32,7 +33,6 @@ import com.surpass.constants.ConstsActResult;
 import com.surpass.constants.ConstsEntryType;
 import com.surpass.entity.Institutions;
 import com.surpass.entity.Message;
-import com.surpass.entity.book.Book;
 import com.surpass.entity.dto.InstitutionsPageDto;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.persistence.service.HistorySystemLogsService;
@@ -157,10 +157,5 @@ public class InstitutionsController {
 		} else {
 			return new Message<>(Message.FAIL);
 		}
-	}
-
-	@GetMapping("/books")
-	public Message<Page<Book>> getInstBooks(@ParameterObject InstitutionsPageDto dto) {
-		return institutionsService.getInstBooks(dto);
 	}
 }

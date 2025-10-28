@@ -39,14 +39,14 @@ import com.surpass.entity.idm.UserInfo;
 
 public  interface LoginMapper extends BaseMapper<UserInfo> {
 
-	@Select("select * from  jbx_userinfo where  id = #{id} and  deleted = 'n' ")
+	@Select("select * from  surpass_userinfo where  id = #{id} and  deleted = 'n' ")
 	public UserInfo findById(@Param ("id") String id ) ;
 
-	@Select("select * from  jbx_userinfo where deleted = 'n' and (username = #{username} or mobile = #{username})")
+	@Select("select * from  surpass_userinfo where deleted = 'n' and (username = #{username} or mobile = #{username})")
 	public UserInfo findByUsername(@Param ("username") String username ) ;
 
 	@Update("""
-			update jbx_userinfo set  
+			update surpass_userinfo set  
 	            bad_password_count    = 0 , 
 	            login_failed_count    = 0 ,  
 	            login_count          = login_count + 1, 
@@ -59,7 +59,7 @@ public  interface LoginMapper extends BaseMapper<UserInfo> {
 
 
 	@Update("""
-            update jbx_userinfo 
+            update surpass_userinfo 
 			    set is_locked 	= #{isLocked} , 
 			    un_lock_time 		= #{unLockTime} 
 			where id = #{id}
@@ -67,7 +67,7 @@ public  interface LoginMapper extends BaseMapper<UserInfo> {
 	public void updateLockUser(UserInfo userInfo);
 
 	@Update("""
-            update jbx_userinfo 
+            update surpass_userinfo 
 			set bad_password_count = 0 , 
 				login_failed_count = 0 ,
 				is_locked 		 = #{isLocked} , 
@@ -78,7 +78,7 @@ public  interface LoginMapper extends BaseMapper<UserInfo> {
 
 
 	@Update("""
-           update jbx_userinfo set 
+           update surpass_userinfo set 
                 bad_password_count = bad_password_count + 1 , 
                 bad_password_time  = #{badPasswordTime} ,
                 login_failed_count = login_failed_count + 1 , 
@@ -88,7 +88,7 @@ public  interface LoginMapper extends BaseMapper<UserInfo> {
 	public void updateBadPasswordCount(UserInfo userInfo);
 
 	@Update("""
-	      update jbx_userinfo set 
+	      update surpass_userinfo set 
 				login_failed_count = login_failed_count + 1 , 
 				last_login_time  = #{loginFailedTime}
 		  where id = #{id}
@@ -96,7 +96,7 @@ public  interface LoginMapper extends BaseMapper<UserInfo> {
 	public void updateLoginFailedCount(UserInfo userInfo);
 
 	@Update("""
-		  update jbx_userinfo set 
+		  update surpass_userinfo set 
 			  	bad_password_count = 0 , 
 				bad_password_time = #{badPasswordTime} ,
                 login_failed_count = 0 , 

@@ -42,7 +42,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.constants.ConstsStatus;
 import com.surpass.entity.ChangePassword;
 import com.surpass.entity.access.SessionList;
-import com.surpass.entity.book.vo.BookVo;
 import com.surpass.entity.config.ConfigLoginPolicy;
 import com.surpass.entity.history.HistoryLogin;
 import com.surpass.entity.idm.UserInfo;
@@ -50,7 +49,6 @@ import com.surpass.entity.permissions.Resources;
 import com.surpass.persistence.mapper.LoginMapper;
 import com.surpass.persistence.service.AuthzResourceService;
 import com.surpass.persistence.service.AuthzService;
-import com.surpass.persistence.service.BookService;
 import com.surpass.persistence.service.ConfigLoginPolicyService;
 import com.surpass.persistence.service.FileStorageService;
 import com.surpass.persistence.service.HistoryLoginService;
@@ -89,9 +87,6 @@ public class LoginServiceImpl  extends ServiceImpl<LoginMapper,UserInfo> impleme
     @Autowired
     AuthzResourceService authzResourceService;
 
-    @Autowired
-    BookService bookService;
-
 	public LoginMapper getMapper() {
 		return loginMapper;
 	}
@@ -108,18 +103,7 @@ public class LoginServiceImpl  extends ServiceImpl<LoginMapper,UserInfo> impleme
 
     @Override
 	public UserInfo findByUsername(String loginName) {
-    	UserInfo userInfo = this.getMapper().findByUsername(loginName);
-        if(StringUtils.isBlank(userInfo.getBookId())) {
-        	//未设置默认账号情况，读取有权限的账套的第一个
-        	List<BookVo> books = bookService.listBooks(userInfo.getId());
-        	if(CollectionUtils.isNotEmpty(books)) {
-        		userInfo.setBookId(books.get(0).getId());
-        		userInfoService.switchBook(userInfo);
-        	}else {
-        		userInfo.setBookId(userInfo.getId());
-        	}
-        }
-		return userInfo;
+        return this.getMapper().findByUsername(loginName);
 	}
 
     @Override

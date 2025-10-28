@@ -50,9 +50,6 @@ public class AuthzResourceServiceImpl   extends ServiceImpl<AuthzResourceMapper,
 	@Autowired
 	AuthzResourceMapper authzResourceMapper;
 
-	@Autowired
-    FileStorageServiceImpl fileStorageService;
-
 	public AuthzResourceMapper getMapper() {
 		return authzResourceMapper;
 	}

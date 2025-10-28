@@ -259,32 +259,3 @@ export function getNormalPath(p: any): any {
 export function blobValidate(data: any): any {
     return data.type !== 'application/json'
 }
-
-/**
- * 账期选择器，参数更新
- * @param queryParams 查询参数实体
- * @param currBookStore 账簿信息
- */
-export function getAccountPeriod(queryParams: any, currBookStore: any): string {
-    let date = new Date(currBookStore.termCurrent + "-01")
-    if (queryParams.value.accountPeriod === "currentPeriod") {
-        queryParams.value.reportDate = parseTime(date, "{y}-{m}")
-        queryParams.value.periodType = "month"
-        return parseTime(date, "{y}年{m}期")
-    } else if (queryParams.value.accountPeriod === "lastPeriod") {
-        date.setMonth(date.getMonth() - 1)
-        queryParams.value.reportDate = parseTime(date, "{y}-{m}")
-        queryParams.value.periodType = "month"
-        return parseTime(date, "{y}年{m}期")
-    } else if (queryParams.value.accountPeriod === "currentYear") {
-        queryParams.value.reportDate = parseTime(date, "{y}")
-        queryParams.value.periodType = "year"
-        return parseTime(date, "{y}年")
-    } else if (queryParams.value.accountPeriod === "lastYear") {
-        date.setMonth(date.getMonth() - 12)
-        queryParams.value.reportDate = parseTime(date, "{y}")
-        queryParams.value.periodType = "year"
-        return parseTime(date, "{y}年")
-    }
-    return ""
-}

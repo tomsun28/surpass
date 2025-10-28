@@ -30,7 +30,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.Institutions;
 import com.surpass.entity.Message;
-import com.surpass.entity.book.dto.BookChangeDto;
 import com.surpass.entity.config.ConfigEmailSenders;
 import com.surpass.entity.idm.dto.RegisterUserDto;
 import com.surpass.entity.idm.dto.UserInfoPageDto;
@@ -38,7 +37,6 @@ import com.surpass.entity.permissions.PermissionBook;
 import com.surpass.entity.permissions.RoleMember;
 import com.surpass.entity.permissions.Roles;
 import com.surpass.persistence.mapper.*;
-import com.surpass.persistence.service.BookService;
 import com.surpass.persistence.service.ConfigEmailSendersService;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -97,12 +95,6 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Autowired
     RoleMemberMapper roleMemberMapper;
-
-    @Autowired
-    BookService bookService;
-
-    @Autowired
-    PermissionBookMapper permissionBookMapper;
 
     @Autowired
     ConfigEmailSendersService configEmailSendersService;
@@ -363,36 +355,12 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         roleMember.setRoleId(rolesId);
         roleMember.setMemberId(userInfo.getId());
         roleMember.setType("USER");
-
-        //新建默认账套
-        BookChangeDto bookChangeDto = new BookChangeDto();
-        bookChangeDto.setName(instName);
-        bookChangeDto.setCompanyName(instName);
-        bookChangeDto.setEnableDate(YearMonth.now());
-        bookChangeDto.setStandardId("1");
-        bookChangeDto.setVatType(0);
-        bookChangeDto.setVoucherReviewed(0);
-        bookChangeDto.setStatus(1);
-        bookChangeDto.setInstId(institutions.getId());
-        Message<String> saveBook = bookService.save(bookChangeDto);
-        if (saveBook.getCode() != 0) {
-            throw new BusinessException(50001, "默认账套添加失败");
-        }
-
-        userInfo.setBookId(bookChangeDto.getId());
         userInfo.setInstId(institutions.getId());
         boolean result = super.save(userInfo);
 
-        //添加账套用户关系
-        PermissionBook permissionBook = new PermissionBook(userInfo.getId(), bookChangeDto.getId());
-
         if (result) {
             institutionsMapper.insert(institutions);
-
-            roleMember.setBookId(bookChangeDto.getId());
             roleMemberMapper.insert(roleMember);
-
-            permissionBookMapper.insert(permissionBook);
             //注册后给管理员发邮件
             if(applicationConfig.isRegisterMailToSupport()) {
             	sendRegisterMailToSupport(registerUserDto);

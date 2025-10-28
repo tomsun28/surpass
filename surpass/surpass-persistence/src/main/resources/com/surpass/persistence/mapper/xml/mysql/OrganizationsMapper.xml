@@ -18,7 +18,7 @@
 		<if test="gradingUserId != null and gradingUserId != ''">
 			and id in(
 				select rg.grading
-				from jbx_group_gradings rg,jbx_groups r,jbx_group_member rm, jbx_userinfo u
+				from jbx_group_gradings rg,jbx_groups r,jbx_group_member rm, surpass_userinfo u
 				where r.id=rm.groupid and rm.memberid =u.id
 				and rg.groupid=r.id and rg.type='org' and rg.book_id=#{bookId} and u.id=#{gradingUserId}
 				and r.deleted = 'n' and u.deleted = 'n'

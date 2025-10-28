@@ -48,7 +48,7 @@ public interface SessionListMapper extends BaseMapper<SessionList> {
 	@Update("delete from jbx_session_list  where session_id = #{sessionId}")
 	public void removeById(@Param ("sessionId") String sessionId);
 
-	@Update("update jbx_userinfo set last_logoff_time = #{lastLogoffTime} , is_online = 0  where id = #{id}")
+	@Update("update surpass_userinfo set last_logoff_time = #{lastLogoffTime} , is_online = 0  where id = #{id}")
 	public void updateLastLogoffTime(UserInfo user);
 
 	@Select("select * from jbx_session_list")

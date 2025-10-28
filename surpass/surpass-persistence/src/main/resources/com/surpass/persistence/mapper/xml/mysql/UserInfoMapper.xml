@@ -7,7 +7,7 @@
         select
         	*
         from
-        jbx_userinfo
+        surpass_userinfo
         where book_id = #{Dto.bookId}
         <if test="Dto.username != null and Dto.username != ''">
             and username = #{Dto.username}
@@ -32,7 +32,7 @@
     </select>
 
     <update id="updateLocked" parameterType="UserInfo">
-        update jbx_userinfo set
+        update surpass_userinfo set
         <if test="isLocked != null">
             islocked = #{isLocked},
         </if>
@@ -42,7 +42,7 @@
     </update>
 
     <update id="updateLockout" parameterType="UserInfo">
-        update jbx_userinfo set
+        update surpass_userinfo set
         <if test="isLocked != null">
             islocked = #{isLocked},
             badpwdcount = 0,
@@ -54,7 +54,7 @@
     </update>
 
     <update id="changePassword" parameterType="ChangePassword">
-        update jbx_userinfo set
+        update surpass_userinfo set
         <if test="password != null">
             password = #{password},
             decipherable = #{decipherable},
@@ -66,7 +66,7 @@
     </update>
 
     <update id="updateSharedSecret" parameterType="UserInfo">
-        update jbx_userinfo set
+        update surpass_userinfo set
         <if test="sharedSecret != null">
             sharedsecret = #{sharedSecret},
             sharedcounter = #{sharedCounter},
@@ -79,7 +79,7 @@
 
 
     <update id="updateEmail" parameterType="UserInfo">
-        update jbx_userinfo set
+        update surpass_userinfo set
         <if test="email != null">
             email = #{email},
         </if>
@@ -95,7 +95,7 @@
     </update>
 
     <update id="updateMobile" parameterType="UserInfo">
-        update jbx_userinfo set
+        update surpass_userinfo set
         <if test="mobile != null">
             mobile = #{mobile},
         </if>
@@ -108,7 +108,7 @@
     </update>
 
     <update id="updateProfile" parameterType="UserInfo">
-        update jbx_userinfo set
+        update surpass_userinfo set
         displayname = #{displayName},
         nickname = #{nickName},
         namezhspell = #{nameZhSpell},
@@ -169,7 +169,7 @@
     <select id="findOrganizationsByUserId" parameterType="string" resultType="Organizations">
         select o.*, 1 isPrimary
         from jbx_organizations o,
-             jbx_userinfo u
+             surpass_userinfo u
         where o.book_id = u.book_id
           and o.id = u.departmentid
           and u.id = #{value}
@@ -189,7 +189,7 @@
     </select>
 
     <update id="updateUserByManage" parameterType="com.surpass.entity.idm.UserInfo">
-        update jbx_userinfo set
+        update surpass_userinfo set
         USERNAME = #{username},
         displayname = #{displayName},
         nickname = #{nickName},

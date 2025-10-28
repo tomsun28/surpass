@@ -45,10 +45,10 @@ public interface UserInfoMapper  extends BaseMapper<UserInfo>{
 
 	Page<UserInfo> fetchPageResults(Page page, @Param("Dto") UserInfoPageDto dto);
 
-	@Select("select * from  jbx_userinfo where deleted = 'n' and username = #{value} and status = " + ConstsStatus.ACTIVE)
+	@Select("select * from  surpass_userinfo where deleted = 'n' and username = #{value} and status = " + ConstsStatus.ACTIVE)
 	public UserInfo findByUsername(String username);
 
-	@Select("select * from  jbx_userinfo where deleted = 'n' and ( email = #{value} or mobile= #{value} ) and status = " + ConstsStatus.ACTIVE)
+	@Select("select * from  surpass_userinfo where deleted = 'n' and ( email = #{value} or mobile= #{value} ) and status = " + ConstsStatus.ACTIVE)
 	public UserInfo findByEmailMobile(String emailMobile);
 
 	public List<Organizations> findOrganizationsByUserId(String userId);
@@ -65,10 +65,10 @@ public interface UserInfoMapper  extends BaseMapper<UserInfo>{
 
 	public int 	updateProfile(UserInfo userInfo);
 
-    @Update("update jbx_userinfo set status =  #{status} where id = #{id}")
+    @Update("update surpass_userinfo set status =  #{status} where id = #{id}")
    	public int 	updateStatus(UserInfo userInfo) ;
 
-    @Update("update jbx_userinfo set book_id =  #{bookId} where id = #{id}")
+    @Update("update surpass_userinfo set book_id =  #{bookId} where id = #{id}")
    	public int 	switchBook(UserInfo userInfo) ;
 
 }

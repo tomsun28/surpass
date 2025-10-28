@@ -20,9 +20,9 @@
         concat(u.display_name,'(',u.username,')') membername,
         rm.created_date
         from
-        jbx_userinfo u,
-        jbx_roles r,
-        jbx_role_member rm
+        surpass_userinfo u,
+        surpass_roles r,
+        surpass_role_member rm
         where  rm.book_id = #{Dto.bookId}
         and rm.type in( 'USER','USER-DYNAMIC')
         and rm.role_id = r.id
@@ -52,11 +52,11 @@
         u.display_name ,
         u.created_by
         from
-        jbx_userinfo u
+        surpass_userinfo u
         where
         u.id not in(
         select rm.member_id
-        from jbx_roles r,jbx_role_member rm
+        from surpass_roles r,surpass_role_member rm
         where r.deleted = 'n'
         <if test="Dto.roleId != null and Dto.roleId != ''">
             and rm.role_id = #{Dto.roleId}
@@ -80,12 +80,12 @@
         select distinct
         r.*
         from
-        jbx_roles r
+        surpass_roles r
         where
         r.id not in(
         select
         rm.role_id
-        from jbx_role_member rm,jbx_userinfo u
+        from surpass_role_member rm,surpass_userinfo u
         where rm.member_id = u.id
         <if test="Dto.username != null and Dto.username != ''">
             and u.username = #{Dto.username}
@@ -103,7 +103,7 @@
 
 
     <update id="addDynamicRoleMember" parameterType="Roles">
-        insert into jbx_role_member(
+        insert into surpass_role_member(
         id,
         roleid,
         memberid,
@@ -116,9 +116,9 @@
         u.id memberid,
         'USER-DYNAMIC' type,
         '${bookId}' book_id
-        from jbx_userinfo u
+        from surpass_userinfo u
         where not exists(
-        select 1 from jbx_role_member rm
+        select 1 from surpass_role_member rm
         where rm.roleid=#{id}
         and rm.memberid=u.id
         and rm.type='USER-DYNAMIC'
@@ -130,12 +130,12 @@
     </update>
 
     <delete id="deleteDynamicRoleMember" parameterType="Roles">
-        delete gm from jbx_role_member gm
+        delete gm from surpass_role_member gm
         where type = 'user-dynamic'
         and gm.roleid=#{id}
         and not exists(
         select 1
-        from jbx_userinfo u
+        from surpass_userinfo u
         where u.deleted = 'n'
         and u.id=gm.memberid
         <if test="filters != null and filters != ''">
@@ -158,9 +158,9 @@
                         u.email,
                         rm.createddate,
                         u.status
-        from jbx_userinfo u,
-             jbx_roles r,
-             jbx_role_member rm
+        from surpass_userinfo u,
+             surpass_roles r,
+             surpass_role_member rm
         where 1 = 1
           and rm.roleid = #{value}
           and g.id = #{value}
@@ -174,7 +174,7 @@
 
     <delete id="deleteByRoleId" parameterType="string">
         delete
-        from jbx_role_member
+        from surpass_role_member
         where rm.roleid = #{value}
           and rolecoe != 'ROLE_ALL_USER'
     </delete>

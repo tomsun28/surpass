@@ -5,7 +5,6 @@ import 'nprogress/nprogress.css'
 import {getToken} from '@/utils/Auth'
 import {isHttp} from '@/utils/Validate'
 import useUserStore from '@/store/modules/user'
-import booksSetStore from '@/store/modules/bookStore'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
 import {loginPreGet} from "@/api/login.js";
@@ -39,10 +38,6 @@ router.beforeEach(async (to: any, from: any, next: any) => {
                         staticAppInfo.logo = logoUrl;
                         appStore().setAppInfo(staticAppInfo);
                     }
-
-                    // 👉 等待账套加载完成
-                    await booksSetStore().refreshData();
-
                     await userStore.currentUser();
                     const accessRoutes = await usePermissionStore().generateRoutes();
 

@@ -48,7 +48,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("JBX_USERINFO")
+@TableName("surpass_userinfo")
 public class UserInfo extends BaseEntity  implements Serializable {
     @Serial
     private static final long serialVersionUID = 6402443942083382236L;

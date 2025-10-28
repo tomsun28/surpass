@@ -1,5 +1,5 @@
 /*
- * Copyright [2025] [Surpass of copyright http://www.surpass.com]
+ * Copyright [2025] [JinBooks of copyright http://www.jinbooks.com]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,15 @@
 
 package com.surpass.persistence.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.FileStorage;
 import com.surpass.persistence.mapper.FileStorageMapper;
 import com.surpass.persistence.service.FileStorageService;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FileStorageServiceImpl  extends ServiceImpl<FileStorageMapper,FileStorage> implements FileStorageService {
+public class FileStorageServiceImpl extends ServiceImpl<FileStorageMapper, FileStorage> implements FileStorageService {
 
 	@Autowired
 	FileStorageMapper fileStorageMapper;

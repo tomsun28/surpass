@@ -14,7 +14,7 @@
     <select id="analysisNewUsers" parameterType="DashBoardReqDto" resultType="Integer">
         select
             count(*) reportcount
-        from jbx_userinfo
+        from surpass_userinfo
         where book_id   =   #{bookId}
           and last_day(created_date) =last_day(curdate())
     </select>
@@ -29,7 +29,7 @@
     <select id="analysisActiveUsers" parameterType="DashBoardReqDto" resultType="Integer">
         select
             count(*) reportcount
-        from jbx_userinfo
+        from surpass_userinfo
         where book_id   =   #{bookId}
           and last_login_time >date_add(curdate(), interval - day(curdate()) -31 day)
     </select>

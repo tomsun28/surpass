@@ -1,5 +1,5 @@
 /*
- * Copyright [2025] [Surpass of copyright http://www.surpass.com]
+ * Copyright [2025] [JinBooks of copyright http://www.jinbooks.com]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.Institutions;
 import com.surpass.entity.Message;
-import com.surpass.entity.book.Book;
 import com.surpass.entity.dto.InstitutionsPageDto;
 
-public interface InstitutionsService  extends IService<Institutions> {
+import java.awt.print.Book;
+
+
+public interface InstitutionsService extends IService<Institutions> {
 	Institutions getByInstIdOrDomain(String instIdOrDomain);
 
 	Page<Institutions> fetch(InstitutionsPageDto dto);
-
-	Message<Page<Book>> getInstBooks(InstitutionsPageDto dto);
 }

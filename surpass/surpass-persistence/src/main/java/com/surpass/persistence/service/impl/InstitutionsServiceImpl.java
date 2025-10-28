@@ -22,15 +22,14 @@
 
 package com.surpass.persistence.service.impl;
 
+import java.awt.print.Book;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.Message;
-import com.surpass.entity.book.Book;
 import com.surpass.entity.dto.InstitutionsPageDto;
-import com.surpass.persistence.mapper.BookMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +51,6 @@ public class InstitutionsServiceImpl extends ServiceImpl<InstitutionsMapper,Inst
 
 	@Autowired
 	InstitutionsMapper institutionsMapper;
-
-	@Autowired
-	BookMapper bookMapper;
 
     protected static final Cache<String, Institutions> institutionsStore =
             Caffeine.newBuilder()
@@ -91,16 +87,5 @@ public class InstitutionsServiceImpl extends ServiceImpl<InstitutionsMapper,Inst
 	@Override
 	public Page<Institutions> fetch(InstitutionsPageDto dto) {
         return institutionsMapper.fetch(dto.build(), dto);
-	}
-
-	@Override
-	public Message<Page<Book>> getInstBooks(InstitutionsPageDto dto) {
-		LambdaUpdateWrapper<Book> wrapper = new LambdaUpdateWrapper<>();
-		wrapper.eq(Book::getInstId, dto.getId());
-		if (StringUtils.isNotBlank(dto.getBookName())) {
-			wrapper.like(Book::getName, dto.getBookName());
-		}
-		Page<Book> bookPage = bookMapper.selectPage(dto.build(), wrapper);
-		return Message.ok(bookPage);
 	}
 }
