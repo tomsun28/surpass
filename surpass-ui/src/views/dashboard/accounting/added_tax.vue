@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import {ref, getCurrentInstance, reactive, toRefs, computed, onMounted, onBeforeUnmount} from "vue";
 import bookStore from "@/store/modules/bookStore";
-import {getAccountPeriod, parseTime} from "@/utils/Jinbooks";
+import {getAccountPeriod, parseTime} from "@/utils/Surpass";
 import {Warning} from "@element-plus/icons-vue"
 import {formatAmount} from "@/utils";
 import * as echarts from 'echarts'

@@ -1,0 +1,74 @@
+/*
+ * Copyright [2025] [Surpass of copyright http://www.surpass.com]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+
+package com.surpass.entity.voucher;
+
+import com.baomidou.mybatisplus.annotation.*;
+import com.surpass.entity.BaseEntity;
+import lombok.*;
+
+import java.io.Serial;
+import java.math.BigDecimal;
+
+/**
+ * @description:
+ * @author: orangeBabu
+ * @time: 2025/3/26 17:48
+ */
+
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName("jbx_voucher_item_cash_flow")
+public class VoucherItemCashFlow extends BaseEntity {
+    @Serial
+    private static final long serialVersionUID = 5584043579878024120L;
+
+    /**
+     * 主键
+     */
+    @TableId(type = IdType.ASSIGN_ID)
+    private String id;
+
+    private String voucherItemId;
+
+    @TableField(updateStrategy = FieldStrategy.ALWAYS)
+    private String cashFlowItemCode;
+
+    private BigDecimal cashFlowBalance;
+
+    private Integer cashFlowItemType;
+
+    private String bookId;
+
+    @TableField(exist = false)
+    private String voucherId;
+
+    /**
+     * 金额方向
+     */
+    @TableField(exist = false)
+    private Integer direction;
+
+    /**
+     * 科目借贷方向
+     */
+    @TableField(exist = false)
+    private Integer subjectDirection;
+}

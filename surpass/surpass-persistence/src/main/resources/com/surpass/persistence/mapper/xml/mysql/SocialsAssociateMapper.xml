@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.SocialsAssociateMapper">
+
+
+	<select id="queryByUser" parameterType="UserInfo" resultType="SocialsAssociate">
+		select
+            p.provider,
+            p.providerName,
+            p.icon,
+            a.id,
+			a.userid,
+			a.username,
+			a.socialuserid,
+			a.createdDate,
+			a.updatedDate
+		from
+            jbx_socials_provider p
+		left join
+            jbx_socials_associate a
+
+		on    a.provider  = p.provider
+		  and a.book_id    = p.book_id
+		  and a.book_id    = #{bookId}
+		  and a.userid    = #{id}
+		where
+			  p.status =1
+		and p.deleted = 'n'
+		order by  p.sortindex
+	</select>
+
+
+</mapper>

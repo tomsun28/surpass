@@ -78,7 +78,7 @@ import type {TabsPaneContext} from 'element-plus'
 import {useRoute, useRouter} from "vue-router";
 import * as settlementApi from "@/api/system/book/settlement";
 import bookStore from "@/store/modules/bookStore";
-import {parseTime} from "@/utils/Jinbooks";
+import {parseTime} from "@/utils/Surpass";
 
 const {proxy} = getCurrentInstance();
 const currBookStore = bookStore()

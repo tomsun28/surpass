@@ -104,7 +104,7 @@
                 </span>
                 <el-input v-else  v-model="scope.row.summary" placeholder="请输入备注"  />
               </template>
-            </el-table-column>      
+            </el-table-column>
             <el-table-column label="科目" align="left" header-align="center" prop="subjectCode">
               <template #default="scope">
                 <span v-if="!scope.row.editing || scope.row.columnIndex !== 1">
@@ -169,7 +169,7 @@
 </template>
 
 <script setup name="ReportBalanceSheet" lang="ts">
-import {getCurrentQuarter, parseTime} from '@/utils/Jinbooks'
+import {getCurrentQuarter, parseTime} from '@/utils/Surpass'
 import {getCurrentInstance, h, ref, shallowRef, reactive, toRefs} from 'vue'
 import bookStore from "@/store/modules/bookStore";
 import {ElForm, FormInstance} from "element-plus";

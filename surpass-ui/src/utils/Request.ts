@@ -8,7 +8,7 @@ import {
     setTokenInfo,
 } from '@/utils/Auth'
 import errorCode from '@/utils/ErrorCode'
-import {blobValidate, tansParams} from '@/utils/Jinbooks'
+import {blobValidate, tansParams} from '@/utils/Surpass'
 import cache from '@/plugins/cache'
 import {saveAs} from "file-saver"
 import useUserStore from '@/store/modules/user'

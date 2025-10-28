@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.InvoiceMapper">
+    <select id="pageList" parameterType="com.surpass.entity.invoice.dto.InvoicePageDto"
+            resultType="com.surpass.entity.invoice.Invoice">
+        select
+        *
+        from jbx_invoice
+        where deleted = 'n'
+        and book_id = #{dto.bookId}
+        <if test="dto.direction != null and dto.direction != ''">
+            and direction = #{dto.direction}
+        </if>
+        <if test="dto.startDate != null">
+            and invoice_date <![CDATA[ >= ]]> #{dto.startDate}
+        </if>
+
+        <if test="dto.endDate != null">
+            and invoice_date <![CDATA[ <= ]]> #{dto.endDate}
+        </if>
+        <if test="dto.invoiceType != null and dto.invoiceType != ''">
+            and invoice_type = #{dto.invoiceType}
+        </if>
+        <if test="dto.invoiceCode != null and dto.invoiceCode != ''">
+            and invoice_code like concat('%', #{dto.invoiceCode}, '%')
+        </if>
+        <if test="dto.invoiceNo != null and dto.invoiceNo != ''">
+            and invoice_no like concat('%', #{dto.invoiceNo}, '%')
+        </if>
+    </select>
+
+</mapper>

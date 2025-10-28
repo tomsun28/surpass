@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.ExpensePaymentMapper">
+
+    <select id="selectVoPageList" resultType="com.surpass.entity.expense.vo.ExpensePaymentVo">
+        SELECT r.*,e.display_name as operator_name,
+               b.acc_name as bank_account_name,b.bank_no as bank_account_number,
+               r1.title as report_title
+        FROM jbx_expense_payment r
+        LEFT JOIN jbx_expense_report r1 ON r.report_id = r1.id
+        left join jbx_employee e on r.operator_id = e.id
+        left join jbx_journal_account b on r.bank_account_id = b.id
+        WHERE r.deleted='n' and r1.deleted = 'n'
+        <if test="dto.reportId != null">
+            AND r.report_id = #{dto.reportId}
+        </if>
+        <if test="dto.paymentMethod != null">
+            AND r.payment_method = #{dto.paymentMethod}
+        </if>
+        <if test="dto.operatorId != null">
+            AND r.operator_id = #{dto.operatorId}
+        </if>
+    </select>
+</mapper>

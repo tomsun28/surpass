@@ -1,6 +1,6 @@
-# JinBooks Web UI
+# Surpass Web UI
 
-这是 JinBooks 项目的前端部分，基于 Vue.js + Vite 构建。
+这是 Surpass 项目的前端部分，基于 Vue.js + Vite 构建。
 该项目旨在提供一个高性能、模块化、易扩展的现代前端架构。
 
 ## 快速开始
@@ -8,8 +8,8 @@
 ### 克隆项目
 
 ```bash
-git clone https://your.repo.url/jinbooks-ui.git
-cd jinbooks-ui
+git clone https://your.repo.url/surpass-ui.git
+cd surpass-ui
 ````
 
 ### 安装依赖
@@ -57,7 +57,7 @@ npm run build
 ## 目录结构说明
 
 ```
-jinbooks-web-fronted/
+surpass-web-fronted/
 ├── public/               # 静态资源
 ├── src/                  # 源代码
 │   ├── assets/           # 资源文件
@@ -152,4 +152,4 @@ MAJOR.MINOR.PATCH
 npm cache clean --force
 ```
 
-感谢使用 JinBooks 前端项目，如有建议或问题，欢迎提交 Issue 或参与贡献！
+感谢使用 Surpass 前端项目，如有建议或问题，欢迎提交 Issue 或参与贡献！

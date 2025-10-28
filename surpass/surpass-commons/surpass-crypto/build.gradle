@@ -1,0 +1,7 @@
+description = "surpass-crypto"
+
+dependencies {
+	//local jars
+	implementation fileTree(dir: '../surpass-lib/', include: '*/*.jar')
+
+}

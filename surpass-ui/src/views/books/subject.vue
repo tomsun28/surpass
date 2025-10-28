@@ -258,7 +258,7 @@ import {
   updateSubject,
   reorgDisplayName
 } from "@/api/system/book/book-subject";
-import {handleTree} from "@/utils/Jinbooks";
+import {handleTree} from "@/utils/Surpass";
 
 const {t} = useI18n()
 

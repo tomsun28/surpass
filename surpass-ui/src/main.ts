@@ -28,7 +28,7 @@ import '@/assets/iconfont/iconfont.css'
 import './permission' // permission control
 
 import {useDict} from '@/utils/Dict'
-import {parseTime, resetForm, addDateRange, handleTree, selectDictLabel, selectDictLabels} from '@/utils/Jinbooks'
+import {parseTime, resetForm, addDateRange, handleTree, selectDictLabel, selectDictLabels} from '@/utils/Surpass'
 
 // 分页组件
 import Pagination from '@/components/Pagination/index.vue'

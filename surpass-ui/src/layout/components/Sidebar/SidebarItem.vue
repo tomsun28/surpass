@@ -37,7 +37,7 @@
 import {ref} from "vue"
 import {isExternal} from '@/utils/Validate'
 import AppLink from './Link'
-import {getNormalPath} from '@/utils/Jinbooks'
+import {getNormalPath} from '@/utils/Surpass'
 
 const props = defineProps({
   // route object

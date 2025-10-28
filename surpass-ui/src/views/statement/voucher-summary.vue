@@ -120,7 +120,7 @@
 
 <script setup name="ReportBalanceSheet" lang="ts">
 import * as reportApis from "@/api/system/statement/statement";
-import {parseTime, getCurrentQuarter, handleTree} from '@/utils/Jinbooks'
+import {parseTime, getCurrentQuarter, handleTree} from '@/utils/Surpass'
 import {computed, h, ref, shallowRef, reactive, toRefs} from 'vue'
 import {downloadData, formatAmount} from "@/utils"
 import {getSubjectAllNodeIds, getSubjectIndent, handleSummaryMethod, SummaryMethodProps} from "@/utils/Subjects"

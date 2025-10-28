@@ -1,0 +1,3 @@
+com.surpass.autoconfigure.MvcCurrentUserAutoConfiguration
+com.surpass.autoconfigure.SessionAutoConfiguration
+com.surpass.autoconfigure.TokenAutoConfiguration

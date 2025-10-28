@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.StatementSubjectBalanceMapper">
+
+    <select id="groupCodeSubjectBalance" resultType="com.surpass.entity.statement.StatementSubjectBalance">
+        SELECT
+        sb.subject_code,
+        sb.subject_name,
+        sb.source_id,
+        sb.parent_id,
+        sb.is_auxiliary,
+
+        -- 年初余额：只取1月
+        SUM(CASE WHEN sb.year_period = #{minPeriod} THEN sb.opening_balance_debit ELSE 0 END) AS
+        opening_balance_debit,
+        SUM(CASE WHEN sb.year_period = #{minPeriod} THEN sb.opening_balance_credit ELSE 0 END) AS
+        opening_balance_credit,
+        -- 本期发生额
+        SUM(CASE WHEN sb.year_period = #{maxPeriod} THEN sb.current_period_debit ELSE 0 END) AS current_period_debit,
+        SUM(CASE WHEN sb.year_period = #{maxPeriod} THEN sb.current_period_credit ELSE 0 END) AS current_period_credit,
+        -- 本年累计发生额（取最后一个月的累计值，需外部传入最终月份，如2025-08）
+        SUM(CASE WHEN sb.year_period = #{maxPeriod} THEN sb.year_to_date_debit ELSE 0 END) AS year_to_date_debit,
+        SUM(CASE WHEN sb.year_period = #{maxPeriod} THEN sb.year_to_date_credit ELSE 0 END) AS year_to_date_credit,
+
+        -- 期末余额（取最后一个月）
+        SUM(CASE WHEN sb.year_period = #{maxPeriod} THEN sb.closing_balance_debit ELSE 0 END) AS
+        closing_balance_debit,
+        SUM(CASE WHEN sb.year_period = #{maxPeriod} THEN sb.closing_balance_credit ELSE 0 END) AS
+        closing_balance_credit
+
+        FROM jbx_statement_subject_balance sb
+
+        WHERE sb.deleted = 'n'
+        AND sb.book_id = #{dto.bookId}
+        <if test="dto.showAll == false">
+            AND sb.is_voucher = 'y'
+        </if>
+        <if test="allMonths != null and allMonths.size() > 0">
+            AND sb.year_period IN
+            <foreach collection="allMonths" item="month" open="(" separator="," close=")">
+                #{month}
+            </foreach>
+        </if>
+
+        GROUP BY
+        sb.subject_code,
+        sb.subject_name,
+        sb.source_id,
+        sb.parent_id,
+        sb.is_auxiliary
+        ORDER BY sb.subject_code ASC
+    </select>
+
+    <select id="getGeneralLedger" resultType="com.surpass.entity.statement.StatementSubjectBalance">
+        SELECT
+        sb.subject_code,
+        sb.subject_name,
+        sb.source_id,
+        sb.parent_id,
+        sb.is_auxiliary,
+        sb.year_period,  -- 期间
+
+        sb.opening_balance_debit,
+        sb.opening_balance_credit,
+        sb.current_period_debit,
+        sb.current_period_credit,
+        sb.closing_balance_debit,
+        sb.closing_balance_credit
+
+        FROM jbx_statement_subject_balance sb
+
+        WHERE sb.deleted = 'n'
+        AND sb.book_id = #{dto.bookId}
+        <if test="dto.showAll == false">
+            AND sb.is_voucher = 'y'
+        </if>
+        <if test="dto.subjectCode != null and dto.subjectCode != ''">
+            AND sb.subject_code like concat('%', #{dto.subjectCode}, '%')
+        </if>
+        <if test="dto.subjectName != null and dto.subjectName != ''">
+            AND sb.subject_name like concat('%', #{dto.subjectName}, '%')
+        </if>
+        <if test="allMonths != null and allMonths.size() > 0">
+            AND sb.year_period IN
+            <foreach collection="allMonths" item="month" open="(" separator="," close=")">
+                #{month}
+            </foreach>
+        </if>
+
+        ORDER BY sb.subject_code ASC, sb.year_period ASC
+    </select>
+
+    <select id="getTAccountDetails" resultType="com.surpass.entity.statement.StatementSubjectBalance">
+        SELECT
+        sb.code as subjectCode,
+        sb.name as subjectName,
+        v.word as voucherNumber,
+        v.voucher_date,
+        vd.summary,
+        CASE
+        WHEN vd.debit_amount > 0 THEN vd.debit_amount
+        ELSE 0
+        END as debit,
+        CASE
+        WHEN vd.credit_amount > 0 THEN vd.credit_amount
+        ELSE 0
+        END as credit,
+        vd.debit_amount - vd.credit_amount as balance
+        FROM jbx_voucher v
+        JOIN jbx_voucher_item vd ON v.id = vd.voucher_id
+        and vd.book_id = #{dto.bookId}
+        and vd.deleted = 'n'
+        JOIN jbx_book_subject sb ON vd.subject_id = sb.id
+        and sb.book_id = #{dto.bookId}
+        and sb.deleted = 'n'
+        WHERE v.deleted = 'n'
+        AND v.book_id = #{dto.bookId}
+        AND v.status = 'completed'  -- 只查已审核的凭证
+        <if test="dto.subjectCode != null and dto.subjectCode != ''">
+            AND sb.code LIKE concat('%', #{dto.subjectCode}, '%')
+        </if>
+        <if test="dto.subjectName != null and dto.subjectName != ''">
+            AND sb.name LIKE concat('%', #{dto.subjectName}, '%')
+        </if>
+        <if test="allMonths != null and allMonths.size() > 0">
+            AND DATE_FORMAT(v.voucher_date, '%Y-%m') IN
+            <foreach collection="allMonths" item="month" open="(" separator="," close=")">
+                #{month}
+            </foreach>
+        </if>
+        ORDER BY sb.code ASC, v.voucher_date ASC, v.word ASC
+    </select>
+
+    <select id="getOpeningBalance" resultType="com.surpass.entity.statement.StatementSubjectBalance">
+        SELECT
+        sb.subject_code,
+        sb.subject_name,
+        sb.opening_balance_debit as debit,
+        sb.opening_balance_credit as credit,
+        (sb.opening_balance_debit - sb.opening_balance_credit) as balance,
+        '期初余额' as summary
+        FROM jbx_statement_subject_balance sb
+        WHERE sb.deleted = 'n'
+        AND sb.book_id = #{dto.bookId}
+        AND sb.year_period = #{startMonth}
+        AND (sb.opening_balance_debit > 0 OR sb.opening_balance_credit > 0)
+        <if test="dto.subjectCode != null and dto.subjectCode != ''">
+            AND sb.subject_code LIKE concat('%', #{dto.subjectCode}, '%')
+        </if>
+        <if test="dto.subjectName != null and dto.subjectName != ''">
+            AND sb.subject_name LIKE concat('%', #{dto.subjectName}, '%')
+        </if>
+        ORDER BY sb.subject_code ASC
+    </select>
+
+    <select id="getClosingBalance" resultType="com.surpass.entity.statement.StatementSubjectBalance">
+        SELECT
+        sb.subject_code,
+        sb.subject_name,
+        sb.closing_balance_debit,
+        sb.closing_balance_credit,
+        (sb.closing_balance_debit - sb.closing_balance_credit) as balance
+        FROM jbx_statement_subject_balance sb
+        WHERE sb.deleted = 'n'
+        AND sb.book_id = #{dto.bookId}
+        AND sb.year_period = #{endMonth}
+        <if test="dto.subjectCode != null and dto.subjectCode != ''">
+            AND sb.subject_code LIKE concat('%', #{dto.subjectCode}, '%')
+        </if>
+        <if test="dto.subjectName != null and dto.subjectName != ''">
+            AND sb.subject_name LIKE concat('%', #{dto.subjectName}, '%')
+        </if>
+        ORDER BY sb.subject_code ASC
+    </select>
+
+
+    <update id="recoverInitial" >
+        update jbx_statement_subject_balance
+        set
+        	current_period_debit  = 0.0,
+        	current_period_credit = 0.0,
+        	balance = prev_balance ,
+        	closing_balance_debit = prev_closing_balance_debit,
+        	closing_balance_credit = prev_closing_balance_credit,
+        	year_to_date_debit = prev_year_to_date_debit,
+        	year_to_date_debit = prev_year_to_date_debit
+
+        where book_id  =   #{bookId}
+        	and period_type = 'month'
+        	and year_period = #{yearPeriod}
+    </update>
+
+</mapper>

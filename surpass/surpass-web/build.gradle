@@ -1,0 +1,57 @@
+buildscript {
+	repositories {
+		maven { url 'https://maven.aliyun.com/nexus/content/groups/public/'}
+	}
+	dependencies {
+		//springboot jar
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version "${springBootVersion}"
+	id "io.spring.dependency-management" version "1.0.11.RELEASE"
+}
+
+description = "surpass-web"
+
+//springboot jar
+apply plugin: 'io.spring.dependency-management'
+//add support for Java
+apply plugin: 'java'
+
+bootJar {
+	dependsOn jar
+	archiveBaseName = 'surpass-boot'
+    version = "${project.version}-ga"
+    mainClass = 'com.surpass.SurpassApplication'
+	manifest {
+	        attributes(
+						"Implementation-Title": project.name,
+	                	"Implementation-Vendor": project.vendor,
+	                	"Created-By": project.author,
+	                	"Implementation-Date": java.time.ZonedDateTime.now(),
+	                	"Implementation-Version": project.version
+	           )
+	    }
+}
+
+dependencies {
+	implementation project(":surpass-commons:surpass-common")
+	implementation project(":surpass-commons:surpass-core")
+	implementation project(":surpass-commons:surpass-crypto")
+	implementation project(":surpass-commons:surpass-authn-core")
+	implementation project(":surpass-commons:surpass-authn-provider")
+
+	implementation project(":surpass-entity")
+	implementation project(":surpass-persistence")
+
+	implementation project(":surpass-starter:surpass-starter-captcha")
+   	implementation project(":surpass-starter:surpass-starter-ip2location")
+   	implementation project(":surpass-starter:surpass-starter-otp")
+   	implementation project(":surpass-starter:surpass-starter-oss")
+   	implementation project(":surpass-starter:surpass-starter-sms")
+   	implementation project(":surpass-starter:surpass-starter-web")
+   	implementation project(":surpass-starter:surpass-starter-xss")
+
+}

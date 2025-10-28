@@ -203,7 +203,7 @@
 import * as statementApis from "@/api/system/statement/statement";
 import {useI18n} from "vue-i18n";
 import {useRouter} from "vue-router";
-import {parseTime, getCurrentQuarter} from '@/utils/Jinbooks'
+import {parseTime, getCurrentQuarter} from '@/utils/Surpass'
 import {getCurrentInstance, reactive, ref, toRefs, shallowRef, h, computed, nextTick} from "vue";
 import editForm from "./cash-flow/edit.vue"
 import {formatBalance, validateNumber} from "@/utils/BalanceFormat";

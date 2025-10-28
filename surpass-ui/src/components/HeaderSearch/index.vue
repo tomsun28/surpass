@@ -22,7 +22,7 @@ import { useRoute, useRouter } from "vue-router";
 import {ref, getCurrentInstance, reactive, toRefs, watch, defineComponent, watchEffect} from "vue";
 import modal from "@/plugins/modal";
 import Fuse from "fuse"
-import { getNormalPath } from '@/utils/Jinbooks'
+import { getNormalPath } from '@/utils/Surpass'
 import { isHttp } from '@/utils/Validate'
 import usePermissionStore from '@/store/modules/permission'
 

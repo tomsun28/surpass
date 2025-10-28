@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.StandardSubjectCashFlowMapper">
+    <select id="fetchRelationships" parameterType="com.surpass.entity.standard.dto.StandardSubjectCashFlowDto"
+            resultType="com.surpass.entity.standard.vo.StandardSubjectCashFlowVo">
+        SELECT MAX(CASE WHEN jccfb.is_main = 1 THEN jsscf.item_code ELSE NULL END)       AS itemCodeMain,
+               MAX(CASE WHEN jccfb.is_additional = 1 THEN jsscf.item_code ELSE NULL END) AS itemCodeSupple
+        FROM jbx_standard_subject_cash_flow jsscf
+                 JOIN jbx_config_cash_flow_balance jccfb ON jsscf.item_code = jccfb.item_code
+            AND jccfb.book_id = #{dto.bookId}
+        WHERE jsscf.book_id = #{dto.bookId}
+          AND jsscf.subject_code = #{dto.subjectCode}
+          AND jsscf.direction = #{dto.direction}
+    </select>
+
+    <select id="getSubjectCashFlow" parameterType="com.surpass.entity.voucher.dto.VoucherChangeDto"
+            resultType="com.surpass.entity.voucher.VoucherItemCashFlow">
+        select jsscf.item_code as cashFlowItemCode,
+               jccfb.direction as direction,
+               jvi.id as voucherItemId,
+               CASE
+                   WHEN jccfb.is_main = 1 THEN 0
+                   WHEN jccfb.is_additional = 1 THEN 1
+                   ELSE NULL
+                   END AS cash_flow_item_type,
+               CASE
+                   WHEN jvi.debit_amount IS NOT NULL THEN jvi.debit_amount
+                   WHEN jvi.credit_amount IS NOT NULL THEN jvi.credit_amount
+                   ELSE 0
+                   END AS cashFlowBalance,
+               CASE
+                   WHEN jvi.debit_amount IS NOT NULL THEN 1
+                   WHEN jvi.credit_amount IS NOT NULL THEN 2
+                   ELSE 0
+                   END AS subjectDirection
+        from jbx_standard_subject_cash_flow jsscf
+                 join jbx_voucher_item jvi on jvi.subject_code = jsscf.subject_code
+            and jvi.deleted = 'n'
+            and jvi.book_id = #{dto.bookId}
+            and jvi.voucher_id = #{dto.id}
+            AND (
+                (jvi.debit_amount IS NOT NULL AND jsscf.direction = 1)
+                OR (jvi.credit_amount IS NOT NULL AND jsscf.direction = 2)
+            )
+        join jbx_config_cash_flow_balance jccfb on jsscf.item_code = jccfb.item_code
+        and jccfb.book_id = #{dto.bookId}
+        where jsscf.book_id = #{dto.bookId}
+    </select>
+</mapper>

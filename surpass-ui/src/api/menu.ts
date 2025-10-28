@@ -1,5 +1,5 @@
 import request from '@/utils/Request'
-import {handleTree} from '@/utils/Jinbooks'
+import {handleTree} from '@/utils/Surpass'
 import useUserStore from '@/store/modules/user'
 import i18n from '@/languages'
 

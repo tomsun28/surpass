@@ -145,7 +145,7 @@ import * as EducationsEnum from "@/utils/enums/EducationsEnum";
 import * as SysStatusEnum from "@/utils/enums/SysStatusEnum";
 import * as IdTypeEnum from "@/utils/enums/IdTypeEnum";
 import {reactive, ref, toRefs, getCurrentInstance} from "vue";
-import {parseTime} from "@/utils/Jinbooks";
+import {parseTime} from "@/utils/Surpass";
 import {getTree} from "@/api/system/dept";
 import modal from "@/plugins/modal";
 import editForm from "./employee/edit.vue"

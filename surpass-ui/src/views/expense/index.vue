@@ -182,7 +182,7 @@ import {ElForm} from 'element-plus'
 import * as expenseReportApi from '@/api/expense/expenseReport'
 import {useI18n} from 'vue-i18n'
 import EmployeeSelector from "@/components/EmployeeSelector/index.vue"
-import {parseTime} from "@/utils/Jinbooks"
+import {parseTime} from "@/utils/Surpass"
 import booksSetStore from "@/store/modules/bookStore";
 import {getTree} from "@/api/system/standard/standard-subject";
 import DictTag from "@/components/DictTag/index.vue";

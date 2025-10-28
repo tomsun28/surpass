@@ -1,0 +1,2 @@
+com.surpass.autoconfigure.AuthnProviderAutoConfiguration
+com.surpass.autoconfigure.CasAuthnAutoConfiguration

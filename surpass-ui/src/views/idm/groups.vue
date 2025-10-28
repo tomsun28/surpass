@@ -91,7 +91,7 @@ import {useI18n} from "vue-i18n";
 import {deleteBatch, listGroup} from "@/api/system/group.js";
 import editForm from "./group/edit.vue";
 import {getTree} from "@/api/system/dept";
-import {handleTree} from "@/utils/Jinbooks";
+import {handleTree} from "@/utils/Surpass";
 import {set2String} from "@/utils"
 import memberComponent from './group/members.vue'
 import {useRouter} from "vue-router";

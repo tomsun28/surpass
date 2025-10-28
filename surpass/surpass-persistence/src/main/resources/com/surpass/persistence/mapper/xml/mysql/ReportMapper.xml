@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.ReportMapper" >
+    <!-- DAY  COUNT 一天访问量 -->
+    <select id="analysisDay" parameterType="DashBoardReqDto" resultType="Integer">
+        select
+            count(id) reportcount
+        from jbx_history_login
+        where  book_id   =   #{bookId}
+            and category = 1
+            and date(operate_time) =curdate()
+    </select>
+    <!-- 本月新用户统计 -->
+    <select id="analysisNewUsers" parameterType="DashBoardReqDto" resultType="Integer">
+        select
+            count(*) reportcount
+        from jbx_userinfo
+        where book_id   =   #{bookId}
+          and last_day(created_date) =last_day(curdate())
+    </select>
+    <!-- 在线用户统计 -->
+    <select id="analysisOnlineUsers" parameterType="DashBoardReqDto" resultType="Integer">
+            select
+                count(*) reportcount
+            from jbx_session_list
+            where   book_id   =   #{bookId}
+    </select>
+    <!-- 30天活跃用户统计 -->
+    <select id="analysisActiveUsers" parameterType="DashBoardReqDto" resultType="Integer">
+        select
+            count(*) reportcount
+        from jbx_userinfo
+        where book_id   =   #{bookId}
+          and last_login_time >date_add(curdate(), interval - day(curdate()) -31 day)
+    </select>
+
+    <!-- DAY HOUR COUNT 当天每小时 -->
+    <select id="analysisDayHour" parameterType="DashBoardReqDto" resultType="DashBoardRepVo">
+        select h.reportname reportname, ifnull(c.reportcount, 0) reportcount from (
+            select 0  reportname union all
+            select 1  reportname union all
+            select 2  reportname union all
+            select 3  reportname union all
+            select 4  reportname union all
+            select 5  reportname union all
+            select 6  reportname union all
+            select 7  reportname union all
+            select 8  reportname union all
+            select 9  reportname union all
+            select 10 reportname union all
+            select 11 reportname union all
+            select 12 reportname union all
+            select 13 reportname union all
+            select 14 reportname union all
+            select 15 reportname union all
+            select 16 reportname union all
+            select 17 reportname union all
+            select 18 reportname union all
+            select 19 reportname union all
+            select 20 reportname union all
+            select 21 reportname union all
+            select 22 reportname union all
+            select 23 reportname
+        ) h left join(
+            select count(id) reportcount, hour(operate_time) reportname
+            from jbx_history_login
+            where book_id = #{bookId}
+                and category = 1
+                and date(operate_time) =curdate()
+            group by reportname
+        )c  on h.reportname=c.reportname
+        order by h.reportname
+    </select>
+
+    <!-- 30 DAY COUNT 最近30天每天访问量-->
+    <select id="analysisMonth" parameterType="DashBoardReqDto" resultType="DashBoardRepVo">
+        select
+            count(id) reportcount,
+            DATE_FORMAT(operate_time,'%Y-%m-%d') reportname
+        from jbx_history_login
+        where   book_id   =   #{bookId}
+            and category = 1
+            and operate_time > date_add(curdate(), interval - day(curdate()) -31 day)
+        group by reportname
+        order by reportname
+    </select>
+
+    <!-- 30天浏览器的访问统计 -->
+    <select id="analysisBrowser" parameterType="DashBoardReqDto" resultType="DashBoardRepVo">
+        select
+            count(id) reportcount,
+            coalesce(browser,'Other') reportname
+        from jbx_history_login
+        where  book_id   =   #{bookId}
+            and category = 1
+            and operate_time >date_add(curdate(), interval - day(curdate()) -31 day)
+        group by reportname
+        order by reportcount desc
+        limit 10
+    </select>
+
+    <!-- 30天各省份的访问统计 -->
+    <select id="analysisProvince" parameterType="DashBoardReqDto" resultType="DashBoardRepVo">
+        select
+            count(id) as reportcount,
+            coalesce(province,'Other') as reportname
+        from jbx_history_login
+        where  book_id   =   #{bookId}
+          and category = 1
+          and operate_time >date_add(curdate(), interval - day(curdate()) -31 day)
+          and province !=''
+        group by reportname
+        order by reportcount desc
+            limit 1000
+    </select>
+
+</mapper>

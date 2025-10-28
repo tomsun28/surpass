@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.JournalSummaryMapper">
+
+	<select id="pageList"
+		parameterType="com.surpass.entity.journal.dto.JournalSummaryPageDto"
+		resultType="com.surpass.entity.journal.JournalSummary">
+		select jjs.*
+		from jbx_journal_summary jjs
+
+		where jjs.deleted = 'n'
+			and jjs.book_id = #{dto.bookId}
+		<if test="dto.accName != null and dto.accName != ''">
+			and jjs.acc_name like CONCAT('%', #{dto.accName}, '%')
+		</if>
+		<if test="dto.years != null ">
+			and jjs.years = #{dto.years}
+		</if>
+		<if test="dto.periods != null">
+			and jjs.periods = #{dto.periods}
+		</if>
+		order by jjs.created_date desc
+	</select>
+
+	<select id="summaryAccount"
+		parameterType="com.surpass.entity.journal.dto.JournalSummaryDto"
+		resultType="com.surpass.entity.journal.JournalSummary">
+		select
+			jja.book_id,
+			jja.category,
+			jja.acc_code,
+			jja.acc_name,
+			jja.currency,
+			jja.opening_balance,
+			jja.balance as closing_balance,
+			jjet.income,
+			jjet.expenditure ,
+			jjety.year_income,
+			jjety.year_expenditure
+		from jbx_journal_account jja
+		left join
+		(
+			select book_id,acc_id,sum(income) income,sum(expenditure) as expenditure
+			from jbx_journal_entry
+			where date(trade_date) &gt;= str_to_date(#{yearPeriodStart},'%Y-%m-%d')
+				and date(trade_date) &lt;= last_day(str_to_date(#{yearPeriodStart},'%Y-%m-%d'))
+				and direction in('i','e')
+				and book_id = #{bookId}
+			group by book_id,acc_id
+		) jjet
+		on 	jja.id= jjet.acc_id
+			and jja.book_id = jjet.book_id
+		left join (
+			select book_id,acc_id,sum(income) year_income,sum(expenditure) as year_expenditure
+			from jbx_journal_entry
+			where date(trade_date) &gt;= str_to_date(CONCAT(#{years},'-01-01'),'%Y-%m-%d')
+				and date(trade_date) &lt;= last_day(str_to_date(#{yearPeriodStart},'%Y-%m-%d'))
+				and direction in('i','e')
+				and book_id = #{bookId}
+			group by book_id,acc_id
+		) jjety
+		on  jja.id= jjety.acc_id and jja.book_id = jjety.book_id
+		where jja.book_id = #{bookId}
+	</select>
+
+	<select id="summarySum"
+		parameterType="com.surpass.entity.journal.dto.JournalSummaryPageDto"
+		resultType="com.surpass.entity.journal.JournalSummary">
+		select
+			sum(jjs.opening_balance) as opening_balance,
+			sum(jjs.closing_balance) as closing_balance,
+			sum(jjs.income) as income,
+			sum(jjs.expenditure) as expenditure,
+			sum(jjs.year_income) as year_income,
+			sum(jjs.year_expenditure) as year_expenditure
+		from jbx_journal_summary jjs
+		where jjs.book_id = #{dto.bookId} and jjs.deleted = 'n'
+		<if test="dto.accName != null and dto.accName != ''">
+			and jjs.acc_name like CONCAT('%', #{dto.accName}, '%')
+		</if>
+		<if test="dto.years != null ">
+			and jjs.years = #{dto.years}
+		</if>
+		<if test="dto.periods != null">
+			and jjs.periods = #{dto.periods}
+		</if>
+	</select>
+
+</mapper>

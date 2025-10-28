@@ -66,12 +66,12 @@
         >{{ t('org.button.deleteBatch') }}
         </el-button>
       </div>
-      <el-table 
+      <el-table
           v-loading="loading"
           :data="subjectList"
           @selection-change="handleSelectionChange"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-          row-key="id" 
+          row-key="id"
           default-expand-all
           border
           max-height="600"
@@ -157,7 +157,7 @@ import {listStandardsAll} from "@/api/system/standard/standard";
 import editForm from "./standard-subject/edit.vue"
 import modal from "@/plugins/modal";
 import {deleteBatch} from "@/api/system/standard/standard-subject";
-import {handleTree, handleTreeToList} from "@/utils/Jinbooks";
+import {handleTree, handleTreeToList} from "@/utils/Surpass";
 
 const {t} = useI18n()
 const {proxy} = getCurrentInstance()!;
@@ -256,7 +256,7 @@ function handleReorgDisplayName(): any {
   reorgDisplayName(queryParams.value).then((res: any) => {
     if (res.code === 0) {
       modal.msgSuccess(res.data);
-    } 
+    }
     loading.value = false;
   })
 }

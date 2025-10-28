@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.VoucherTemplateMapper">
+    <select id="pageList" parameterType="com.surpass.entity.voucher.dto.VoucherTemplatePageDto"
+            resultType="com.surpass.entity.voucher.VoucherTemplate">
+        select jvt.*
+        from jbx_voucher_template jvt
+        where jvt.deleted = 'n'
+        <if test="dto.relatedId != null and dto.relatedId != ''">
+            and jvt.related_Id = #{dto.relatedId}
+        </if>
+        <if test="dto.category != null and dto.category > 0">
+            and jvt.category = #{dto.category}
+        </if>
+        <if test="dto.code != null and dto.code != ''">
+            and jvt.code = #{dto.code}
+        </if>
+        <if test="dto.name != null and dto.name != ''">
+            and jvt.name like CONCAT('%', #{dto.name}, '%')
+        </if>
+        order by jvt.sort_index,jvt.code,jvt.created_date desc
+    </select>
+
+</mapper>

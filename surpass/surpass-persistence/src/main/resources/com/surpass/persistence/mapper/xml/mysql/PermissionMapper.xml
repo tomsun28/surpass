@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.PermissionMapper">
+
+	<sql id="where_statement">
+    	<if test="id != null and id != ''">
+			and	id	=	#{id}
+		</if>
+		<if test="name != null and name != ''">
+			and name like '%${name}%'
+		</if>
+    </sql>
+
+    <select id="queryPermissions" parameterType="Permission" resultType="Permission">
+        select
+            *
+        from
+            jbx_permission
+        where   book_id   =   #{bookId}
+            and status   = 1
+       <if test="id != null and id != ''">
+            and id  =   #{id}
+        </if>
+        <if test="roleId != null and roleId != ''">
+            and role_id  =   #{roleId}
+        </if>
+
+    </select>
+
+    <update id="deletePermissions" parameterType="java.util.List">
+        update jbx_permission
+        set status = 9
+        where 1 = 1 and
+            <foreach item="item" collection="list" open="(" separator="or" close=")">
+                ( id = #{item.id} and book_id  =   #{item.bookId} )
+            </foreach>
+    </update>
+
+    <insert id="insertPermissions"  parameterType="java.util.List">
+	    insert into jbx_permission ( id,role_id,resource_id,created_by,status,book_id)
+	    values
+	    <foreach collection="list" item="item" index="index" separator=",">
+	        (#{item.id},
+	        #{item.roleId},
+	        #{item.resourceId},
+	        #{item.createdBy},
+	        #{item.status},
+	        #{item.bookId})
+	    </foreach>
+	</insert>
+
+</mapper>

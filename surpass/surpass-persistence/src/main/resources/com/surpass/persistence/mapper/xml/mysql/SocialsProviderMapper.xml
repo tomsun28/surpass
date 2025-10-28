@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.SocialsProviderMapper">
+
+	<sql id="where_statement">
+    	<if test="id != null and id != ''">
+			and	id	=	#{id}
+		</if>
+		<if test="providerName != null and providerName != ''">
+			and providerName  like  '%${providerName}%'
+		</if>
+		and deleted = 'n'
+    </sql>
+
+
+
+	<select id="fetchPageResults" parameterType="SocialsProvider" resultType="SocialsProvider">
+		select
+			*
+		from
+			jbx_socials_provider
+		where
+			 book_id   =   #{bookId}
+		<include refid="where_statement"/>
+		order by  sortindex
+	</select>
+
+
+</mapper>

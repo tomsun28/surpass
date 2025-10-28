@@ -167,7 +167,7 @@
 import {ElForm} from "element-plus";
 import Template from "@/views/hr/salary-voucher-rules/template.vue";
 import {getCurrentInstance, h, reactive, ref, shallowRef, toRefs, onMounted, computed} from "vue";
-import {getCurrentQuarter, parseTime} from "@/utils/Jinbooks";
+import {getCurrentQuarter, parseTime} from "@/utils/Surpass";
 import booksSetStore from "@/store/modules/bookStore";
 import * as reportApis from "@/api/system/statement/statement";
 import modal from "@/plugins/modal";

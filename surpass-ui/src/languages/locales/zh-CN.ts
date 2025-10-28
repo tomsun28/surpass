@@ -1,7 +1,7 @@
 export default {
-  "appTitle": "JinBooks财务管理系统",
+  "appTitle": "Surpass财务管理系统",
   "login": {
-    "title": "JinBooks",
+    "title": "Surpass",
     "titleSub": "财务管理产品",
     "tabCredentials": "账号登录",
     "tabMobile": "手机登录",
@@ -295,7 +295,7 @@ export default {
     "journalaccout": {
       "id": "编号",
       "category":{
-        "category":"账户类型", 
+        "category":"账户类型",
         "deposit":"银行",
         "cash":"现金"
       },
@@ -310,7 +310,7 @@ export default {
     "journalentry": {
       "id": "编号",
       "category":{
-        "category":"账户类型", 
+        "category":"账户类型",
         "deposit":"银行",
         "cash":"现金"
       },
@@ -330,7 +330,7 @@ export default {
       "id": "编号",
       "yearPeriod":"期间",
       "category":{
-        "category":"账户类型", 
+        "category":"账户类型",
         "deposit":"银行",
         "cash":"现金"
       },

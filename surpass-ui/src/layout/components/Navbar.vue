@@ -36,14 +36,14 @@
           <svg-icon icon-class="setting"></svg-icon>
           <template #dropdown>
             <el-dropdown-menu>
-              
+
               <el-dropdown-item>
                 <svg-icon icon-class="border-left"></svg-icon>
                 <span style="margin-left: 5px">RTL</span>
               </el-dropdown-item>
-             
+
               <el-dropdown-item>
-                
+
               </el-dropdown-item>
               <el-dropdown-item>
                 <CleanSession class="right-menu-item hover-effect"/>
@@ -110,7 +110,7 @@ import bookStore from '@/store/modules/bookStore'
 import {logoutApi} from "@/api/login";
 import Logo from "./Sidebar/Logo.vue";
 import SvgIcon from "@/components/SvgIcon/index.vue";
-import {parseTime} from "@/utils/Jinbooks"
+import {parseTime} from "@/utils/Surpass"
 
 const appStore = useAppStore()
 const userStore = useUserStore()

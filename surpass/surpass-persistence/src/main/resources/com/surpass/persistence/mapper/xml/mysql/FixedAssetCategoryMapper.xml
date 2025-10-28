@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.FixedAssetCategoryMapper">
+    <select id="pageList" parameterType="com.surpass.entity.fa.dto.FixedAssetCategoryPageDto"
+            resultType="com.surpass.entity.fa.FixedAssetCategory">
+        SELECT jfc.*, asset.display_name as assetSubjectName, depreciation.display_name as depreciationSubjectName,
+        expense.display_name as expenseSubjectName
+        FROM jbx_fa_categories jfc
+        LEFT JOIN jbx_book_subject asset
+        ON jfc.asset_subject_code = asset.code
+        AND asset.deleted = 'n'
+        AND asset.book_id = #{Dto.bookId}
+        LEFT JOIN jbx_book_subject depreciation
+        ON jfc.depreciation_subject_code = depreciation.code
+        AND depreciation.deleted = 'n'
+        AND depreciation.book_id = #{Dto.bookId}
+        LEFT JOIN jbx_book_subject expense
+        ON jfc.expense_subject_code = expense.code
+        AND expense.deleted = 'n'
+        AND expense.book_id = #{Dto.bookId}
+        WHERE jfc.book_id = #{Dto.bookId}
+        and jfc.deleted = 'n'
+        <if test="Dto.categoryCode != null and Dto.categoryCode != ''">
+            and jfc.category_code = #{Dto.categoryCode}
+        </if>
+        <if test="Dto.categoryName != null and Dto.categoryName != ''">
+            and jfc.category_name = #{Dto.categoryName}
+        </if>
+        <if test="Dto.keyword != null and Dto.keyword != ''">
+            and jfc.category_name like concat('%', #{Dto.keyword}, '%')
+        </if>
+    </select>
+</mapper>

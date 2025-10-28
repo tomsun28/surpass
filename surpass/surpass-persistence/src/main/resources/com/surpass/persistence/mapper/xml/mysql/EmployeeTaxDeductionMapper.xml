@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.EmployeeTaxDeductionMapper">
+
+	<select id="pageList"
+		parameterType="com.surpass.entity.hr.dto.EmployeeTaxDeductionPageDto"
+		resultType="com.surpass.entity.hr.EmployeeTaxDeduction">
+		select jetd.*
+		from jbx_employee_tax_deduction jetd
+
+		where jetd.deleted = 'n'
+			and jetd.book_id = #{dto.bookId}
+		<if test="dto.employeeNo != null and dto.employeeNo != ''">
+			and jetd.employee_no = #{dto.employeeNo}
+		</if>
+		<if test="dto.employeeName != null and dto.employeeName != ''">
+			and jetd.employee_name like CONCAT('%', #{dto.employeeName}, '%')
+		</if>
+		<if test="dto.idCardNo != null and dto.idCardNo != ''">
+			and jetd.id_card_no = #{dto.idCardNo}
+		</if>
+		order by jetd.created_date desc
+	</select>
+</mapper>

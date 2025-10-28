@@ -1,0 +1,14 @@
+
+description = "surpass-starter-captcha"
+
+
+dependencies {
+    implementation project(":surpass-commons:surpass-common")
+    implementation project(":surpass-commons:surpass-core")
+	implementation project(":surpass-commons:surpass-crypto")
+	implementation project(":surpass-commons:surpass-authn-core")
+
+    implementation project(":surpass-entity")
+	//local jars
+	implementation fileTree(dir: '../surpass-lib/', include: '*/*.jar')
+}

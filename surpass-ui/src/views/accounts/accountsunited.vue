@@ -173,7 +173,7 @@ import {apiFetch, apiDeleteById} from "@/api/accounts/accountsUnited";
 import accountEdit from "./account-sunited/edit.vue"
 import {ref, getCurrentInstance, reactive, toRefs} from "vue";
 import {getTree} from "@/api/system/dept.js";
-import {handleTree} from "@/utils/Jinbooks";
+import {handleTree} from "@/utils/Surpass";
 import {set2String} from "@/utils";
 
 const {t} = useI18n()

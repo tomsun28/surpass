@@ -29,7 +29,7 @@ export default defineConfig(({mode, command}) => {
             host: true,
             open: false,
             proxy: {
-                '/jinbooks-api': {
+                '/surpass-api': {
                     // target: 'http://passport.maxkey.top:2154',
                     target: 'http://localhost:2154',
                     changeOrigin: true,

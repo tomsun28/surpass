@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.ExpenseReportMapper">
+
+    <select id="selectVoPageList" resultType="com.surpass.entity.expense.vo.ExpenseReportVo" parameterType="map">
+        select r.*, e.display_name as employee_name
+        from jbx_expense_report r
+        left join jbx_employee e on r.employee_id = e.id
+        where r.deleted = 'n'
+        <if test="dto != null">
+            <if test="dto.employeeId != null">
+                and r.employee_id = #{dto.employeeId}
+            </if>
+            <if test="dto.departmentId != null">
+                and r.department_id = #{dto.departmentId}
+            </if>
+            <if test="dto.status != null">
+                and r.status = #{dto.status}
+            </if>
+        </if>
+    </select>
+</mapper>

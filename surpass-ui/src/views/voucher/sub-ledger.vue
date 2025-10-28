@@ -136,7 +136,7 @@
 <script setup name="VoucherItems" lang="ts">
 import * as subjectApi from "@/api/system/standard/standard-subject"
 import * as apis from "@/api/system/voucher/voucher";
-import {parseTime, getCurrentQuarter, handleTree} from '@/utils/Jinbooks'
+import {parseTime, getCurrentQuarter, handleTree} from '@/utils/Surpass'
 import {h, ref, shallowRef, reactive, toRefs, watch} from 'vue'
 import {formatAmount} from "@/utils"
 import {useRouter, useRoute} from "vue-router";

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.BookMapper">
+    <select id="pageList" parameterType="com.surpass.entity.book.dto.BookPageDto"
+            resultType="com.surpass.entity.book.Book">
+        select jbs.*, jbas.name AS standardsName
+        from jbx_book jbs
+        left join jbx_standard jbas
+        on jbs.standard_id = jbas.id
+        and jbas.deleted = 'n'
+        where jbs.deleted = 'n'
+        and jbs.inst_id = #{Dto.instId}
+        <if test="Dto.name != null and Dto.name != ''">
+            and jbs.name like CONCAT('%', #{Dto.name}, '%')
+        </if>
+        order by jbs.created_date desc
+    </select>
+
+    <select id="listBooks" resultType="com.surpass.entity.book.vo.BookVo">
+        select b.id, b.name, b.company_name
+        from jbx_book b,
+             jbx_permission_book pb
+        where pb.book_id = b.id
+          and b.deleted = 'n'
+          and pb.deleted = 'n'
+          and pb.user_id = #{userId}
+    </select>
+</mapper>

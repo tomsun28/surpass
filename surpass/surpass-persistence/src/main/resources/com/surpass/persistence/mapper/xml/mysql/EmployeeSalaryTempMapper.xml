@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.EmployeeSalaryTempMapper">
+    <select id="pageList" parameterType="com.surpass.entity.hr.dto.SalaryDetailPageDto"
+            resultType="com.surpass.entity.hr.EmployeeSalaryTemp">
+        select jest.*, je.display_name as employeeName, je.bank_card_no as bankCardNo,je.bank_name,
+               je.employee_number as employeeNumber,je.employee_type
+        from jbx_employee_salary_temp jest
+        inner join jbx_employee je on jest.employee_id = je.id
+        and je.deleted = 'n'
+        and je.book_id = #{Dto.bookId}
+        <if test="Dto.employeeName != null and Dto.employeeName != '' ">
+            and je.display_name like CONCAT('%', #{Dto.employeeName}, '%')
+        </if>
+        <if test="Dto.employeeNumber != null and Dto.employeeNumber != '' ">
+            and je.employee_number like CONCAT('%', #{Dto.employeeNumber}, '%')
+        </if>
+        where jest.deleted = 'n'
+        and jest.belong_date = #{Dto.currentYearMonth}
+        and jest.book_id = #{Dto.bookId}
+        order by jest.created_date desc
+    </select>
+
+    <select id="listCurrentMonth" parameterType="com.surpass.entity.hr.dto.SalaryDetailPageDto"
+            resultType="com.surpass.entity.hr.EmployeeSalaryTemp">
+        select jest.*
+        from jbx_employee_salary_temp jest
+        inner join jbx_employee je on jest.employee_id = je.id
+        and je.deleted = 'n'
+        and je.book_id = #{Dto.bookId}
+        where jest.deleted = 'n'
+        and jest.belong_date = #{Dto.currentYearMonth}
+        and jest.book_id = #{Dto.bookId}
+    </select>
+
+    <delete id="removeCurrentMonth" parameterType="com.surpass.entity.hr.dto.ListNoCalCurrentDto">
+        delete from jbx_employee_salary_temp
+        where book_id = #{Dto.bookId}
+        and belong_date = #{Dto.belongDate}
+    </delete>
+</mapper>

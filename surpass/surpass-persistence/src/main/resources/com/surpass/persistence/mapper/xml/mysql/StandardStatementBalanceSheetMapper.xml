@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.StandardStatementBalanceSheetMapper">
+    <!-- 增加 sort_index 的方法 -->
+    <update id="incrementSortIndex">
+        UPDATE jbx_standard_statement_balance_sheet
+        SET sort_index = sort_index + 1
+        WHERE standard_id = #{standardId}
+        AND sort_index >= #{sortIndex}
+        AND item_code NOT LIKE '%00'
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </update>
+
+    <!-- 减少 sort_index 的方法 -->
+    <update id="decrementSortIndex">
+        UPDATE jbx_standard_statement_balance_sheet
+        SET sort_index = sort_index - 1
+        WHERE standard_id = #{standardId}
+        AND sort_index >= #{sortIndex}
+        AND item_code NOT LIKE '%00'
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </update>
+
+    <!-- 增加 item_code 的方法 -->
+    <update id="incrementItemCode">
+        UPDATE jbx_standard_statement_balance_sheet
+        SET item_code = LPAD(CAST(CAST(item_code AS UNSIGNED) + 1 AS CHAR), 4, '0')
+        WHERE standard_id = #{standardId}
+        AND item_code &gt;= #{itemCode}
+        AND item_code NOT LIKE '%00'
+        AND LEFT(item_code, 2) = LEFT(#{itemCode}, 2)
+        AND CAST(RIGHT(item_code, 2) AS UNSIGNED) &lt; 90
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </update>
+
+    <!-- 减少 item_code 的方法 -->
+    <update id="decrementItemCode">
+        UPDATE jbx_standard_statement_balance_sheet
+        SET item_code = LPAD(CAST(CAST(item_code AS UNSIGNED) - 1 AS CHAR), 4, '0')
+        WHERE standard_id = #{standardId}
+        AND item_code &gt;= #{itemCode}
+        AND item_code NOT LIKE '%00'
+        AND LEFT(item_code, 2) = LEFT(#{itemCode}, 2)
+        AND CAST(RIGHT(item_code, 2) AS UNSIGNED) &lt;= 90
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </update>
+</mapper>

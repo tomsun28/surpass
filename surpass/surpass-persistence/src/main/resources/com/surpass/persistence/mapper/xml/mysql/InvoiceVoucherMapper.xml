@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.InvoiceVoucherTemplateMapper">
+    <select id="pageList" parameterType="com.surpass.entity.invoice.dto.InvoiceVoucherPageDto"
+            resultType="com.surpass.entity.invoice.InvoiceVoucherTemplate">
+        select
+        *
+        from jbx_invoice_voucher_template
+        where deleted = 'n'
+        and book_id = #{dto.bookId}
+        <if test="dto.direction != null and dto.direction != ''">
+            and direction = #{dto.direction}
+        </if>
+        <if test="dto.templateName != null and dto.templateName != ''">
+            and template_name like concat('%', #{dto.templateName}, '%')
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.OrganizationsMapper" >
+
+	<sql id="dao_where_statement">
+    	<if test="id != null and id != ''">
+			and	id	=	#{id}
+		</if>
+		<if test="orgName != null and orgName != '' ">
+			and orgname like '%${orgName}%'
+		</if>
+		<if test="parentId != null and parentId != '' ">
+			and	parentid	=	#{parentId}
+		</if>
+		<if test="parentName != null and parentName != ''">
+			and parentName like '%${parentName}%'
+		</if>
+		<if test="gradingUserId != null and gradingUserId != ''">
+			and id in(
+				select rg.grading
+				from jbx_group_gradings rg,jbx_groups r,jbx_group_member rm, jbx_userinfo u
+				where r.id=rm.groupid and rm.memberid =u.id
+				and rg.groupid=r.id and rg.type='org' and rg.book_id=#{bookId} and u.id=#{gradingUserId}
+				and r.deleted = 'n' and u.deleted = 'n'
+			)
+		</if>
+		and deleted = 'n'
+    </sql>
+
+
+
+     <select id="queryOrgs" parameterType="Organizations" resultType="Organizations">
+    	select
+			*
+    	from jbx_organizations
+    	where	book_id   =   #{bookId}
+    	<include refid="dao_where_statement"/>
+    	order by sort_index,id
+    </select>
+
+
+   <select id="pageList" parameterType="com.surpass.entity.idm.dto.OrgPageDto"
+		   resultType="com.surpass.entity.idm.Organizations">
+    	select
+			*
+    	from jbx_organizations
+    	where book_id = #{Dto.bookId}
+	   <if test="Dto.id != null and Dto.id != ''">
+		   and	id = #{Dto.id}
+	   </if>
+	   <if test="Dto.orgName != null and Dto.orgName != '' ">
+		   and org_name like CONCAT ('%', #{Dto.orgName}, '%')
+	   </if>
+	   <if test="Dto.parentId != null and Dto.parentId != '' ">
+		   and code_path like CONCAT ('%', #{Dto.parentId}, '%')
+	   </if>
+	   <if test="Dto.parentName != null and Dto.parentName != ''">
+		   and parent_name like CONCAT ('%', #{Dto.parentName}, '%')
+	   </if>
+	   and deleted = 'n'
+      order by sort_index,id
+    </select>
+</mapper>

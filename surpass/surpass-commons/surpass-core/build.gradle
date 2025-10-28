@@ -1,0 +1,10 @@
+description = "surpass-core"
+
+dependencies {
+	implementation project(":surpass-commons:surpass-common")
+	implementation project(":surpass-commons:surpass-crypto")
+	implementation project(":surpass-entity")
+	//local jars
+	implementation fileTree(dir: '../surpass-lib/', include: '*/*.jar')
+
+}

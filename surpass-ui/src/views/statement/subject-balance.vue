@@ -159,7 +159,7 @@
 
 <script setup name="ReportIncomeStatement" lang="ts">
 import * as reportApis from "@/api/system/statement/statement";
-import {getCurrentQuarter, handleTree, parseTime} from '@/utils/Jinbooks'
+import {getCurrentQuarter, handleTree, parseTime} from '@/utils/Surpass'
 import {getSubjectIndent, getSubjectAllNodeIds, handleSummaryMethod, SummaryMethodProps} from '@/utils/Subjects'
 import {getCurrentInstance,h, reactive, ref, shallowRef, toRefs, computed, VNode} from 'vue'
 import {downloadData, formatAmount} from "@/utils"

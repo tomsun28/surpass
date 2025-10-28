@@ -61,7 +61,7 @@
 import {ref, getCurrentInstance, reactive, toRefs, computed, onMounted, onBeforeUnmount} from "vue";
 import {useI18n} from 'vue-i18n'
 import bookStore from "@/store/modules/bookStore";
-import {getAccountPeriod} from "@/utils/Jinbooks";
+import {getAccountPeriod} from "@/utils/Surpass";
 import {Warning} from "@element-plus/icons-vue"
 import {formatAmount} from "@/utils";
 import * as echarts from 'echarts'

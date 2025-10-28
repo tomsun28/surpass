@@ -256,7 +256,7 @@ import {useI18n} from "vue-i18n";
 import voucherEdit from "./voucher-edit.vue";
 import {useRouter} from "vue-router";
 import {getVoucherStatusDesc} from "@/utils/enums/VoucherStatusEnum"
-import {parseTime} from "@/utils/Jinbooks";
+import {parseTime} from "@/utils/Surpass";
 import {formatAmount} from "@/utils";
 import {reactive} from "vue";
 import bookStore from "@/store/modules/bookStore";

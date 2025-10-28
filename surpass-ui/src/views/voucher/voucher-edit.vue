@@ -272,7 +272,7 @@
 import {computed, onBeforeUpdate, onMounted, reactive, ref, watch} from 'vue'
 import SelectAuxiliary from "./SelectAuxiliary/index.vue"
 import {ElLoading, ElMessage, ElMessageBox, ElSelect, TableColumnCtx} from 'element-plus'
-import {parseTime} from "@/utils/Jinbooks";
+import {parseTime} from "@/utils/Surpass";
 import * as subjectApi from "@/api/system/standard/standard-subject"
 import {draftVoucher, getOneVoucher, getVoucherAbleWordNum, submitVoucher} from "@/api/system/voucher/voucher";
 import {validateForm} from "@/utils"
@@ -833,7 +833,7 @@ function isCurrentOrFutureMonth(date: Date) {
 
 // 打印
 const onPrint = () => {
-  const url = "/jinbooks/temporary/voucher-print?mode=print";
+  const url = "/surpass/temporary/voucher-print?mode=print";
   window.localStorage.setItem("voucher-print-data", JSON.stringify(formData.value))
   window.open(url, "_blank")
 

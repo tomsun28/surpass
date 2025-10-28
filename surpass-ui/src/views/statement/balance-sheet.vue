@@ -281,7 +281,7 @@
 
 <script setup name="ReportBalanceSheet" lang="ts">
 import * as reportApis from "@/api/system/statement/statement";
-import {getCurrentQuarter, parseTime} from '@/utils/Jinbooks'
+import {getCurrentQuarter, parseTime} from '@/utils/Surpass'
 import {getCurrentInstance, h, ref, shallowRef, reactive, toRefs, VNode, nextTick} from 'vue'
 import {downloadData, formatAmount} from "@/utils";
 import booksSetStore from "@/store/modules/bookStore";

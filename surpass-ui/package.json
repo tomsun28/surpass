@@ -1,8 +1,8 @@
 {
-  "name": "jinbooks",
+  "name": "surpass",
   "version": "v1.2.0",
-  "description": "jinbooks",
-  "author": "jinbooks",
+  "description": "surpass",
+  "author": "surpass",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -21,7 +21,7 @@
     "element-plus": "2.9.9",
     "file-saver": "^2.0.5",
     "fuse.js": "6.6.2",
-    "jinbooks": "file:",
+    "surpass": "file:",
     "js-cookie": "3.0.5",
     "jsencrypt": "3.3.2",
     "lucide-vue-next": "^0.475.0",

@@ -1,0 +1,28 @@
+/*
+ * project name and include subprojects
+ */
+
+rootProject.name = 'surpass'
+
+
+//Common
+include ('surpass-commons:surpass-common')
+include ('surpass-commons:surpass-core')
+include ('surpass-commons:surpass-crypto')
+include ('surpass-commons:surpass-authn-core')
+include ('surpass-commons:surpass-authn-provider')
+
+include ('surpass-entity')
+include ('surpass-persistence')
+
+//starter
+include ('surpass-starter:surpass-starter-captcha')
+include ('surpass-starter:surpass-starter-ip2location')
+include ('surpass-starter:surpass-starter-oss')
+include ('surpass-starter:surpass-starter-otp')
+include ('surpass-starter:surpass-starter-sms')
+include ('surpass-starter:surpass-starter-web')
+include ('surpass-starter:surpass-starter-xss')
+
+//webs
+include ('surpass-web')
