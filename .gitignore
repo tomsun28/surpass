@@ -30,3 +30,4 @@ logs/
 
 .pmd
 .pmdruleset.xml
+/surpass/.gradle/

@@ -14,7 +14,7 @@
 		select
 			*
 		from
-			jbx_institutions
+			surpass_institutions
 		where
 		1 = 1
 		<include refid="where_statement"/>
@@ -24,7 +24,7 @@
 	<select id="fetch" parameterType="com.surpass.entity.dto.InstitutionsPageDto"
 			resultType="com.surpass.entity.Institutions">
 		select ji.*, ju.username as ownerName
-		    from jbx_institutions ji
+		    from surpass_institutions ji
 		join jbx_userinfo ju on ji.owner_id = ju.id
 		and ju.deleted = 'n'
 		where ji.deleted = 'n'

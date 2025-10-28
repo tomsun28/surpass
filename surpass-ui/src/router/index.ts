@@ -86,18 +86,6 @@ export const constantRoutes: any = [
             }
         ]
     },
-    {
-        path: '/temporary',
-        hidden: true,
-        children: [
-            {
-                path: 'voucher-print',
-                component: () => import('@/views/voucher/voucher-edit.vue'),
-                name: 'PrintRecordingVoucher',
-                meta: {title: '打印记账凭证'}
-            },
-        ]
-    },
 ]
 
 // 动态路由，基于用户权限动态去加载

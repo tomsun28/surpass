@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-@TableName("JBX_INSTITUTIONS")
+@TableName("surpass_institutions")
 public class Institutions extends BaseEntity implements Serializable {
 	static final long serialVersionUID = -2375872012431214098L;
 
