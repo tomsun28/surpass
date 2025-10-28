@@ -1,3 +1,5 @@
+import { ref } from 'vue';
+
 /**
  * 显示图片
  */
@@ -75,10 +77,9 @@ export function getCurrentQuarter() {
 }
 
 // 表单重置
+const formRef = ref();
 export function resetForm(refName: any): any {
-    if (this.$refs[refName]) {
-        this.$refs[refName].resetFields();
-    }
+        formRef.value?.resetFields();
 }
 
 // 添加日期范围
