@@ -5,7 +5,7 @@
     <select id="analysisDay" parameterType="DashBoardReqDto" resultType="Integer">
         select
             count(id) reportcount
-        from jbx_history_login
+        from surpass_history_login
         where  book_id   =   #{bookId}
             and category = 1
             and date(operate_time) =curdate()
@@ -63,7 +63,7 @@
             select 23 reportname
         ) h left join(
             select count(id) reportcount, hour(operate_time) reportname
-            from jbx_history_login
+            from surpass_history_login
             where book_id = #{bookId}
                 and category = 1
                 and date(operate_time) =curdate()
@@ -77,7 +77,7 @@
         select
             count(id) reportcount,
             DATE_FORMAT(operate_time,'%Y-%m-%d') reportname
-        from jbx_history_login
+        from surpass_history_login
         where   book_id   =   #{bookId}
             and category = 1
             and operate_time > date_add(curdate(), interval - day(curdate()) -31 day)
@@ -90,7 +90,7 @@
         select
             count(id) reportcount,
             coalesce(browser,'Other') reportname
-        from jbx_history_login
+        from surpass_history_login
         where  book_id   =   #{bookId}
             and category = 1
             and operate_time >date_add(curdate(), interval - day(curdate()) -31 day)
@@ -104,7 +104,7 @@
         select
             count(id) as reportcount,
             coalesce(province,'Other') as reportname
-        from jbx_history_login
+        from surpass_history_login
         where  book_id   =   #{bookId}
           and category = 1
           and operate_time >date_add(curdate(), interval - day(curdate()) -31 day)

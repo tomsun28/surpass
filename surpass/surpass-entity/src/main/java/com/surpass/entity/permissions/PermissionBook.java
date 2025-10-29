@@ -42,7 +42,7 @@ import com.surpass.entity.BaseEntity;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("jbx_permission_book")
+@TableName("surpass_permission_book")
 public class PermissionBook  extends BaseEntity implements Serializable {
 
     /**

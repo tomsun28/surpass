@@ -15,7 +15,7 @@
         select
             *
         from
-            jbx_permission
+            surpass_permission
         where   book_id   =   #{bookId}
             and status   = 1
        <if test="id != null and id != ''">
@@ -28,7 +28,7 @@
     </select>
 
     <update id="deletePermissions" parameterType="java.util.List">
-        update jbx_permission
+        update surpass_permission
         set status = 9
         where 1 = 1 and
             <foreach item="item" collection="list" open="(" separator="or" close=")">
@@ -37,7 +37,7 @@
     </update>
 
     <insert id="insertPermissions"  parameterType="java.util.List">
-	    insert into jbx_permission ( id,role_id,resource_id,created_by,status,book_id)
+	    insert into surpass_permission ( id,role_id,resource_id,created_by,status,book_id)
 	    values
 	    <foreach collection="list" item="item" index="index" separator=",">
 	        (#{item.id},

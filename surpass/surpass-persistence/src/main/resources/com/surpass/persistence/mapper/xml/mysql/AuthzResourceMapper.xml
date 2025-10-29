@@ -5,8 +5,8 @@
 
     <select id="queryResourcesByRoleId" parameterType="QueryAppResourceDto" resultType="Resources">
         SELECT distinct mr.*
-        FROM jbx_resources mr
-        join jbx_permission mp
+        FROM surpass_resources mr
+        join surpass_permission mp
         on mr.id = mp.resource_id
         where  mr.status ='1'
 		and mr.deleted = 'n'

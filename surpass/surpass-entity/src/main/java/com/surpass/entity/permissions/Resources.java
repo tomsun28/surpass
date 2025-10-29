@@ -32,7 +32,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("JBX_RESOURCES")
+@TableName("surpass_resources")
 public class Resources  extends BaseEntity implements Serializable {
 
     @Serial

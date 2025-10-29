@@ -43,7 +43,7 @@ import com.surpass.entity.BaseEntity;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("JBX_HISTORY_LOGIN_APPS")
+@TableName("surpass_history_login_APPS")
 public class HistoryLoginApps extends BaseEntity implements Serializable {
 	@Serial
 	private static final long serialVersionUID = -1600208317188910376L;

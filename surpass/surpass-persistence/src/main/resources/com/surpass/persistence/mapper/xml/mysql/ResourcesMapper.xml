@@ -18,7 +18,7 @@
 		select
 			res.*
 		from
-			jbx_resources res
+			surpass_resources res
 		where  res.deleted 	= 'n'
 		<include refid="where_statement"/>
 		order by res.sortindex
@@ -29,7 +29,7 @@
 		select
 		res.*
 		from
-		jbx_resources res
+		surpass_resources res
 		where res.deleted 	= 'n'
 		<if test="Dto.id != null and Dto.id != ''">
 			and res.id = #{Dto.id}

@@ -44,7 +44,7 @@
 			displayname,
 			logintime
 
-    	from jbx_history_login_apps
+    	from surpass_history_login_apps
     	where	book_id   =   #{bookId}
     	<include refid="dao_where_statement"/>
 

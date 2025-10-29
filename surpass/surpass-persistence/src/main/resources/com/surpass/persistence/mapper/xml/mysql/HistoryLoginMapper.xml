@@ -68,7 +68,7 @@
 			application,
 			operatetime,
 			book_id
-    	from jbx_history_login
+    	from surpass_history_login
     	where	book_id   =   #{bookId}
     	<include refid="dao_where_statement"/>
 
