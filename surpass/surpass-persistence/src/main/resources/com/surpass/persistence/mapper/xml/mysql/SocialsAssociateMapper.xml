@@ -20,8 +20,6 @@
             jbx_socials_associate a
 
 		on    a.provider  = p.provider
-		  and a.book_id    = p.book_id
-		  and a.book_id    = #{bookId}
 		  and a.userid    = #{id}
 		where
 			  p.status =1

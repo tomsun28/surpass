@@ -66,7 +66,6 @@ public class LoginHistoryController {
 		logger.debug("historys/loginHistory/fetch/ {}",dto);
 
 		LambdaQueryWrapper<HistoryLogin> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(HistoryLogin::getBookId, currentUser.getBookId());
 
 		return new Message<>(historyLoginService.page(dto.build(), wrapper));
 	}

@@ -80,7 +80,6 @@ public class RoleMemberController {
 			@CurrentUser UserInfo currentUser) {
 		logger.debug("fetch {}",dto);
 		LambdaQueryWrapper<RoleMember> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(RoleMember::getBookId, currentUser.getBookId());
 		if(AuthorizationUtils.getAuthentication().getAuthorities().contains(ConstsRoles.ROLE_MANAGER)){
 			logger.debug("Has ROLE_MANAGERS {}" ,currentUser.getId());
 			wrapper.eq(RoleMember::getGradingUserId, currentUser.getId());
@@ -92,21 +91,18 @@ public class RoleMemberController {
 	public Message<Page<RoleMember>> memberInGroup(@ParameterObject RoleMemberPageDto dto,
 													@CurrentUser UserInfo currentUser) {
 		logger.debug("groupMember : {}",dto);
-		dto.setBookId(currentUser.getBookId());
 		return new Message<>(Message.SUCCESS, groupMemberService.memberInRole(dto.build(), dto));
 	}
 
 	@GetMapping(value = { "/memberNotInGroup" })
 	public Message<Page<RoleMember>> memberNotInGroup(@ParameterObject RoleMemberPageDto dto,
 													   @CurrentUser UserInfo currentUser) {
-		dto.setBookId(currentUser.getBookId());
 
 		return new Message<>(groupMemberService.memberNotInRole(dto.build(), dto));
 	}
 
 	@GetMapping(value = { "/groupsNoMember" })
 	public Message<Page<Roles>> groupsNoMember(@ParameterObject RoleMemberPageDto dto, @CurrentUser UserInfo currentUser) {
-		dto.setBookId(currentUser.getBookId());
 		return new Message<>(Message.SUCCESS, groupMemberService.rolesNoMember(dto.build(), dto));
 	}
 
@@ -123,8 +119,7 @@ public class RoleMemberController {
 					new RoleMember(
 							dto.getRoleId(),
 							dto.getMemberIds().get(i),
-							dto.getType(),
-							currentUser.getBookId());
+							dto.getType());
 			newGroupMember.setId(WebContext.genId());
 			result = groupMemberService.save(newGroupMember);
 		}
@@ -150,8 +145,7 @@ public class RoleMemberController {
 					new RoleMember(
 							dto.getGroupIds().get(i),
 							userInfo.getId(),
-							"USER",
-							currentUser.getBookId());
+							"USER");
 			newGroupMember.setId(WebContext.genId());
 			result = groupMemberService.save(newGroupMember);
 		}

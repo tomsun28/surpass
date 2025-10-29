@@ -28,9 +28,9 @@
     	select
 			*
     	from jbx_history_synchronizer
-    	where	book_id   =   #{bookId}
-    	<include refid="where_statement"/>
-
+    	<where>
+            <include refid="where_statement"/>
+        </where>
     	order by synctime desc
     </select>
 

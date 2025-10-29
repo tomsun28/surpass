@@ -51,8 +51,6 @@ public class SignedPrincipal implements  UserDetails {
 
     String 	style;
 
-    String 	bookId;
-
     String  userId;
 
     String  username;
@@ -60,6 +58,8 @@ public class SignedPrincipal implements  UserDetails {
     String 	mobile;
 
     String 	email;
+
+    String instId;
 
     int   	twoFactor;
 
@@ -105,7 +105,7 @@ public class SignedPrincipal implements  UserDetails {
     public SignedPrincipal(UserInfo user,Session session) {
     	this.userId = user.getId();
     	this.username = user.getUsername();
-    	this.bookId = user.getBookId();
+    	this.instId = user.getInstId();
     	this.email = user.getEmail();
     	this.mobile = user.getMobile();
     	this.passwordSetType = user.getPasswordSetType();

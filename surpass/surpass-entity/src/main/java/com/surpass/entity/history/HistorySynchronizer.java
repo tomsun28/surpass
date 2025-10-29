@@ -66,14 +66,12 @@ public class HistorySynchronizer  extends BaseEntity  implements Serializable{
 
     String result;
 
-	private String bookId;
-
 	private String instName;
 	Date startDate;
 	Date endDate;
 
     public HistorySynchronizer(String id, String syncId,  String syncName, String objectId,
-			String objectType, String objectName, Date syncTime, String result,String bookId) {
+			String objectType, String objectName, Date syncTime, String result) {
 		super();
 		this.id = id;
 		this.syncId = syncId;
@@ -83,11 +81,10 @@ public class HistorySynchronizer  extends BaseEntity  implements Serializable{
 		this.objectName = objectName;
 		this.syncTime = syncTime;
 		this.result = result;
-		this.bookId = bookId;
 	}
 
 	public HistorySynchronizer(String id, String syncId, String sessionId, String syncName, String objectId,
-			String objectType, String objectName, Date syncTime, String result, String bookId) {
+			String objectType, String objectName, Date syncTime, String result) {
 		super();
 		this.id = id;
 		this.syncId = syncId;
@@ -98,7 +95,6 @@ public class HistorySynchronizer  extends BaseEntity  implements Serializable{
 		this.objectName = objectName;
 		this.syncTime = syncTime;
 		this.result = result;
-		this.bookId = bookId;
 	}
 
 }

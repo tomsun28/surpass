@@ -72,13 +72,13 @@ public class AuthJwt implements Serializable {
 	private String displayName;
 	private String email;
 	private String mobile;
-	private String bookId;
+	private String instId;
 	private String instName;
 	private int    passwordSetType;
 	private List<String> authorities;
 
 	public AuthJwt(String ticket, String type, String token, String refreshToken, int expiresIn, String remeberMe,
-			String id, String name, String username, String displayName, String email, String bookId, String instName,
+			String id, String name, String username, String displayName, String email, String instId, String instName,
 			int passwordSetType, List<String> authorities) {
 		super();
 		this.ticket = ticket;
@@ -92,7 +92,7 @@ public class AuthJwt implements Serializable {
 		this.username = username;
 		this.displayName = displayName;
 		this.email = email;
-		this.bookId = bookId;
+		this.instId = instId;
 		this.instName = instName;
 		this.passwordSetType = passwordSetType;
 		this.authorities = authorities;
@@ -120,7 +120,7 @@ public class AuthJwt implements Serializable {
 		this.displayName = principal.getUserInfo().getDisplayName();
 		this.email = principal.getUserInfo().getEmail();
 		this.mobile = principal.getUserInfo().getMobile();
-		this.bookId = principal.getUserInfo().getBookId();
+		this.instId = principal.getUserInfo().getInstId();
 		this.twoFactor = principal.getTwoFactor();
 		this.passwordSetType = principal.getPasswordSetType();
 

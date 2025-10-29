@@ -67,7 +67,6 @@ public class SystemLogsController {
 		logger.debug("historys/historyLog/fetch {} ",dto);
 
 		LambdaQueryWrapper<HistorySystemLogs> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(HistorySystemLogs::getBookId, currentUser.getBookId());
 
 		return new Message<>(historySystemLogsService.page(dto.build(), wrapper));
 	}

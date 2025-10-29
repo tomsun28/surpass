@@ -45,6 +45,4 @@ public class ResourcesPageDto extends PageQuery {
     String resName;
 
     String parentId;
-
-    String bookId;
 }

@@ -65,7 +65,6 @@ public class ConnectorHistoryController {
 			@CurrentUser UserInfo currentUser){
         logger.debug("historys/historyConnector/fetch/ {}",dto);
 		LambdaQueryWrapper<HistoryConnector> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(HistoryConnector::getInstId, currentUser.getBookId());
 		return new Message<>(historyConnectorService.page(dto.build(), wrapper));
     }
 

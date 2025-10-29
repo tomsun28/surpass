@@ -48,7 +48,7 @@ public class ConfigPasswordPolicyController {
 
 	@GetMapping(value={"/get"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<ConfigPasswordPolicy> get(@CurrentUser UserInfo currentUser){
-		ConfigPasswordPolicy passwordPolicy = configPasswordPolicyService.getById(currentUser.getBookId());
+		ConfigPasswordPolicy passwordPolicy = configPasswordPolicyService.getPasswordPolicy();
 		return new Message<>(passwordPolicy);
 	}
 

@@ -32,8 +32,6 @@ public interface UserInfoService  extends IService<UserInfo> {
 
 	boolean saveOneUser(UserInfo userInfo) ;
 
-	boolean switchBook(UserInfo userInfo) ;
-
 	boolean updateOneUser(UserInfo userInfo) ;
 
 	UserInfo findByUsername(String username);

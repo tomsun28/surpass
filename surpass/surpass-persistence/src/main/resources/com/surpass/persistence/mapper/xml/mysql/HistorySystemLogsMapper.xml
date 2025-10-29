@@ -32,9 +32,10 @@
 
      <select id="fetchPageResults" parameterType="HistorySystemLogs" resultType="HistorySystemLogs">
     	select *
-    	from jbx_history_system_logs
-    	where	book_id   =   #{bookId}
-    	<include refid="where_statement"/>
+    	from surpass_history_system_logs
+    	<where>
+			<include refid="where_statement"/>
+		</where>
 
     	order by executeTime desc
     </select>

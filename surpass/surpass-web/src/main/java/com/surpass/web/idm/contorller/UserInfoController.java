@@ -100,7 +100,6 @@ public class UserInfoController {
 	@GetMapping(value = { "/fetch" }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Page<UserInfo>> fetch(@ParameterObject UserInfoPageDto dto, @CurrentUser UserInfo currentUser) {
 		logger.debug("fetch {}",dto);
-		dto.setBookId(currentUser.getBookId());
 		return userInfoService.fetchPageResults(dto);
 	}
 
@@ -130,38 +129,6 @@ public class UserInfoController {
 		userInfo.clearSensitive();
 		return new Message<>(userInfo);
 	}
-	/**
-	 * 获取登录用户信息
-	 * 需要token头，获取当前token对应的用户对象
-	 * @return
-	 */
-	@GetMapping(value = { "/switchBook/{bookId}" }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Message<UserInfo> switchBook(@PathVariable("bookId") String bookId,@CurrentUser UserInfo currentUser) {
-		if (Objects.isNull(currentUser)|| StringUtils.isBlank(bookId)) {
-			return new Message<>(Message.FAIL);
-		}
-		currentUser.setBookId(bookId);
-		SignedPrincipal principal  = AuthorizationUtils.getPrincipal();
-		principal.setBookId(bookId);
-		principal.setUserInfo(currentUser);
-		Session session = sessionManager.get(principal.getSessionId());
-		UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(
-                		principal,
-                        "PASSWORD",
-                        principal.getAuthorities()
-                );
-		session.setAuthentication(authenticationToken);
-
-		sessionManager.create(principal.getSessionId(), session);
-
-		if (ObjectUtils.isNotEmpty(userInfoService.switchBook(currentUser))) {
-			 return new Message<>(Message.SUCCESS);
-		} else {
-			 return new Message<>(Message.FAIL);
-		}
-	}
-
 
 	@GetMapping(value = { "/get/{id}" }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<UserInfo> get(@PathVariable("id") String id) {
@@ -181,7 +148,6 @@ public class UserInfoController {
 	public Message<UserInfo> insert(@Validated(value = AddGroup.class) @RequestBody UserInfo userInfo,@CurrentUser UserInfo currentUser) {
 		logger.debug("-Add  : {}" , userInfo);
 		userInfo.setId(WebContext.genId());
-		userInfo.setBookId(currentUser.getBookId());
 		userInfo.setInstId(currentUser.getInstId());
 		userInfo.setCreatedBy(currentUser.getId());
 		userInfo.setCreatedDate(new Date());
@@ -201,8 +167,6 @@ public class UserInfoController {
 	@PutMapping(value={"/update"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<UserInfo> update(@Validated(value = EditGroup.class) @RequestBody  UserInfo userInfo, @CurrentUser UserInfo currentUser) {
 		logger.debug("-update  : {}" , userInfo);
-
-		userInfo.setBookId(currentUser.getBookId());
 
 		if (userInfoService.updateOneUser(userInfo)) {
 			historySystemLogsService.log(
@@ -272,7 +236,6 @@ public class UserInfoController {
 	public Message<UserInfo> updateStatus(@ModelAttribute UserInfo userInfo,@CurrentUser UserInfo currentUser) {
 		logger.debug("updateStatus {}",userInfo);
 		UserInfo loadUserInfo = userInfoService.getById(userInfo.getId());
-		userInfo.setBookId(currentUser.getBookId());
 		userInfo.setUsername(loadUserInfo.getUsername());
 		userInfo.setDisplayName(loadUserInfo.getDisplayName());
 		if(userInfoService.updateStatus(userInfo)) {
@@ -303,7 +266,6 @@ public class UserInfoController {
 									@PathVariable("type") String type,
 									HttpServletResponse response,
 									@CurrentUser UserInfo currentUser)  {
-		userInfo.setBookId(currentUser.getBookId());
 		userInfoExcelService.exportToExcel(type,userInfo,response);
 	}
 

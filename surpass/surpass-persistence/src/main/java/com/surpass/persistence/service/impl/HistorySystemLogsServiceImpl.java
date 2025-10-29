@@ -120,7 +120,6 @@ public class HistorySystemLogsServiceImpl  extends ServiceImpl<HistorySystemLogs
 		systemLog.setUserId(operator.getId());
 		systemLog.setUsername(operator.getUsername());
 		systemLog.setDisplayName(operator.getDisplayName());
-		systemLog.setBookId(operator.getBookId());
 		systemLog.setJsonCotent(JsonUtils.toString(entity));
 		systemLog.setExecuteTime(new Date());
 		logger.trace("System Log {}" ,systemLog);

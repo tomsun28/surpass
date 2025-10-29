@@ -39,7 +39,7 @@
 				select rg.grading
 				from jbx_group_gradings rg,jbx_groups r,jbx_group_member rm, surpass_userinfo u
 				where r.id=rm.groupid and rm.memberid =u.id
-				and rg.groupid=r.id and rg.type='org' and rg.book_id=#{bookId} and u.id=#{gradingUserId}
+				and rg.groupid=r.id and rg.type='org' and u.id=#{gradingUserId}
 			)
 		</if>
     </sql>
@@ -66,11 +66,11 @@
 			browser,
 			platform,
 			application,
-			operatetime,
-			book_id
+			operatetime
     	from surpass_history_login
-    	where	book_id   =   #{bookId}
-    	<include refid="dao_where_statement"/>
+    	<where>
+			<include refid="dao_where_statement"/>
+		</where>
 
     	order by operatetime desc
     </select>

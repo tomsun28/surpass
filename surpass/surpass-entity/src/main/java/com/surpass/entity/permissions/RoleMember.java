@@ -59,8 +59,6 @@ public class RoleMember implements Serializable {
 	// USER or POST
 	String type;
 
-	String bookId;
-
 	@TableField(exist = false)
 	String instName;
 	// for user
@@ -113,23 +111,20 @@ public class RoleMember implements Serializable {
 	 * @param memberId
 	 * @param type
 	 */
-	public RoleMember(String roleId, String memberId, String type, String bookId) {
+	public RoleMember(String roleId, String memberId, String type) {
 		super();
 		this.roleId = roleId;
 		this.memberId = memberId;
 		this.type = type;
-		this.bookId = bookId;
 	}
 
-	public RoleMember(String roleId, String memberId, String memberName, String type,
-			String createdBy, String bookId) {
+	public RoleMember(String roleId, String memberId, String memberName, String type, String createdBy) {
 		super();
 		this.roleId = roleId;
 		this.memberId = memberId;
 		this.memberName = memberName;
 		this.type = type;
 		this.createdBy = createdBy;
-		this.bookId = bookId;
 	}
 
 }

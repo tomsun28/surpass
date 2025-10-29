@@ -43,7 +43,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@TableName("JBX_HISTORY_SYSTEM_LOGS")
+@TableName("surpass_history_system_logs")
 public class HistorySystemLogs implements Serializable {
 
     @Serial
@@ -73,8 +73,6 @@ public class HistorySystemLogs implements Serializable {
     String displayName;
 
     Date executeTime;
-
-	private String bookId;
 
     @TableField(exist = false)
 	String jsonCotent;

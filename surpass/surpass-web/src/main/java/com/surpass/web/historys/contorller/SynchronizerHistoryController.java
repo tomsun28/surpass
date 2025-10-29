@@ -64,7 +64,6 @@ public class SynchronizerHistoryController {
     			@CurrentUser UserInfo currentUser){
         logger.debug("historys/synchronizerHistory/fetch/ {}",dto);
 		LambdaQueryWrapper<HistorySynchronizer> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(HistorySynchronizer::getBookId, currentUser.getBookId());
         return new Message<>(historySynchronizerService.page(dto.build(), wrapper));
     }
 

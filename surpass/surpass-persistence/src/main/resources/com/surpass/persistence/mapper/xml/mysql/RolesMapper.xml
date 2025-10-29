@@ -3,13 +3,13 @@
 <mapper namespace="com.surpass.persistence.mapper.RolesMapper">
 
     <sql id="where_statement">
+        deleted = 'n'
         <if test="id != null and id != ''">
             and id = #{id}
         </if>
         <if test="roleName != null and roleName != ''">
             and rolename like '%${roleName}%'
         </if>
-		and deleted = 'n'
     </sql>
 
 
@@ -18,7 +18,7 @@
         *
         from
         surpass_roles
-        where book_id = #{bookId}
+        where
         <include refid="where_statement"/>
     </select>
 
@@ -27,8 +27,7 @@
         *
         from
         surpass_roles
-        where book_id = #{bookId}
-        and category = 'dynamic'
+        where category = 'dynamic'
         <include refid="where_statement"/>
     </select>
 
@@ -37,9 +36,7 @@
         from surpass_userinfo u,
              surpass_roles r,
              surpass_role_member rm
-        where u.book_id = #{bookId}
-          and rm.book_id = #{bookId}
-          and rm.memberid = #{value}
+        where rm.memberid = #{value}
           and u.id = #{value}
           and rm.type in ('USER', 'USER-DYNAMIC')
           and rm.roleid = r.id

@@ -124,9 +124,6 @@ public class Organizations extends BaseEntity implements Serializable {
 
     private int status;
 
-    @TableField(updateStrategy = FieldStrategy.NEVER)
-	private String bookId;
-
     @TableField(fill = FieldFill.INSERT)
     @TableLogic(value="n",delval="y")
     String deleted;

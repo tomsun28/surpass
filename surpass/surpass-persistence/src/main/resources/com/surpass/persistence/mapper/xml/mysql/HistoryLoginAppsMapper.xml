@@ -45,9 +45,9 @@
 			logintime
 
     	from surpass_history_login_apps
-    	where	book_id   =   #{bookId}
-    	<include refid="dao_where_statement"/>
-
+    	<where>
+			<include refid="dao_where_statement"/>
+		</where>
     	order by logintime desc
     </select>
 

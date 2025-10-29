@@ -32,9 +32,6 @@ import java.util.List;
 
 @Data
 public class ListIdsDto {
-
-    private String bookId;
-
     @Valid
     @NotEmpty(message = "所选ID不能为空")
     List<String> listIds;

@@ -33,7 +33,6 @@ import com.surpass.entity.Message;
 import com.surpass.entity.config.ConfigEmailSenders;
 import com.surpass.entity.idm.dto.RegisterUserDto;
 import com.surpass.entity.idm.dto.UserInfoPageDto;
-import com.surpass.entity.permissions.PermissionBook;
 import com.surpass.entity.permissions.RoleMember;
 import com.surpass.entity.permissions.Roles;
 import com.surpass.persistence.mapper.*;
@@ -457,10 +456,4 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 		   logger.error("注册通知邮件发送失败",e);
 	   }
    }
-
-
-    @Override
-	public boolean switchBook(UserInfo userInfo) {
-		return getMapper().switchBook(userInfo) > 0;
-	}
 }

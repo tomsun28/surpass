@@ -22,6 +22,7 @@
 
 package com.surpass.web.security.contorller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,9 @@ public class ConfigSmsProviderController {
 
 	@GetMapping(value={"/get"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<ConfigSmsProvider> get(@CurrentUser UserInfo currentUser){
-		ConfigSmsProvider smsProvider = configSmsProviderService.getById(currentUser.getBookId());
+		LambdaQueryWrapper<ConfigSmsProvider> wrapper = new LambdaQueryWrapper<>();
+		wrapper.isNotNull(ConfigSmsProvider::getId);
+		ConfigSmsProvider smsProvider = configSmsProviderService.getOne(wrapper);
 		if(smsProvider != null && StringUtils.isNoneBlank(smsProvider.getId())) {
 			smsProvider.setAppSecret(PasswordReciprocal.getInstance().decoder(smsProvider.getAppSecret()));
 		}
@@ -62,10 +65,8 @@ public class ConfigSmsProviderController {
 	public Message<ConfigSmsProvider> update( @RequestBody ConfigSmsProvider smsProvider,@CurrentUser UserInfo currentUser,BindingResult result) {
 		logger.debug("update smsProvider : {}" ,smsProvider);
 		smsProvider.setAppSecret(PasswordReciprocal.getInstance().encode(smsProvider.getAppSecret()));
-		smsProvider.setBookId(currentUser.getBookId());
 		boolean updateResult = false;
 		if(StringUtils.isBlank(smsProvider.getId())) {
-			smsProvider.setId(smsProvider.getBookId());
 			updateResult = configSmsProviderService.save(smsProvider);
 		}else {
 			updateResult = configSmsProviderService.updateById(smsProvider);

@@ -26,8 +26,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class DashBoardVo {
-	String bookId;
-
 	int dayCount;
 
 	int newUsers;

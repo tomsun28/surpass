@@ -54,27 +54,23 @@ public class Permission  extends BaseEntity implements Serializable {
 
     int status = ConstsStatus.ACTIVE;
 
-	private String bookId;
-
 	private String instName;
 
-    public Permission(String roleId, String bookId) {
+    public Permission(String roleId) {
         this.roleId = roleId;
-        this.bookId = bookId;
     }
 
     /**
      * .
-     * @param appId String
-     * @param groupId String
+     * @param roleId String
+     * @param resourceId String
      * @param resourceId String
      */
-    public Permission(String id,String roleId, String resourceId ,String createdBy, String bookId) {
+    public Permission(String id,String roleId, String resourceId ,String createdBy) {
         this.id = id;
         this.roleId = roleId;
         this.resourceId = resourceId;
         this.createdBy = createdBy;
-        this.bookId = bookId;
     }
 
     public String  getUniqueId() {

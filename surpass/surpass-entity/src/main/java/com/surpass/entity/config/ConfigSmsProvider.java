@@ -65,7 +65,4 @@ public class ConfigSmsProvider extends BaseEntity implements Serializable {
     String description;
 
     int status;
-
-	private String bookId;
-
 }

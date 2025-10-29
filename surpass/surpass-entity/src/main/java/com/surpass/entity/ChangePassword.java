@@ -57,7 +57,7 @@ public class ChangePassword implements Serializable {
 	String confirmPassword;
 
 	String decipherable;
-	String bookId;
+
 	int passwordSetType;
 	String passwordLastSetTime;
 
@@ -77,7 +77,6 @@ public class ChangePassword implements Serializable {
 		this.setEmail(userInfo.getEmail());
 		this.setDecipherable(userInfo.getDecipherable());
 		this.setPassword(userInfo.getPassword());
-		this.setBookId(userInfo.getBookId());
 	}
 
 	public void clearPassword() {

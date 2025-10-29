@@ -136,8 +136,6 @@ public class OrganizationsExcelServiceImpl extends ServiceImpl<OrganizationsMapp
         organization.setPostalCode(ExcelUtils.getValue(row, 20));
         // 详细描述
         organization.setDescription(ExcelUtils.getValue(row, 21));
-
-        organization.setBookId(currentUser.getBookId());
         return organization;
     }
 

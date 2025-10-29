@@ -99,7 +99,6 @@ public class UserInfoExcelServiceImpl  extends ServiceImpl<UserInfoMapper,UserIn
 			userInfoService.passwordEncoder(userInfo);
 		}
 		// 设置租户标识
-        userInfo.setBookId(currentUser.getBookId());
 		userInfo.setInstId(currentUser.getInstId());
 
         return userInfo;

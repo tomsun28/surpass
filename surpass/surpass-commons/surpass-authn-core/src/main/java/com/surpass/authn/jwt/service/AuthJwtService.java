@@ -76,7 +76,7 @@ public class AuthJwtService {
 				.claim(ConstsJwt.KID, Hmac512Service.MXK_AUTH_JWK)
 				.claim(ConstsJwt.TWO_FACTOR, principal.getTwoFactor())
 				.claim(ConstsJwt.USER_ID, userInfo.getId())
-				.claim(ConstsJwt.INST_ID, userInfo.getBookId())
+				.claim(ConstsJwt.INST_ID, userInfo.getInstId())
 				.claim(ConstsJwt.LOCALE, userInfo.getLocale())
 				.build();
 

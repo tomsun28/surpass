@@ -31,7 +31,7 @@ public interface ConfigService {
      * @param configKey 参数 key
      * @return 参数值
      */
-    String getConfigValue(String bookId, String configKey);
+    String getConfigValue(String configKey);
 
 
 }

@@ -8,7 +8,7 @@
         	*
         from
         surpass_userinfo
-        where book_id = #{Dto.bookId}
+        where deleted = 'n'
         <if test="Dto.username != null and Dto.username != ''">
             and username = #{Dto.username}
         </if>
@@ -27,7 +27,6 @@
         <if test="Dto.displayName != null and Dto.displayName != ''">
             and display_name like CONCAT('%', #{Dto.displayName}, '%')
         </if>
-        and deleted = 'n'
         order by sort_index,id
     </select>
 
@@ -170,8 +169,7 @@
         select o.*, 1 isPrimary
         from jbx_organizations o,
              surpass_userinfo u
-        where o.book_id = u.book_id
-          and o.id = u.departmentid
+        where o.id = u.departmentid
           and u.id = #{value}
           and o.deleted = 'n'
           and u.deleted = 'n'
@@ -182,8 +180,7 @@
         select o.*, 0 isPrimary
         from jbx_organizations o,
              jbx_organization_users ua
-        where o.book_id = ua.book_id
-          and o.id = ua.departmentid
+        where o.id = ua.departmentid
           and ua.userid = #{value}
           and o.deleted = 'n'
     </select>

@@ -64,8 +64,6 @@ public class SocialsProvider extends BaseEntity implements Serializable {
 
     int status;
 
-	String bookId;
-
 	String redirectUri;
 
 	String accountId;

@@ -38,8 +38,6 @@ public class UserInfoPageDto extends PageQuery {
 	 */
 	private static final long serialVersionUID = 4849764781931650281L;
 
-	String bookId;
-
     String username;
 
     String employeeNumber;

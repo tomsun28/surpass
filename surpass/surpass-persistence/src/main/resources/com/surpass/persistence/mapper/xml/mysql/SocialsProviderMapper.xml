@@ -3,13 +3,13 @@
 <mapper namespace="com.surpass.persistence.mapper.SocialsProviderMapper">
 
 	<sql id="where_statement">
+		deleted = 'n'
     	<if test="id != null and id != ''">
 			and	id	=	#{id}
 		</if>
 		<if test="providerName != null and providerName != ''">
 			and providerName  like  '%${providerName}%'
 		</if>
-		and deleted = 'n'
     </sql>
 
 
@@ -20,7 +20,6 @@
 		from
 			jbx_socials_provider
 		where
-			 book_id   =   #{bookId}
 		<include refid="where_statement"/>
 		order by  sortindex
 	</select>

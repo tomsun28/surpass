@@ -82,7 +82,6 @@ public class OrganizationsController {
 
     @GetMapping(value = {"/fetch"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public Message<Page<Organizations>> fetch(@ParameterObject OrgPageDto dto, @CurrentUser UserInfo currentUser) {
-        dto.setBookId(currentUser.getBookId());
         return organizationsService.pageList(dto);
     }
 
@@ -90,7 +89,6 @@ public class OrganizationsController {
     public Message<List<Organizations>> query(@ModelAttribute Organizations org, @CurrentUser UserInfo currentUser) {
         logger.debug("-query  {}", org);
         LambdaQueryWrapper<Organizations> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Organizations::getBookId, currentUser.getBookId());
         List<Organizations> orgList = organizationsService.list(wrapper);
         if (orgList != null) {
             return new Message<>(Message.SUCCESS, orgList);
@@ -109,7 +107,6 @@ public class OrganizationsController {
     public Message<Organizations> insert(@Validated(value = AddGroup.class)
                                          @RequestBody Organizations org, @CurrentUser UserInfo currentUser) {
         logger.debug("-Add  : {}", org);
-        org.setBookId(currentUser.getBookId());
         if (organizationsService.saveOneOrg(org)) {
             historySystemLogsService.log(
                     ConstsEntryType.ORGANIZATION,
@@ -128,7 +125,6 @@ public class OrganizationsController {
                                          @RequestBody Organizations org,
                                          @CurrentUser UserInfo currentUser) {
         logger.debug("-update  : {}", org);
-        org.setBookId(currentUser.getBookId());
         if (organizationsService.updateOneOrg(org)) {
             historySystemLogsService.log(
                     ConstsEntryType.ORGANIZATION,
@@ -161,7 +157,6 @@ public class OrganizationsController {
     @GetMapping(value = {"/tree"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public Message<List<MapTree<String>>> tree(@ModelAttribute Organizations organization, @CurrentUser UserInfo currentUser) {
         logger.debug("-query  {}", organization);
-        organization.setBookId(currentUser.getBookId());
 
         if (AuthorizationUtils.getAuthentication().getAuthorities().contains(ConstsRoles.ROLE_MANAGER)) {
             logger.debug("Has ROLE_MANAGERS {}", currentUser.getId());
@@ -190,7 +185,6 @@ public class OrganizationsController {
                                     @PathVariable("type") String type,
                                     HttpServletResponse response,
                                     @CurrentUser UserInfo currentUser) {
-    	organization.setBookId(currentUser.getBookId());
     	organizationsExcelService.exportToExcel(type,organization,response);
     }
 

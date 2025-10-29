@@ -68,7 +68,9 @@ public class InstitutionsController {
 
 	@GetMapping(value={"/getCurrent"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Institutions> getCurrent(@CurrentUser UserInfo currentUser){
-		Institutions inst = institutionsService.getById(currentUser.getBookId());
+		LambdaQueryWrapper<Institutions> wrapper = new LambdaQueryWrapper<>();
+		wrapper.isNotNull(Institutions::getId);
+		Institutions inst = institutionsService.getOne(wrapper);
 		return new Message<>(Message.SUCCESS,inst);
 	}
 

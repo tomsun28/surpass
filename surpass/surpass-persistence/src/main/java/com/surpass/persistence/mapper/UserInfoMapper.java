@@ -67,8 +67,4 @@ public interface UserInfoMapper  extends BaseMapper<UserInfo>{
 
     @Update("update surpass_userinfo set status =  #{status} where id = #{id}")
    	public int 	updateStatus(UserInfo userInfo) ;
-
-    @Update("update surpass_userinfo set book_id =  #{bookId} where id = #{id}")
-   	public int 	switchBook(UserInfo userInfo) ;
-
 }

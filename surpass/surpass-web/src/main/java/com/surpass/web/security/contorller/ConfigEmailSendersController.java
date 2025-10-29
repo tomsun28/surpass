@@ -22,6 +22,7 @@
 
 package com.surpass.web.security.contorller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,9 @@ public class ConfigEmailSendersController {
 
 	@GetMapping(value={"/get"})
 	public Message<ConfigEmailSenders> get(@CurrentUser UserInfo currentUser){
-		ConfigEmailSenders emailSenders = configEmailSendersService.getById(currentUser.getBookId());
+		LambdaQueryWrapper<ConfigEmailSenders> wrapper = new LambdaQueryWrapper<>();
+		wrapper.isNotNull(ConfigEmailSenders::getId);
+		ConfigEmailSenders emailSenders = configEmailSendersService.getById(wrapper);
 		if(emailSenders != null && StringUtils.isNotBlank(emailSenders.getCredentials())) {
 			emailSenders.setCredentials(PasswordReciprocal.getInstance().
 					decoder(emailSenders.getCredentials()));

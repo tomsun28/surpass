@@ -64,7 +64,6 @@ public class SocialsProviderController {
 		logger.debug("fetch {}",dto);
 
 		LambdaQueryWrapper<SocialsProvider> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(SocialsProvider::getBookId, currentUser.getBookId());
 
 		return new Message<>(Message.SUCCESS, socialsProviderService.page(dto.build(), wrapper));
 	}
@@ -73,7 +72,6 @@ public class SocialsProviderController {
 	public Message<SocialsProvider> query(@ParameterObject SocialsProviderPageDto dto,@CurrentUser UserInfo currentUser) {
 		logger.debug("-query  : {}" , dto);
 		LambdaQueryWrapper<SocialsProvider> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(SocialsProvider::getBookId, currentUser.getBookId());
 		if (ObjectUtils.isNotEmpty(socialsProviderService.list(wrapper))) {
 			 return new Message<>(Message.SUCCESS);
 		} else {
@@ -91,7 +89,6 @@ public class SocialsProviderController {
 	@PostMapping(value={"/add"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<SocialsProvider> insert(@RequestBody  SocialsProvider socialsProvider,@CurrentUser UserInfo currentUser) {
 		logger.debug("-Add  : {}" , socialsProvider);
-		socialsProvider.setBookId(currentUser.getBookId());
 		socialsProvider.setClientSecret(PasswordReciprocal.getInstance().encode(socialsProvider.getClientSecret()));
 		if (socialsProviderService.save(socialsProvider)) {
 			return new Message<>(Message.SUCCESS);
@@ -103,7 +100,6 @@ public class SocialsProviderController {
 	@PutMapping(value={"/update"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<SocialsProvider> update(@RequestBody  SocialsProvider socialsProvider,@CurrentUser UserInfo currentUser) {
 		logger.debug("-update  : {}" , socialsProvider);
-		socialsProvider.setBookId(currentUser.getBookId());
 		socialsProvider.setClientSecret(PasswordReciprocal.getInstance().encode(socialsProvider.getClientSecret()));
 		if (socialsProviderService.updateById(socialsProvider)) {
 		    return new Message<>(Message.SUCCESS);

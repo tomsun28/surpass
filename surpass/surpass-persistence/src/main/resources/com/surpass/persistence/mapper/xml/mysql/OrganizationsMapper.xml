@@ -3,6 +3,7 @@
 <mapper namespace="com.surpass.persistence.mapper.OrganizationsMapper" >
 
 	<sql id="dao_where_statement">
+		deleted = 'n'
     	<if test="id != null and id != ''">
 			and	id	=	#{id}
 		</if>
@@ -20,11 +21,10 @@
 				select rg.grading
 				from jbx_group_gradings rg,jbx_groups r,jbx_group_member rm, surpass_userinfo u
 				where r.id=rm.groupid and rm.memberid =u.id
-				and rg.groupid=r.id and rg.type='org' and rg.book_id=#{bookId} and u.id=#{gradingUserId}
+				and rg.groupid=r.id and rg.type='org' and u.id=#{gradingUserId}
 				and r.deleted = 'n' and u.deleted = 'n'
 			)
 		</if>
-		and deleted = 'n'
     </sql>
 
 
@@ -33,7 +33,7 @@
     	select
 			*
     	from jbx_organizations
-    	where	book_id   =   #{bookId}
+    	where
     	<include refid="dao_where_statement"/>
     	order by sort_index,id
     </select>
@@ -44,7 +44,7 @@
     	select
 			*
     	from jbx_organizations
-    	where book_id = #{Dto.bookId}
+    	where deleted = 'n'
 	   <if test="Dto.id != null and Dto.id != ''">
 		   and	id = #{Dto.id}
 	   </if>
@@ -57,7 +57,6 @@
 	   <if test="Dto.parentName != null and Dto.parentName != ''">
 		   and parent_name like CONCAT ('%', #{Dto.parentName}, '%')
 	   </if>
-	   and deleted = 'n'
       order by sort_index,id
     </select>
 </mapper>

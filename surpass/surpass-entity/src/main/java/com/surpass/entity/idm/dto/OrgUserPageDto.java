@@ -38,5 +38,4 @@ public class OrgUserPageDto extends PageQuery {
 	 *
 	 */
 	private static final long serialVersionUID = -5854742069639940711L;
-	private String bookId;
 }

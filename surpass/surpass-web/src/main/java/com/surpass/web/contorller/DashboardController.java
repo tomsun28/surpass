@@ -32,9 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.entity.Message;
 import com.surpass.entity.idm.UserInfo;
-import com.surpass.entity.report.dto.DashBoardReqDto;
 import com.surpass.entity.report.vo.DashBoardVo;
-import com.surpass.persistence.service.ReportService;
 
 /**
  * Index
@@ -45,32 +43,15 @@ import com.surpass.persistence.service.ReportService;
 public class DashboardController {
 
 	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
-	@Autowired
-	ReportService reportService;
 
 	@GetMapping(value={"/dashboard"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<DashBoardVo> dashboard(@CurrentUser UserInfo currentUser) {
 
 		logger.debug("DashboardController /dashboard.");
 
-		DashBoardReqDto dbReqDto = new DashBoardReqDto();
-		dbReqDto.setBookId(currentUser.getBookId());
 
 		DashBoardVo dbv = new DashBoardVo();
-		dbv.setBookId(currentUser.getBookId());
 
-		dbv.setDayCount(reportService.analysisDay(dbReqDto));
-		dbv.setNewUsers(reportService.analysisNewUsers(dbReqDto));
-
-		dbv.setOnlineUsers(reportService.analysisOnlineUsers(dbReqDto));
-		dbv.setActiveUsers(reportService.analysisActiveUsers(dbReqDto));
-
-		dbv.setReportMonth(reportService.analysisMonth(dbReqDto));
-		dbv.setReportDayHour(reportService.analysisDayHour(dbReqDto));
-
-		dbv.setReportBrowser(reportService.analysisBrowser(dbReqDto));
-
-		dbv.setReportProvince(reportService.analysisProvince(dbReqDto));
 		return new Message<>(dbv);
 	}
 }

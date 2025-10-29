@@ -24,8 +24,6 @@ import lombok.Data;
 
 @Data
 public class QueryOrgDto {
-	String bookId;
-
 	String userId;
 
 	String departmentId;
@@ -34,9 +32,8 @@ public class QueryOrgDto {
 	public QueryOrgDto() {
 	}
 
-	public QueryOrgDto(String bookId, String userId, String departmentId) {
+	public QueryOrgDto(String userId, String departmentId) {
 		super();
-		this.bookId = bookId;
 		this.userId = userId;
 		this.departmentId = departmentId;
 	}

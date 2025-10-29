@@ -168,7 +168,6 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
 
         //修改当前组织
         LambdaQueryWrapper<Organizations> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(Organizations::getBookId, organization.getBookId());
         queryWrapper.like(Organizations::getCodePath, organization.getId());
         queryWrapper.ne(Organizations::getId, currentId);
         List<Organizations> orgInfos = super.list(queryWrapper);
@@ -220,12 +219,10 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
     public void saveCheckDuplicateOrgs(Organizations entity) {
         String orgName = entity.getOrgName();
         String parentId = entity.getParentId();
-        String bookId = entity.getBookId();
         String orgCode = entity.getOrgCode();
 
         //检查名称
         LambdaQueryWrapper<Organizations> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Organizations::getBookId, bookId);
         wrapper.eq(Organizations::getParentId, parentId);
         wrapper.eq(Organizations::getOrgName, orgName);
         List<Organizations> organizationsList = super.list(wrapper);
@@ -238,7 +235,6 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
 
         //检查编码
         LambdaQueryWrapper<Organizations> secondWrapper = new LambdaQueryWrapper<>();
-        secondWrapper.eq(Organizations::getBookId, bookId);
         secondWrapper.eq(Organizations::getOrgCode, orgCode);
         List<Organizations> secondOrgs = super.list(secondWrapper);
         if (ObjectUtils.isNotEmpty(secondOrgs)) {
@@ -257,13 +253,11 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
     public void updateCheckDuplicateOrgs(Organizations entity) {
         String orgName = entity.getOrgName();
         String parentId = entity.getParentId();
-        String bookId = entity.getBookId();
         String orgCode = entity.getOrgCode();
         String id = entity.getId();
 
         //检查名称
         LambdaQueryWrapper<Organizations> wrapper = new LambdaQueryWrapper<Organizations>();
-        wrapper.eq(Organizations::getBookId, bookId);
         wrapper.eq(Organizations::getParentId, parentId);
         wrapper.eq(Organizations::getOrgName, orgName);
         wrapper.notIn(Organizations::getId, id);
@@ -277,7 +271,6 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
 
         //检查编码
         LambdaQueryWrapper<Organizations> secondWrapper = new LambdaQueryWrapper<Organizations>();
-        secondWrapper.eq(Organizations::getBookId, bookId);
         secondWrapper.eq(Organizations::getOrgCode, orgCode);
         secondWrapper.notIn(Organizations::getId, id);
         List<Organizations> secondOrgs = super.list(secondWrapper);
@@ -291,8 +284,7 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
 
     @Override
     public List<MapTree<String>> tree(Organizations org) {
-        LambdaQueryWrapper<Organizations> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Organizations::getBookId, org.getBookId());
+        LambdaQueryWrapper<Organizations> wrapper = new LambdaQueryWrapper<>();;
         List<Organizations> orgInfos = organizationsMapper.selectList(wrapper);
         List<TreeNode<String>> treeNode = new ArrayList<>();
         orgInfos.forEach(temp -> treeNode.add(new TreeNode<>(temp.getId(),

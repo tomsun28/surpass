@@ -27,8 +27,6 @@ import lombok.Data;
 
 @Data
 public class QueryGrantedAppsDto {
-	String bookId;
-
 	String userId;
 
 	String departmentId;

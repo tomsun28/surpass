@@ -68,8 +68,7 @@ public class PermissionController {
 		//have
 		Permission queryPermission =
 				new Permission(
-						dto.roleId(),
-						currentUser.getBookId());
+						dto.roleId());
 		List<Permission> permissionsList = permissionService.queryPermissions(queryPermission);
 
 		HashMap<String,String >permissionsMap =new HashMap<>();
@@ -84,8 +83,7 @@ public class PermissionController {
 		    			WebContext.genId(),
 		    			dto.roleId(),
                     resourceId,
-                    currentUser.getId(),
-                    currentUser.getBookId());
+                    currentUser.getId());
 		    newPermission.setId(identifierGenerator.nextId(newPermission).toString());
 		    newPermissionsMap.put(newPermission.getUniqueId(), dto.appId());
 
@@ -99,7 +97,6 @@ public class PermissionController {
 		ArrayList<Permission> deletePermissionsList =new ArrayList<>();
 		for(Permission deletePermission : permissionsList) {
            if(!newPermissionsMap.containsKey(deletePermission.getUniqueId())) {
-        	   deletePermission.setBookId(currentUser.getBookId());
         	   deletePermissionsList.add(deletePermission);
            }
         }
@@ -126,8 +123,7 @@ public class PermissionController {
         //have
         Permission queryPermission =
         		new Permission(
-        				permission.getRoleId(),
-        				currentUser.getBookId());
+        				permission.getRoleId());
 
         List<Permission> queryPermissionList = permissionService.queryPermissions(queryPermission);
 

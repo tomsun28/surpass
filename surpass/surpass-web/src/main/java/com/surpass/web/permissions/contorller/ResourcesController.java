@@ -77,7 +77,6 @@ public class ResourcesController {
 	@GetMapping(value = { "/fetch" }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Page<Resources>> fetch(@ParameterObject ResourcesPageDto dto, @CurrentUser UserInfo currentUser) {
 		logger.debug("fetch {}" , dto);
-		dto.setBookId(rootId);
 		return resourcesService.pageList(dto);
 	}
 

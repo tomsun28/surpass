@@ -60,7 +60,4 @@ public class SocialsAssociate extends BaseEntity implements Serializable {
 	String socialUserInfo;
 	String accessToken;
 	String exAttribute;
-
-    String bookId;
-
 }

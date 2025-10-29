@@ -97,8 +97,6 @@ public class HistoryLogin implements Serializable{
 
 	Date operateTime;
 
-	private String bookId;
-
 	@TableField(exist=false)
 	private String instName;
 

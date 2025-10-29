@@ -169,8 +169,6 @@ public class UserInfo extends BaseEntity  implements Serializable {
 
     String description;
 
-	String bookId;
-
     @TableField(updateStrategy = FieldStrategy.NEVER)
     String instId;
 
