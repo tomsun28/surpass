@@ -4,5 +4,5 @@ dependencies {
 
     implementation project(":surpass-commons:surpass-crypto")
 	//local jars
-	implementation fileTree(dir: '../surpass-lib/', include: '*/*.jar')
+	implementation fileTree(dir: '../surpass-lib', include: ['*.jar'])
 }
