@@ -71,7 +71,7 @@
 			application,
 			operatetime,
 			style
-    	from jbx_session_list
+    	from surpass_session_list
     	<where>
 			<include refid="dao_where_statement"/>
 		</where>

@@ -45,7 +45,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("JBX_ORGANIZATIONS")
+@TableName("surpass_organizations")
 public class Organizations extends BaseEntity implements Serializable {
 
     @Serial
@@ -86,7 +86,7 @@ public class Organizations extends BaseEntity implements Serializable {
 
     private String namePath;
     //数据库关键字，解决人大金仓数据库适配修改2023-1-30-shibanglin
-//    @Column(name = "JBX_organizations.level")
+//    @Column(name = "surpass_organizations.level")
 
     private int level;
 

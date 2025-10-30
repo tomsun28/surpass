@@ -167,7 +167,7 @@
 
     <select id="findOrganizationsByUserId" parameterType="string" resultType="Organizations">
         select o.*, 1 isPrimary
-        from jbx_organizations o,
+        from surpass_organizations o,
              surpass_userinfo u
         where o.id = u.departmentid
           and u.id = #{value}
@@ -178,7 +178,7 @@
         union all
 
         select o.*, 0 isPrimary
-        from jbx_organizations o,
+        from surpass_organizations o,
              jbx_organization_users ua
         where o.id = ua.departmentid
           and ua.userid = #{value}

@@ -42,7 +42,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 @Data
 @NoArgsConstructor
-@TableName("JBX_SESSION_LIST")
+@TableName("surpass_session_list")
 public class SessionList implements Serializable{
 	@Serial
 	private static final long serialVersionUID = -1321470643357719383L;

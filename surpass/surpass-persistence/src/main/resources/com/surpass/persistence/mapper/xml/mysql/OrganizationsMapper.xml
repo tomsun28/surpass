@@ -32,7 +32,7 @@
      <select id="queryOrgs" parameterType="Organizations" resultType="Organizations">
     	select
 			*
-    	from jbx_organizations
+    	from surpass_organizations
     	where
     	<include refid="dao_where_statement"/>
     	order by sort_index,id
@@ -43,7 +43,7 @@
 		   resultType="com.surpass.entity.idm.Organizations">
     	select
 			*
-    	from jbx_organizations
+    	from surpass_organizations
     	where deleted = 'n'
 	   <if test="Dto.id != null and Dto.id != ''">
 		   and	id = #{Dto.id}

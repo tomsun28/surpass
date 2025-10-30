@@ -42,19 +42,19 @@ import com.surpass.entity.idm.UserInfo;
 @Mapper
 public interface SessionListMapper extends BaseMapper<SessionList> {
 
-	@Select("select * from jbx_session_list  where session_id = #{sessionId}")
+	@Select("select * from surpass_session_list  where session_id = #{sessionId}")
 	public SessionList getBySessionId(@Param ("sessionId") String sessionId) ;
 
-	@Update("delete from jbx_session_list  where session_id = #{sessionId}")
+	@Update("delete from surpass_session_list  where session_id = #{sessionId}")
 	public void removeById(@Param ("sessionId") String sessionId);
 
 	@Update("update surpass_userinfo set last_logoff_time = #{lastLogoffTime} , is_online = 0  where id = #{id}")
 	public void updateLastLogoffTime(UserInfo user);
 
-	@Select("select * from jbx_session_list")
+	@Select("select * from surpass_session_list")
 	public List<SessionList> listAll() ;
 
-	@Select("select * from jbx_session_list where style = #{style}")
+	@Select("select * from surpass_session_list where style = #{style}")
 	public List<SessionList> listByStyle(@Param ("style") String style) ;
 
 
