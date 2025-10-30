@@ -113,13 +113,6 @@
             </a>
           </template>
         </el-table-column>
-        <el-table-column prop="id" label="账套" align="center" width="80">
-          <template #default="scope">
-              <el-button link type="text" @click="bookDrawerOpen(scope.row)">
-                <el-icon><Notebook /></el-icon>
-              </el-button>
-          </template>
-        </el-table-column>
         <el-table-column :label="$t('jbx.text.action')" align="center" width="140">
           <template #default="scope">
             <el-tooltip content="编辑">
@@ -138,7 +131,7 @@
                                         </el-dropdown-item>
                   <el-dropdown-item v-if="scope.row.status === 1" @click.native="groupDrawerOpen(scope.row)">
                     <span>角色</span>
-                  </el-dropdown-item>                     
+                  </el-dropdown-item>
                   <el-dropdown-item v-if="scope.row.status === 1" @click.native="postDrawerOpen(scope.row)">
                                           <span>{{ $t('jbx.text.posts') }}</span>
                                         </el-dropdown-item>
@@ -205,10 +198,6 @@
                 @groupDrawerClose="dialogAndDrawClose" :group-open="groupOpen"></user-group>
     <!--用户兼职-->
     <user-hats :title="title" :form-id="id" :open="hatsOpen" @hatsDrawerClose="dialogAndDrawClose"></user-hats>
-
-    <!--账套权限-->
-    <book :title="title" :username="currentUsername" :form-id="id"
-          @bookDrawerClose="dialogAndDrawClose" :book-open="bookOpen"></book>
   </div>
 </template>
 <script setup lang="ts">
@@ -222,10 +211,9 @@ import UserEdit from "./user/edit.vue"
 import changePassword from './user/changePas.vue'
 import postDrawer from './user/post.vue'
 import userGroup from './user/group.vue'
-import book from './user/book.vue'
 import userHats from './user/hats.vue'
 import {useRouter} from "vue-router";
-import SvgIcon from "@/components/SvgIcon/index.vue";
+
 
 const {t} = useI18n()
 const {proxy} = getCurrentInstance()!;
