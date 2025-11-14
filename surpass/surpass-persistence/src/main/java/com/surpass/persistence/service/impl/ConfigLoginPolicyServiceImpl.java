@@ -24,12 +24,11 @@ package com.surpass.persistence.service.impl;
 
 import java.util.concurrent.TimeUnit;
 
+import org.dromara.mybatis.jpa.query.LambdaQuery;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.surpass.entity.config.ConfigLoginPolicy;
@@ -39,7 +38,7 @@ import com.surpass.persistence.service.ConfigLoginPolicyService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ConfigLoginPolicyServiceImpl extends ServiceImpl<ConfigLoginPolicyMapper,ConfigLoginPolicy> implements ConfigLoginPolicyService {
+public class ConfigLoginPolicyServiceImpl extends JpaServiceImpl<ConfigLoginPolicyMapper,ConfigLoginPolicy> implements ConfigLoginPolicyService {
 	private static final Logger logger = LoggerFactory.getLogger(ConfigLoginPolicyServiceImpl.class);
 
 	static final String CONFIG_LOGIN_POLICY_KEY = "CONFIG_LOGIN_POLICY_KEY";
@@ -61,9 +60,9 @@ public class ConfigLoginPolicyServiceImpl extends ServiceImpl<ConfigLoginPolicyM
 	public ConfigLoginPolicy getConfigLoginPolicy() {
 		ConfigLoginPolicy configLoginPolicy = configLoginPolicyStore.getIfPresent(CONFIG_LOGIN_POLICY_KEY);
         if (configLoginPolicy == null) {
-			LambdaQueryWrapper<ConfigLoginPolicy> wrapper = new LambdaQueryWrapper<>();
-			wrapper.isNotNull(ConfigLoginPolicy::getId);
-			configLoginPolicy = super.getOne(wrapper);
+			LambdaQuery<ConfigLoginPolicy> wrapper = new LambdaQuery<>();
+			wrapper.notNull(ConfigLoginPolicy::getId);
+			configLoginPolicy = super.get(wrapper);
             configLoginPolicyStore.put(CONFIG_LOGIN_POLICY_KEY,configLoginPolicy);
             logger.debug("get ConfigLoginPolicy : {}" , configLoginPolicy);
         }

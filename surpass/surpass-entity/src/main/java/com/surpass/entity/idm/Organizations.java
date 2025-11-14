@@ -24,17 +24,18 @@ package com.surpass.entity.idm;
 
 import java.io.Serial;
 import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.*;
-import com.surpass.entity.BaseEntity;
+import java.util.Date;
 import com.surpass.validate.AddGroup;
 import com.surpass.validate.EditGroup;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.dromara.mybatis.jpa.annotations.SoftDelete;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 /**
  * root organization node,<br> id = instId or id = parentId or parentId = -1 or parentId = 0
@@ -45,8 +46,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("surpass_organizations")
-public class Organizations extends BaseEntity implements Serializable {
+@Table(name = "surpass_organizations")
+@Entity
+public class Organizations extends JpaEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 5085413816404119803L;
@@ -54,105 +56,138 @@ public class Organizations extends BaseEntity implements Serializable {
     public static final String CLASS_TYPE = "Organization";
     public static final String ROOT_ORG_ID = "1";
 
-    @TableId(type = IdType.ASSIGN_ID)
+    @Id
+    @Column
+    @GeneratedValue
     private String id;
 
     @NotEmpty(message = "组织编码不能为空", groups = {AddGroup.class, EditGroup.class})
     @Size(max = 50, message = "组织编码的长度不能超过50位", groups = {AddGroup.class, EditGroup.class})
+    @Column
     private String orgCode;
 
+    @Column
     @NotEmpty(message = "组织名称不能为空", groups = {AddGroup.class, EditGroup.class})
     @Size(max = 16, message = "组织名称的长度不能超过16位", groups = {AddGroup.class, EditGroup.class})
     private String orgName;
 
+    @Column
     @NotEmpty(message = "组织全称不能为空", groups = {AddGroup.class, EditGroup.class})
     @Size(max = 32, message = "组织全称的长度不能超过32位", groups = {AddGroup.class, EditGroup.class})
     private String fullName;
 
+    @Column
     private String parentId;
 
+    @Column
     private String parentCode;
 
+    @Column
     private String parentName;
 
     /**
      * 1. entity
      * 2. virtual
      */
+    @Column
     @NotEmpty(message = "类型不能为空", groups = {AddGroup.class, EditGroup.class})
     private String type;
 
+    @Column
     private String codePath;
 
+    @Column
     private String namePath;
     //数据库关键字，解决人大金仓数据库适配修改2023-1-30-shibanglin
 //    @Column(name = "surpass_organizations.level")
 
+    @Column
     private int level;
 
+    @Column
     private String hasChild;
 
+    @Column
     private String division;
 
+    @Column
     private String country;
 
+    @Column
     private String region;
 
+    @Column
     private String locality;
 
+    @Column
     private String street;
 
+    @Column
     private String address;
 
+    @Column
     private String contact;
 
+    @Column
     private String postalCode;
 
+    @Column
     private String phone;
 
+    @Column
     private String fax;
 
+    @Column
     private String email;
 
+    @Column
     private long sortIndex;
 
+    @Column
     private String ldapDn;
 
+    @Column
     private String description;
 
+    @Column
     private String extraAttrs;
 
+    @Column
     private int status;
 
-    @TableField(fill = FieldFill.INSERT)
-    @TableLogic(value="n",delval="y")
+    @SoftDelete
+    @Column
     String deleted;
 
-    @TableField(exist = false)
+    @Column
+    private String createdBy;
+
+    @Column
+    private Date createdDate;
+
+    @Column
+    private String modifiedBy;
+
+    @Column
+    private Date modifiedDate;
+
 	String instName;
 
-    @TableField(exist = false)
     String syncId;
 
-    @TableField(exist = false)
     String syncName;
 
-    @TableField(exist = false)
     String originId;
 
-    @TableField(exist = false)
     String originId2;
 
     /**
      * 1任职机构，0兼职机构
      */
-    @TableField(exist = false)
     int isPrimary = 0;
 
-    @TableField(exist = false)
     boolean reorgNamePath;
 
-    @TableField(exist = false)
     String gradingUserId;
 
 }

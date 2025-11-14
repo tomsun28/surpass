@@ -27,15 +27,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.surpass.authn.SignedPrincipal;
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.authn.secretkey.SecretKeyManager;
-import com.surpass.authn.session.Session;
 import com.surpass.authn.session.SessionManager;
-import com.surpass.authn.web.AuthorizationUtils;
 import com.surpass.constants.*;
 import com.surpass.entity.*;
 import com.surpass.entity.idm.UserInfo;
@@ -47,6 +41,8 @@ import com.surpass.web.WebContext;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
@@ -86,9 +82,6 @@ public class UserInfoController {
 	UserInfoExcelService userInfoExcelService;
 
 	@Autowired
-	FileStorageService fileStorageService;
-
-	@Autowired
 	SecretKeyManager secretKeyManager;
 
 	@Autowired
@@ -98,7 +91,7 @@ public class UserInfoController {
 	HistorySystemLogsService historySystemLogsService;
 
 	@GetMapping(value = { "/fetch" }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Message<Page<UserInfo>> fetch(@ParameterObject UserInfoPageDto dto, @CurrentUser UserInfo currentUser) {
+	public Message<JpaPageResults<UserInfo>> fetch(@ParameterObject UserInfoPageDto dto, @CurrentUser UserInfo currentUser) {
 		logger.debug("fetch {}",dto);
 		return userInfoService.fetchPageResults(dto);
 	}
@@ -107,8 +100,8 @@ public class UserInfoController {
 	public Message<UserInfo> query(@ParameterObject UserInfoPageDto dto, @CurrentUser UserInfo currentUser) {
 		logger.debug("-query  : {}" , dto);
 
-		LambdaQueryWrapper<UserInfo> wrapper = new LambdaQueryWrapper<>();
-		if (ObjectUtils.isNotEmpty(userInfoService.list(wrapper))) {
+		LambdaQuery<UserInfo> wrapper = new LambdaQuery<>();
+		if (ObjectUtils.isNotEmpty(userInfoService.query(wrapper))) {
 			 return new Message<>(Message.SUCCESS);
 		} else {
 			 return new Message<>(Message.FAIL);
@@ -125,14 +118,14 @@ public class UserInfoController {
 		if (Objects.isNull(currentUser)) {
 			return new Message<>(Message.FAIL);
 		}
-		UserInfo userInfo = userInfoService.getById(currentUser.getId());
+		UserInfo userInfo = userInfoService.get(currentUser.getId());
 		userInfo.clearSensitive();
 		return new Message<>(userInfo);
 	}
 
 	@GetMapping(value = { "/get/{id}" }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<UserInfo> get(@PathVariable("id") String id) {
-		UserInfo userInfo=userInfoService.getById(id);
+		UserInfo userInfo=userInfoService.get(id);
 		userInfo.clearSensitive();
 		return new Message<>(userInfo);
 	}
@@ -185,7 +178,7 @@ public class UserInfoController {
 	public Message<UserInfo> delete(@RequestParam("ids") List<String> ids,@CurrentUser UserInfo currentUser) {
 		logger.debug("-delete  ids : {} " , ids);
 
-		if (userInfoService.removeByIds(ids)) {
+		if (userInfoService.deleteBatch(ids)) {
 			historySystemLogsService.log(
 					ConstsEntryType.USERINFO,
 					ids,
@@ -235,7 +228,7 @@ public class UserInfoController {
 	@GetMapping(value = { "/updateStatus" }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<UserInfo> updateStatus(@ModelAttribute UserInfo userInfo,@CurrentUser UserInfo currentUser) {
 		logger.debug("updateStatus {}",userInfo);
-		UserInfo loadUserInfo = userInfoService.getById(userInfo.getId());
+		UserInfo loadUserInfo = userInfoService.get(userInfo.getId());
 		userInfo.setUsername(loadUserInfo.getUsername());
 		userInfo.setDisplayName(loadUserInfo.getDisplayName());
 		if(userInfoService.updateStatus(userInfo)) {

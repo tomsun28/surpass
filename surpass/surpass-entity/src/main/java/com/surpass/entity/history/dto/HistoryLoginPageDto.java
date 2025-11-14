@@ -1,5 +1,5 @@
 /*
- * Copyright [2025] [Surpass of copyright http://www.surpass.com]
+ * Copyright [2025] [JinBooks of copyright http://www.jinbooks.com]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@
 
 package com.surpass.entity.history.dto;
 
-import com.surpass.entity.PageQuery;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.dromara.mybatis.jpa.entity.JpaPage;
 
 /**
  * @description:
@@ -31,7 +30,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class HistoryLoginPageDto extends PageQuery {/**
+public class HistoryLoginPageDto extends JpaPage {/**
 	 *
 	 */
 	private static final long serialVersionUID = 7324849662736107103L;

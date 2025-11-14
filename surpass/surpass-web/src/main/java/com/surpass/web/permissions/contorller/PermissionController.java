@@ -23,8 +23,6 @@ package com.surpass.web.permissions.contorller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.entity.Message;
 import com.surpass.entity.idm.UserInfo;
@@ -57,9 +55,6 @@ public class PermissionController {
 	@Autowired
 	HistorySystemLogsService historySystemLogsService;
 
-	@Autowired
-	IdentifierGenerator identifierGenerator;
-
 	@PutMapping(value={"/update"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Permission> update(
 			@RequestBody PermissionDto dto,
@@ -84,7 +79,7 @@ public class PermissionController {
 		    			dto.roleId(),
                     resourceId,
                     currentUser.getId());
-		    newPermission.setId(identifierGenerator.nextId(newPermission).toString());
+		    newPermission.setId(newPermission.generateId());
 		    newPermissionsMap.put(newPermission.getUniqueId(), dto.appId());
 
 		    if(!dto.appId().equalsIgnoreCase(resourceId) &&

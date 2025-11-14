@@ -22,18 +22,17 @@
 
 package com.surpass.persistence.mapper;
 import java.util.List;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.idm.dto.OrgPageDto;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.idm.Organizations;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
-public interface OrganizationsMapper extends BaseMapper<Organizations> {
+@Mapper
+public interface OrganizationsMapper extends IJpaMapper<Organizations> {
 
 	List<Organizations> queryOrgs(Organizations organization);
 
 
-	Page<Organizations> pageList(Page page, @Param("Dto") OrgPageDto dto);
+	List<Organizations> queryPageResults(@Param("Dto") OrgPageDto dto);
 }

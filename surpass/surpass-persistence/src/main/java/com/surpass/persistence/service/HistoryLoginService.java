@@ -18,9 +18,9 @@
 
 package com.surpass.persistence.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.history.HistoryLogin;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface HistoryLoginService  extends IService<HistoryLogin> {
+public interface HistoryLoginService  extends IJpaService<HistoryLogin> {
 	public void insertHistory(HistoryLogin historyLogin) ;
 }

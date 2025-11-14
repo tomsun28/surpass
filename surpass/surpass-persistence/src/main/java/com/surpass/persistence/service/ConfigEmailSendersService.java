@@ -17,10 +17,9 @@
 
 
 package com.surpass.persistence.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.config.ConfigEmailSenders;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface ConfigEmailSendersService  extends IService<ConfigEmailSenders> {
+public interface ConfigEmailSendersService extends IJpaService<ConfigEmailSenders> {
 
 }

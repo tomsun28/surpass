@@ -24,15 +24,12 @@ package com.surpass.entity.config;
 
 import java.io.Serial;
 import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import java.util.Date;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.surpass.entity.BaseEntity;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 /**
  * @author 24096
@@ -40,29 +37,53 @@ import com.surpass.entity.BaseEntity;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("jbx_config_sms_provider")
-public class ConfigSmsProvider extends BaseEntity implements Serializable {
+@Table(name = "surpass_config_sms_provider")
+@Entity
+public class ConfigSmsProvider extends JpaEntity implements Serializable {
 	@Serial
     private static final long serialVersionUID = -4595539647817265938L;
 
-    @TableId(type = IdType.ASSIGN_ID)
+    @Id
+    @Column
+    @GeneratedValue
     String id;
 
+    @Column
     String provider;
 
+    @Column
     String message;
 
+    @Column
     String appKey;
 
+    @Column
     String appSecret;
 
+    @Column
     String templateId;
 
+    @Column
     String signName;
 
+    @Column
     String smsSdkAppId;
 
+    @Column
     String description;
 
+    @Column
     int status;
+
+    @Column
+    private String createdBy;
+
+    @Column
+    private Date createdDate;
+
+    @Column
+    private String modifiedBy;
+
+    @Column
+    private Date modifiedDate;
 }

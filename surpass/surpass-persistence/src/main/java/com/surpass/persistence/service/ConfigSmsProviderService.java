@@ -18,9 +18,9 @@
 
 package com.surpass.persistence.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.config.ConfigSmsProvider;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface ConfigSmsProviderService  extends IService<ConfigSmsProvider> {
+public interface ConfigSmsProviderService extends IJpaService<ConfigSmsProvider> {
 
 }

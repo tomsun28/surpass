@@ -18,17 +18,15 @@
 
 package com.surpass.persistence.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.ChangePassword;
 import com.surpass.entity.Message;
-import com.surpass.entity.dto.RegisterDto;
 import com.surpass.entity.idm.UserInfo;
-import com.surpass.entity.idm.dto.RegisterUserDto;
 import com.surpass.entity.idm.dto.UserInfoPageDto;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface UserInfoService  extends IService<UserInfo> {
-	Message<Page<UserInfo>> fetchPageResults(UserInfoPageDto dto);
+public interface UserInfoService  extends IJpaService<UserInfo> {
+	Message<JpaPageResults<UserInfo>> fetchPageResults(UserInfoPageDto dto);
 
 	boolean saveOneUser(UserInfo userInfo) ;
 
@@ -42,5 +40,5 @@ public interface UserInfoService  extends IService<UserInfo> {
 
 	boolean updateStatus(UserInfo userInfo) ;
 
-	Message<String> handleRegister(RegisterUserDto registerUserDto);
+	public void passwordEncoder(UserInfo userInfo);
 }

@@ -19,12 +19,11 @@
 package com.surpass.persistence.service;
 
 import jakarta.servlet.http.HttpServletResponse;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.ExcelImport;
 import com.surpass.entity.idm.UserInfo;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface UserInfoExcelService  extends IService<UserInfo> {
+public interface UserInfoExcelService  extends IJpaService<UserInfo> {
     public void importFromExcel(ExcelImport excelImportFile, UserInfo currentUser);
 
     public void exportToExcel(String exportType,UserInfo userInfo, HttpServletResponse response);

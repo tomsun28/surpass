@@ -23,9 +23,6 @@
 package com.surpass.web.idm.contorller;
 
 import java.util.List;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.authn.web.AuthorizationUtils;
 import com.surpass.constants.ConstsRoles;
@@ -42,6 +39,8 @@ import com.surpass.persistence.service.HistorySystemLogsService;
 import com.surpass.persistence.service.UserInfoService;
 import com.surpass.web.WebContext;
 
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
@@ -75,35 +74,39 @@ public class RoleMemberController {
 	HistorySystemLogsService historySystemLogsService;
 
 	@GetMapping(value = { "/fetch" }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Message<Page<RoleMember>> fetch(
+	public Message<JpaPageResults<RoleMember>> fetch(
 			@ParameterObject RoleMemberPageDto dto,
 			@CurrentUser UserInfo currentUser) {
 		logger.debug("fetch {}",dto);
-		LambdaQueryWrapper<RoleMember> wrapper = new LambdaQueryWrapper<>();
+		LambdaQuery<RoleMember> wrapper = new LambdaQuery<>();
 		if(AuthorizationUtils.getAuthentication().getAuthorities().contains(ConstsRoles.ROLE_MANAGER)){
 			logger.debug("Has ROLE_MANAGERS {}" ,currentUser.getId());
 			wrapper.eq(RoleMember::getGradingUserId, currentUser.getId());
 		}
-		return new Message<>(Message.SUCCESS, groupMemberService.page(dto.build(), wrapper));
+		dto.build();
+		JpaPageResults<RoleMember> page = groupMemberService.fetch(dto, wrapper);
+		return new Message<>(Message.SUCCESS, page);
 	}
 
 	@GetMapping(value = { "/memberInGroup" })
-	public Message<Page<RoleMember>> memberInGroup(@ParameterObject RoleMemberPageDto dto,
-													@CurrentUser UserInfo currentUser) {
+	public Message<JpaPageResults<RoleMember>> memberInGroup(@ParameterObject RoleMemberPageDto dto,
+															 @CurrentUser UserInfo currentUser) {
 		logger.debug("groupMember : {}",dto);
-		return new Message<>(Message.SUCCESS, groupMemberService.memberInRole(dto.build(), dto));
+		dto.build();
+
+		return new Message<>(Message.SUCCESS, groupMemberService.memberInRole(dto));
 	}
 
 	@GetMapping(value = { "/memberNotInGroup" })
-	public Message<Page<RoleMember>> memberNotInGroup(@ParameterObject RoleMemberPageDto dto,
+	public Message<JpaPageResults<RoleMember>> memberNotInGroup(@ParameterObject RoleMemberPageDto dto,
 													   @CurrentUser UserInfo currentUser) {
 
-		return new Message<>(groupMemberService.memberNotInRole(dto.build(), dto));
+		return new Message<>(groupMemberService.memberNotInRole(dto));
 	}
 
 	@GetMapping(value = { "/groupsNoMember" })
-	public Message<Page<Roles>> groupsNoMember(@ParameterObject RoleMemberPageDto dto, @CurrentUser UserInfo currentUser) {
-		return new Message<>(Message.SUCCESS, groupMemberService.rolesNoMember(dto.build(), dto));
+	public Message<JpaPageResults<Roles>> groupsNoMember(@ParameterObject RoleMemberPageDto dto, @CurrentUser UserInfo currentUser) {
+		return new Message<>(Message.SUCCESS, groupMemberService.rolesNoMember(dto));
 	}
 
 	/**
@@ -121,7 +124,7 @@ public class RoleMemberController {
 							dto.getMemberIds().get(i),
 							dto.getType());
 			newGroupMember.setId(WebContext.genId());
-			result = groupMemberService.save(newGroupMember);
+			result = groupMemberService.insert(newGroupMember);
 		}
 		if(result) {
 			return new Message<>(Message.SUCCESS);
@@ -147,7 +150,7 @@ public class RoleMemberController {
 							userInfo.getId(),
 							"USER");
 			newGroupMember.setId(WebContext.genId());
-			result = groupMemberService.save(newGroupMember);
+			result = groupMemberService.insert(newGroupMember);
 		}
 		if(result) {
 			return new Message<>(Message.SUCCESS);
@@ -158,7 +161,7 @@ public class RoleMemberController {
 	@DeleteMapping(value={"/delete"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<RoleMember> delete(@RequestParam("ids") List<String> ids,@CurrentUser UserInfo currentUser) {
 		logger.debug("-delete ids : {}" , ids);
-		if (groupMemberService.removeBatchByIds(ids)) {
+		if (groupMemberService.deleteBatch(ids)) {
 			 return new Message<>(Message.SUCCESS);
 		} else {
 			return new Message<>(Message.FAIL);

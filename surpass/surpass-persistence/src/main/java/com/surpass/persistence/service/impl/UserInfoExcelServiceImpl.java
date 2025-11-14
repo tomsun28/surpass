@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import com.surpass.persistence.service.UserInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -35,13 +36,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.surpass.constants.ConstsHttpHeader;
 import com.surpass.constants.ContentType;
@@ -56,11 +56,11 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Repository
-public class UserInfoExcelServiceImpl  extends ServiceImpl<UserInfoMapper,UserInfo> implements UserInfoExcelService {
+public class UserInfoExcelServiceImpl  extends JpaServiceImpl<UserInfoMapper,UserInfo> implements UserInfoExcelService {
 	private static final  Logger logger = LoggerFactory.getLogger(UserInfoExcelServiceImpl.class);
 
 	@Autowired
-	UserInfoServiceImpl userInfoService;
+	UserInfoService userInfoService;
 
     private UserInfo buildFromSheetRow(Row row,UserInfo currentUser) {
 		UserInfo userInfo = new UserInfo();
@@ -136,7 +136,7 @@ public class UserInfoExcelServiceImpl  extends ServiceImpl<UserInfoMapper,UserIn
                     for (UserInfo userInfo : userInfoList) {
 						//如果导入用户标识，则根据用户标识D判断是存在，进行更新和修改
 						if(org.apache.commons.lang3.StringUtils.isNotEmpty(userInfo.getId())) {
-							UserInfo temp = userInfoService.getById(userInfo.getId());
+							UserInfo temp = userInfoService.get(userInfo.getId());
 							//如果标识不存在，则进行新增
 							if (temp == null){
 								userInfoService.saveOneUser(userInfo);
@@ -144,7 +144,12 @@ public class UserInfoExcelServiceImpl  extends ServiceImpl<UserInfoMapper,UserIn
 								userInfoService.updateOneUser(userInfo);
 							}
 						} else {
-							userInfoService.saveOrUpdate(userInfo);
+							UserInfo exist = userInfoService.get(userInfo.getId());
+							if (exist == null) {
+								userInfoService.insert(userInfo);
+							} else {
+								userInfoService.update(userInfo);
+							}
 						}
 					}
                 }
@@ -160,7 +165,7 @@ public class UserInfoExcelServiceImpl  extends ServiceImpl<UserInfoMapper,UserIn
     	//判断导出模板还是导出用户还是template
 		List<UserInfo> users = null;
 		if (StringUtils.isNotEmpty(exportType) && "user".equalsIgnoreCase(exportType)) {
-			users = userInfoService.list();
+			users = userInfoService.findAll();
 		}
 		Workbook workbook = null;
 		try {

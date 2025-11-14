@@ -24,14 +24,13 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.dto.QueryGroupMembersDto;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.Roles;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
 @Mapper
-public  interface AuthzMapper extends BaseMapper<UserInfo> {
+public  interface AuthzMapper extends IJpaMapper<UserInfo> {
 
 
 	public List<Roles> queryRolesByMembers(QueryGroupMembersDto dto) ;

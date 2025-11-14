@@ -182,7 +182,7 @@ public class SessionManagerImpl implements SessionManager{
 			this.remove(sessionId);
 		}
 		//删除数据库记录
-        sessionListService.removeById(sessionList.getId());
+        sessionListService.delete(sessionList.getId());
 
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright [2025] [Surpass of copyright http://www.surpass.com]
+ * Copyright [2025] [JinBooks of copyright http://www.jinbooks.com]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,43 +21,52 @@
 package com.surpass.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.io.IOException;
-import java.io.InputStream;
-
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * .
  *
  * @author Crystal.Sea
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Log4j2
-public class ExcelImport extends BaseEntity {
-
-    /**
-	 *
-	 */
-	private static final long serialVersionUID = -2764463764570801771L;
+public class ExcelImport {
 	String id;
     @JsonIgnore
     protected MultipartFile excelFile;
     String updateExist;
     InputStream inputStream = null;
     Workbook workbook = null;
+
+    @Column
+    private String createdBy;
+
+    @Column
+    private Date createdDate;
+
+    @Column
+    private String modifiedBy;
+
+    @Column
+    private Date modifiedDate;
+
 
     public boolean isExcelNotEmpty() {
         return excelFile != null && !excelFile.isEmpty();

@@ -1,5 +1,5 @@
 /*
- * Copyright [2025] [Surpass of copyright http://www.surpass.com]
+ * Copyright [2025] [JinBooks of copyright http://www.jinbooks.com]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
 
 package com.surpass.entity.history.dto;
 
-import com.surpass.entity.PageQuery;
+import org.dromara.mybatis.jpa.entity.JpaPage;
 
 /**
  * @description:
  * @author: orangeBabu
  * @time: 2024/11/28 16:39
  */
-public class HistorySystemLogsPageDto extends PageQuery {
+public class HistorySystemLogsPageDto extends JpaPage {
 
 	/**
 	 *

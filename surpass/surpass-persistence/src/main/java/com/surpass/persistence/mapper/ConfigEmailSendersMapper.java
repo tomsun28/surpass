@@ -21,9 +21,11 @@
 
 
 package com.surpass.persistence.mapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.config.ConfigEmailSenders;
+import org.apache.ibatis.annotations.Mapper;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
-public interface ConfigEmailSendersMapper extends BaseMapper<ConfigEmailSenders> {
+@Mapper
+public interface ConfigEmailSendersMapper extends IJpaMapper<ConfigEmailSenders> {
 
 }

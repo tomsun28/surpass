@@ -23,11 +23,6 @@
 package com.surpass.web.permissions.contorller;
 
 import java.util.List;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.constants.ConstsAct;
 import com.surpass.constants.ConstsActResult;
@@ -42,6 +37,8 @@ import com.surpass.persistence.service.HistorySystemLogsService;
 import com.surpass.persistence.service.ResourcesService;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
@@ -71,11 +68,8 @@ public class ResourcesController {
 	@Autowired
 	HistorySystemLogsService historySystemLogsService;
 
-	@Autowired
-	IdentifierGenerator identifierGenerator;
-
 	@GetMapping(value = { "/fetch" }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Message<Page<Resources>> fetch(@ParameterObject ResourcesPageDto dto, @CurrentUser UserInfo currentUser) {
+	public Message<JpaPageResults<Resources>> fetch(@ParameterObject ResourcesPageDto dto, @CurrentUser UserInfo currentUser) {
 		logger.debug("fetch {}" , dto);
 		return resourcesService.pageList(dto);
 	}
@@ -83,8 +77,8 @@ public class ResourcesController {
 	@GetMapping(value={"/query"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<List<Resources>>  query(@ParameterObject ResourcesPageDto dto,@CurrentUser UserInfo currentUser) {
 		logger.debug("-query  {}" , dto);
-		LambdaQueryWrapper<Resources> wrapper = new LambdaQueryWrapper<>();
-		List<Resources>  resourceList = resourcesService.list(wrapper);
+		LambdaQuery<Resources> wrapper = new LambdaQuery<>();
+		List<Resources>  resourceList = resourcesService.query(wrapper);
 		if (resourceList != null) {
 			 return new Message<>(Message.SUCCESS,resourceList);
 		} else {
@@ -94,18 +88,18 @@ public class ResourcesController {
 
 	@GetMapping(value = { "/get/{id}" }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Resources> get(@PathVariable("id") String id) {
-		Resources resource=resourcesService.getById(id);
+		Resources resource=resourcesService.get(id);
 		return new Message<>(resource);
 	}
 
 	@PostMapping(value={"/add"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Resources> insert(@RequestBody Resources resource,@CurrentUser UserInfo currentUser) {
 		logger.debug("-Add  : {}" , resource);
-		resource.setId(identifierGenerator.nextId(resource).toString());
+		resource.setId(resource.generateId());
 		if(StringUtils.isBlank(resource.getPermission())) {
 			resource.setPermission(resource.getId());
 		}
-		if (resourcesService.save(resource)) {
+		if (resourcesService.insert(resource)) {
 			historySystemLogsService.log(
 					ConstsEntryType.RESOURCE,
 					resource,
@@ -121,7 +115,7 @@ public class ResourcesController {
 	@PutMapping(value={"/update"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Resources> update(@RequestBody  Resources resource,@CurrentUser UserInfo currentUser) {
 		logger.debug("-update  : {}" , resource);
-		if (resourcesService.updateById(resource)) {
+		if (resourcesService.update(resource)) {
 			historySystemLogsService.log(
 					ConstsEntryType.RESOURCE,
 					resource,
@@ -137,7 +131,7 @@ public class ResourcesController {
 	@DeleteMapping(value={"/delete"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Resources> delete(@RequestParam("ids") List<String> ids,@CurrentUser UserInfo currentUser) {
 		logger.debug("-delete  ids : {} " , ids);
-		if (resourcesService.removeByIds(ids)) {
+		if (resourcesService.deleteBatch(ids)) {
 			historySystemLogsService.log(
 					ConstsEntryType.RESOURCE,
 					ids,
@@ -153,7 +147,7 @@ public class ResourcesController {
 	@GetMapping(value={"/tree"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<TreeAttributes> tree(@ModelAttribute Resources resource,@CurrentUser UserInfo currentUser) {
 		logger.debug("-query  {}" , resource);
-		List<Resources>  resourceList = resourcesService.list(Wrappers.<Resources>lambdaQuery());
+		List<Resources>  resourceList = resourcesService.query(new LambdaQuery<>());
 		if (resourceList != null) {
 			TreeAttributes treeAttributes = new TreeAttributes();
 			int nodeCount = 0;

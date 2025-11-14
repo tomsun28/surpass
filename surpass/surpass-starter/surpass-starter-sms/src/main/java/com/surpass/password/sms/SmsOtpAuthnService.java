@@ -30,8 +30,6 @@ import com.surpass.password.onetimepwd.token.RedisOtpTokenStore;
 import com.surpass.password.sms.impl.SmsOtpAuthnYunxin;
 import com.surpass.password.sms.impl.SmsOtpAuthnAliyun;
 import com.surpass.password.sms.impl.SmsOtpAuthnTencentCloud;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.surpass.configuration.EmailConfig;
@@ -43,6 +41,9 @@ import com.surpass.entity.config.ConfigEmailSenders;
 import com.surpass.entity.config.ConfigSmsProvider;
 import com.surpass.persistence.service.ConfigEmailSendersService;
 import com.surpass.persistence.service.ConfigSmsProviderService;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
+import org.dromara.mybatis.jpa.query.OrderBy;
+import org.dromara.mybatis.jpa.query.OrderType;
 
 public class SmsOtpAuthnService {
 
@@ -71,11 +72,10 @@ public class SmsOtpAuthnService {
     	AbstractOtpAuthn smsOtpAuthn = smsOtpAuthnStore.getIfPresent(ConstsConfig.CONSOLE_CONFIG_SMS_SENDERS);
     	if(smsOtpAuthn == null) {
 
-    		LambdaQueryWrapper<ConfigSmsProvider> queryWrapper = new LambdaQueryWrapper<>();
+    		LambdaQuery<ConfigSmsProvider> queryWrapper = new LambdaQuery<>();
 			queryWrapper.eq(ConfigSmsProvider::getStatus, ConstsStatus.ACTIVE)
-					.orderByDesc(ConfigSmsProvider::getModifiedDate);
-    		ConfigSmsProvider configSmsProvider = smsProviderService.getOne(queryWrapper, false);
-
+					.orderBy(ConfigSmsProvider::getModifiedDate, OrderBy.DESC.getOrder());
+    		ConfigSmsProvider configSmsProvider = smsProviderService.get(queryWrapper);
     		if(configSmsProvider != null ) {
     			if(configSmsProvider.getProvider().equalsIgnoreCase("aliyun")) {
     				smsOtpAuthn = new SmsOtpAuthnAliyun(
@@ -114,10 +114,10 @@ public class SmsOtpAuthnService {
 		AbstractOtpAuthn smsOtpAuthn = smsOtpAuthnStore.getIfPresent(ConstsConfig.CONSOLE_CONFIG_SMS_SENDERS);
     	if(smsOtpAuthn == null) {
 
-    		LambdaQueryWrapper<ConfigEmailSenders> queryWrapper = new LambdaQueryWrapper<>();
+    		LambdaQuery<ConfigEmailSenders> queryWrapper = new LambdaQuery<>();
     		queryWrapper.eq(ConfigEmailSenders::getStatus, ConstsStatus.ACTIVE)
-					.orderByDesc(ConfigEmailSenders::getModifiedDate);
-			ConfigEmailSenders configEmailSender = emailSendersService.getOne(queryWrapper, false);
+					.orderBy(ConfigEmailSenders::getModifiedDate, OrderBy.DESC.getOrder());
+			ConfigEmailSenders configEmailSender = emailSendersService.get(queryWrapper);
 			String credentials = PasswordReciprocal.getInstance().decoder(configEmailSender.getCredentials());
 			EmailConfig emailConfig =
 							new EmailConfig(

@@ -37,6 +37,9 @@ bootJar {
 }
 
 dependencies {
+	//local jars
+	implementation fileTree(dir: '../surpass-lib', include: ['*.jar'])
+
 	implementation project(":surpass-commons:surpass-common")
 	implementation project(":surpass-commons:surpass-core")
 	implementation project(":surpass-commons:surpass-crypto")

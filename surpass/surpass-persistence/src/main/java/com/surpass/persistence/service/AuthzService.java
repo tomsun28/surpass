@@ -20,13 +20,12 @@ package com.surpass.persistence.service;
 
 import java.util.List;
 
+import org.dromara.mybatis.jpa.service.IJpaService;
 import org.springframework.security.core.GrantedAuthority;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.Roles;
 
-public interface AuthzService  extends IService<UserInfo> {
+public interface AuthzService  extends IJpaService<UserInfo> {
 	public List<Roles> queryRoles(UserInfo userInfo);
 
 	public List<Roles> queryRolesByMembers(UserInfo userInfo);

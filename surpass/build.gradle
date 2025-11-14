@@ -216,6 +216,7 @@ subprojects {
         implementation group: 'jakarta.transaction', name: 'jakarta.transaction-api', version: "${jakartatransactionapiVersion}"
         implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: "${jakartavalidationapiVersion}"
         implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: "${jakartaxmlbindapiVersion}"
+        implementation group: 'jakarta.persistence', name: 'jakarta.persistence-api', version: "${jakartapersistenceapiVersion}"
         //mail
         implementation group: 'org.eclipse.angus', name: 'jakarta.mail', version: "${angusjakartamailVersion}"
         implementation group: 'org.eclipse.angus', name: 'angus-activation', version: "${angusactivationVersion}"
@@ -260,14 +261,6 @@ subprojects {
         //mybatis
         implementation group: 'org.mybatis', name: 'mybatis', version: "${mybatisVersion}"
         implementation group: 'org.mybatis', name: 'mybatis-spring', version: "${mybatisspringVersion}"
-        //mybatis-plus
-        implementation group: 'com.baomidou', name: 'mybatis-plus-core', version: "${mybatisplusVersion}"
-        implementation group: 'com.baomidou', name: 'mybatis-plus-annotation', version: "${mybatisplusVersion}"
-        implementation group: 'com.baomidou', name: 'mybatis-plus-extension', version: "${mybatisplusVersion}"
-        implementation group: 'com.baomidou', name: 'mybatis-plus-jsqlparser-common', version: "${mybatisplusVersion}"
-        implementation group: 'com.baomidou', name: 'mybatis-plus-jsqlparser', version: "${mybatisplusVersion}"
-        implementation group: 'com.baomidou', name: 'mybatis-plus-spring', version: "${mybatisplusVersion}"
-        implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: "${mybatisplusVersion}"
         implementation group: 'com.github.jsqlparser', name: 'jsqlparser', version: "${jsqlparserVersion}"
         //hibernate
         implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: "${hibernateVersion}"
@@ -355,7 +348,10 @@ subprojects {
         implementation group: 'com.github.xiaoymin', name: 'knife4j-core', version: "${knife4jVersion}"
         implementation group: 'com.github.xiaoymin', name: 'knife4j-openapi3-ui', version: "${knife4jVersion}"
         implementation group: 'com.github.xiaoymin', name: 'knife4j-openapi3-jakarta-spring-boot-starter', version: "${knife4jVersion}"
-        
+
+        //mybatis-jpa
+        implementation group: 'org.dromara.mybatis-jpa-extra', name: 'mybatis-jpa-extra', version: "${mybatisjpaextraVersion}"
+        implementation group: 'org.dromara.mybatis-jpa-extra', name: 'mybatis-jpa-extra-spring-boot-starter', version: "${mybatisjpaextraVersion}"
     }
 
     jar {

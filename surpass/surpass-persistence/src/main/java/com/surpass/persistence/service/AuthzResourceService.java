@@ -20,13 +20,12 @@ package com.surpass.persistence.service;
 
 import java.util.List;
 import java.util.Set;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.dto.QueryAppResourceDto;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.Resources;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface AuthzResourceService  extends IService<UserInfo> {
+public interface AuthzResourceService  extends IJpaService<UserInfo> {
 
 	public Set<Resources> getResourcesBySubject(UserInfo user);
 

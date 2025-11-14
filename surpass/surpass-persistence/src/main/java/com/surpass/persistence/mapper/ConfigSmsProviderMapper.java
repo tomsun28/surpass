@@ -21,9 +21,11 @@
 
 
 package com.surpass.persistence.mapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.config.ConfigSmsProvider;
+import org.apache.ibatis.annotations.Mapper;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
-public interface ConfigSmsProviderMapper extends BaseMapper<ConfigSmsProvider> {
+@Mapper
+public interface ConfigSmsProviderMapper extends IJpaMapper<ConfigSmsProvider> {
 
 }

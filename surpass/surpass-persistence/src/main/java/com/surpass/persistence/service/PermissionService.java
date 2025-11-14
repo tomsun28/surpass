@@ -17,13 +17,12 @@
 
 
 package com.surpass.persistence.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.permissions.Permission;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
 import java.util.List;
 
-public interface PermissionService  extends IService<Permission> {
+public interface PermissionService  extends IJpaService<Permission> {
     public boolean insertGroupPrivileges(List<Permission> permissionsList) ;
 
     public boolean deleteGroupPrivileges(List<Permission> permissionsList) ;

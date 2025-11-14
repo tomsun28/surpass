@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
@@ -37,8 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.constants.ConstsStatus;
 import com.surpass.entity.ChangePassword;
 import com.surpass.entity.access.SessionList;
@@ -50,7 +49,6 @@ import com.surpass.persistence.mapper.LoginMapper;
 import com.surpass.persistence.service.AuthzResourceService;
 import com.surpass.persistence.service.AuthzService;
 import com.surpass.persistence.service.ConfigLoginPolicyService;
-import com.surpass.persistence.service.FileStorageService;
 import com.surpass.persistence.service.HistoryLoginService;
 import com.surpass.persistence.service.LoginService;
 import com.surpass.persistence.service.SessionListService;
@@ -60,7 +58,7 @@ import com.surpass.web.WebConstants;
 import com.surpass.web.WebContext;
 
 @Repository
-public class LoginServiceImpl  extends ServiceImpl<LoginMapper,UserInfo> implements LoginService {
+public class LoginServiceImpl  extends JpaServiceImpl<LoginMapper,UserInfo> implements LoginService {
 	private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
 	@Autowired
@@ -77,9 +75,6 @@ public class LoginServiceImpl  extends ServiceImpl<LoginMapper,UserInfo> impleme
 
 	@Autowired
     SessionListService sessionListService;
-
-    @Autowired
-    FileStorageService fileStorageService;
 
     @Autowired
     AuthzService authzService;
@@ -273,7 +268,7 @@ public class LoginServiceImpl  extends ServiceImpl<LoginMapper,UserInfo> impleme
 
     public void insertHistory(HistoryLogin historyLogin) {
     	historyLogin.setOperateTime(new Date());
-    	this.historyLoginService.save(historyLogin);
+    	this.historyLoginService.insert(historyLogin);
     	//insert online session
     	if(WebConstants.LOGIN_RESULT.SUCCESS.equals(historyLogin.getMessage())) {
 	       SessionList onlineSession = new SessionList();

@@ -26,11 +26,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.access.SessionList;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.persistence.mapper.SessionListMapper;
@@ -43,7 +42,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class SessionListServiceImpl  extends ServiceImpl<SessionListMapper,SessionList> implements SessionListService {
+public class SessionListServiceImpl extends JpaServiceImpl<SessionListMapper,SessionList> implements SessionListService {
 	 private static Logger logger = LoggerFactory.getLogger(SessionListServiceImpl.class);
 
 	@Autowired
@@ -99,7 +98,7 @@ public class SessionListServiceImpl  extends ServiceImpl<SessionListMapper,Sessi
 	    public void run() {
 			logger.debug(" sessionList {}" , sessionList);
 			sessionList.setOperateTime(new Date());
-			service.save(sessionList);
+			service.insert(sessionList);
 		}
 	}
 

@@ -22,8 +22,8 @@
 
 package com.surpass.web.security.contorller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +51,9 @@ public class ConfigEmailSendersController {
 
 	@GetMapping(value={"/get"})
 	public Message<ConfigEmailSenders> get(@CurrentUser UserInfo currentUser){
-		LambdaQueryWrapper<ConfigEmailSenders> wrapper = new LambdaQueryWrapper<>();
-		wrapper.isNotNull(ConfigEmailSenders::getId);
-		ConfigEmailSenders emailSenders = configEmailSendersService.getById(wrapper);
+		LambdaQuery<ConfigEmailSenders> wrapper = new LambdaQuery<>();
+		wrapper.notNull(ConfigEmailSenders::getId);
+		ConfigEmailSenders emailSenders = configEmailSendersService.get(wrapper);
 		if(emailSenders != null && StringUtils.isNotBlank(emailSenders.getCredentials())) {
 			emailSenders.setCredentials(PasswordReciprocal.getInstance().
 					decoder(emailSenders.getCredentials()));
@@ -70,13 +70,13 @@ public class ConfigEmailSendersController {
 		logger.debug("update emailSenders : {}",emailSenders);
 		emailSenders.setCredentials(PasswordReciprocal.getInstance().encode(emailSenders.getCredentials()));
 		if(StringUtils.isBlank(emailSenders.getId())) {
-			if(configEmailSendersService.save(emailSenders)) {
+			if(configEmailSendersService.insert(emailSenders)) {
 				return new Message<>(Message.SUCCESS);
 			}else {
 				return new Message<>(Message.ERROR);
 			}
 		}else {
-			if(configEmailSendersService.updateById(emailSenders)) {
+			if(configEmailSendersService.update(emailSenders)) {
 				return new Message<>(Message.SUCCESS);
 			}else {
 				return new Message<>(Message.ERROR);

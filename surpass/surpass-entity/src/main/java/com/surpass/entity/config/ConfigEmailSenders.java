@@ -24,16 +24,12 @@ package com.surpass.entity.config;
 
 import java.io.Serial;
 import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import java.util.Date;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.surpass.entity.BaseEntity;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 /**
  * @author 24096
@@ -41,33 +37,57 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("jbx_config_email_senders")
-public class ConfigEmailSenders  extends BaseEntity implements Serializable {
+@Table(name = "surpass_config_email_senders")
+@Entity
+public class ConfigEmailSenders extends JpaEntity implements Serializable {
 
 	@Serial
     private static final long serialVersionUID = 5564960495591334956L;
 
-    @TableId(type = IdType.ASSIGN_ID)
+    @Id
+    @Column
+    @GeneratedValue
     private String id;
 
+    @Column
     private String account;
 
+    @Column
     private String credentials;
 
+    @Column
     private String smtpHost;
 
+    @Column
     private Integer port;
 
+    @Column
     private int sslSwitch;
 
+    @Column
     private String sender;
 
+    @Column
     private String encoding;
 
+    @Column
     private String protocol;
 
+    @Column
     private int status;
 
+    @Column
     private String description;
 
+    @Column
+    private String createdBy;
+
+    @Column
+    private Date createdDate;
+
+    @Column
+    private String modifiedBy;
+
+    @Column
+    private Date modifiedDate;
 }

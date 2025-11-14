@@ -25,16 +25,12 @@ package com.surpass.entity.history;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.surpass.entity.client.ClientResolve;
 import com.surpass.entity.client.ClientUserAgent;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 
 /**
@@ -44,8 +40,9 @@ import com.surpass.entity.client.ClientUserAgent;
 
 @Data
 @NoArgsConstructor
-@TableName("surpass_history_login")
-public class HistoryLogin implements Serializable{
+@Table(name = "surpass_history_login")
+@Entity
+public class HistoryLogin extends JpaEntity implements Serializable{
 	@Serial
 	private static final long serialVersionUID = -1321470643357719383L;
 
@@ -54,59 +51,77 @@ public class HistoryLogin implements Serializable{
 		public static final Integer LOGOUT 	= 2;
 	}
 
-	@TableId(type = IdType.ASSIGN_ID)
+	@Id
+	@Column
+	@GeneratedValue
 	String id;
 
+	@Column
 	Integer category = CATEGORY.LOGIN;
 
+	@Column
 	String sessionId;
 
+	@Column
 	String style;
 
+	@Column
 	String userId;
 
+	@Column
 	String username;
 
+	@Column
 	String displayName;
 
+	@Column
 	String loginType;
 
+	@Column
 	String message;
 
+	@Column
 	String code;
 
+	@Column
 	String provider;
 
+	@Column
 	String ipAddr;
 
+	@Column
 	String country;
 
+	@Column
 	String province;
 
+	@Column
 	String city;
 
+	@Column
 	String location;
 
+	@Column
 	String browser;
 
+	@Column
 	String platform;
 
+	@Column
 	String deviceId;
 
+	@Column
 	String application;
 
+	@Column
 	Date operateTime;
 
-	@TableField(exist=false)
 	private String instName;
 
-	@TableField(exist=false)
 	Date startDate;
 
-	@TableField(exist=false)
 	Date endDate;
 
-	@TableField(exist=false)
 	String gradingUserId;
 
 	public void setClientResolve(ClientResolve clientResolve) {

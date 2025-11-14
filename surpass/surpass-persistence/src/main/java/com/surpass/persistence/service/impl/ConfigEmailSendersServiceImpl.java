@@ -22,17 +22,17 @@
 
 package com.surpass.persistence.service.impl;
 
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.config.ConfigEmailSenders;
 import com.surpass.persistence.mapper.ConfigEmailSendersMapper;
 import com.surpass.persistence.service.ConfigEmailSendersService;
 
 
 @Repository
-public class ConfigEmailSendersServiceImpl  extends ServiceImpl<ConfigEmailSendersMapper,ConfigEmailSenders> implements ConfigEmailSendersService {
+public class ConfigEmailSendersServiceImpl extends JpaServiceImpl<ConfigEmailSendersMapper,ConfigEmailSenders> implements ConfigEmailSendersService {
 
 	@Autowired
 	ConfigEmailSendersMapper configEmailSendersMapper;

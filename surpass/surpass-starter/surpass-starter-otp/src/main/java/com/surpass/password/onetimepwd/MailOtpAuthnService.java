@@ -26,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.surpass.password.onetimepwd.impl.MailOtpAuthn;
 import com.surpass.password.onetimepwd.token.RedisOtpTokenStore;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.surpass.configuration.EmailConfig;
@@ -38,6 +36,9 @@ import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.entity.config.ConfigEmailSenders;
 import com.surpass.persistence.service.ConfigEmailSendersService;
 import com.surpass.persistence.service.ConfigSmsProviderService;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
+import org.dromara.mybatis.jpa.query.OrderBy;
+import org.dromara.mybatis.jpa.query.OrderType;
 
 public class MailOtpAuthnService {
 
@@ -73,10 +74,10 @@ public class MailOtpAuthnService {
 	}
 
 	MailOtpAuthn builderMailOtpAuthn(){
-		LambdaQueryWrapper<ConfigEmailSenders> queryWrapper = new LambdaQueryWrapper<>();
+		LambdaQuery<ConfigEmailSenders> queryWrapper = new LambdaQuery<>();
 		queryWrapper.eq(ConfigEmailSenders::getStatus, ConstsStatus.ACTIVE)
-				.orderByDesc(ConfigEmailSenders::getModifiedDate);
-		ConfigEmailSenders configEmailSender = emailSendersService.getOne(queryWrapper, false);
+				.orderBy(ConfigEmailSenders::getModifiedDate, OrderBy.DESC.getOrder());
+		ConfigEmailSenders configEmailSender = emailSendersService.get(queryWrapper);
 
 		String credentials = PasswordReciprocal.getInstance().decoder(configEmailSender.getCredentials());
 		EmailConfig emailConfig = new EmailConfig(

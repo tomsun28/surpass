@@ -17,11 +17,9 @@
 
 
 package com.surpass.entity.permissions.dto;
-
-import com.surpass.entity.PageQuery;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.dromara.mybatis.jpa.entity.JpaPage;
 
 /**
  * @description:
@@ -31,7 +29,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class RoleMemberPageDto extends PageQuery {
+public class RoleMemberPageDto extends JpaPage {
 
     /**
 	 *

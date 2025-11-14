@@ -25,14 +25,11 @@ package com.surpass.entity.access;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import com.baomidou.mybatisplus.annotation.TableName;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 
 /**
@@ -40,62 +37,80 @@ import com.baomidou.mybatisplus.annotation.TableName;
  *
  */
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("surpass_session_list")
-public class SessionList implements Serializable{
+@Table(name = "surpass_session_list")
+@Entity
+public class SessionList extends JpaEntity implements Serializable {
 	@Serial
 	private static final long serialVersionUID = -1321470643357719383L;
 
-	@TableId(type = IdType.ASSIGN_ID)
-	String id;
+	@Id
+	@Column
+	@GeneratedValue
+	private String id;
 
+	@Column
 	String sessionId;
 
+	@Column
 	String style;
 
+	@Column
 	String userId;
 
+	@Column
 	String username;
 
+	@Column
 	String displayName;
 
+	@Column
 	String loginType;
 
+	@Column
 	String message;
 
+	@Column
 	String code;
 
+	@Column
 	String provider;
 
+	@Column
 	String ipAddr;
 
+	@Column
 	String country;
 
+	@Column
 	String province;
 
+	@Column
 	String city;
 
+	@Column
 	String location;
 
+	@Column
 	String browser;
 
+	@Column
 	String platform;
 
+	@Column
 	String application;
 
+	@Column
 	Date operateTime;
 
-	@TableField(exist = false)
 	private String instName;
 
-	@TableField(exist = false)
 	String startDate;
 
-	@TableField(exist = false)
 	String endDate;
 
-	@TableField(exist = false)
 	String gradingUserId;
 
 }

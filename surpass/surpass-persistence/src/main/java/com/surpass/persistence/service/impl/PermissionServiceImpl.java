@@ -24,18 +24,17 @@ package com.surpass.persistence.service.impl;
 
 import java.util.List;
 
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.permissions.Permission;
 import com.surpass.persistence.mapper.PermissionMapper;
 import com.surpass.persistence.service.PermissionService;
 
 @Repository
-public class PermissionServiceImpl  extends ServiceImpl<PermissionMapper,Permission> implements PermissionService {
+public class PermissionServiceImpl extends JpaServiceImpl<PermissionMapper,Permission> implements PermissionService {
 	static final  Logger logger = LoggerFactory.getLogger(PermissionServiceImpl.class);
 
 	@Autowired

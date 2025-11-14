@@ -24,11 +24,10 @@ package com.surpass.persistence.service.impl;
 
 import java.util.Date;
 
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.history.HistoryLogin;
 import com.surpass.persistence.mapper.HistoryLoginMapper;
 import com.surpass.persistence.service.HistoryLoginService;
@@ -37,7 +36,7 @@ import com.surpass.web.WebContext;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HistoryLoginServiceImpl  extends ServiceImpl<HistoryLoginMapper,HistoryLogin> implements HistoryLoginService {
+public class HistoryLoginServiceImpl  extends JpaServiceImpl<HistoryLoginMapper,HistoryLogin> implements HistoryLoginService {
 	private static Logger logger = LoggerFactory.getLogger(HistoryLoginServiceImpl.class);
 
 	@Autowired
@@ -70,7 +69,7 @@ public class HistoryLoginServiceImpl  extends ServiceImpl<HistoryLoginMapper,His
 	    public void run() {
 			logger.debug(" historyLogin {}" , historyLogin);
 			historyLogin.setOperateTime(new Date());
-			service.save(historyLogin);
+			service.insert(historyLogin);
 		}
 	}
 

@@ -27,15 +27,15 @@ package com.surpass.persistence.mapper;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.permissions.Permission;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
 /**
  * @author Crystal.sea
  *
  */
 
-public  interface PermissionMapper extends BaseMapper<Permission> {
+public  interface PermissionMapper extends IJpaMapper<Permission> {
 
     public int insertPermissions(List<Permission> permissionList);
 

@@ -17,18 +17,12 @@
 
 
 package com.surpass.persistence.service;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.Institutions;
-import com.surpass.entity.Message;
 import com.surpass.entity.dto.InstitutionsPageDto;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-import java.awt.print.Book;
 
 
-public interface InstitutionsService extends IService<Institutions> {
+public interface InstitutionsService extends IJpaService<Institutions> {
 	Institutions getByInstIdOrDomain(String instIdOrDomain);
-
-	Page<Institutions> fetch(InstitutionsPageDto dto);
 }

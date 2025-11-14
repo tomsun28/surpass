@@ -21,10 +21,6 @@
 package com.surpass.web.idm.contorller;
 
 import java.util.List;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.authn.web.AuthorizationUtils;
 import com.surpass.constants.ConstsAct;
@@ -43,6 +39,8 @@ import com.surpass.validate.AddGroup;
 import com.surpass.validate.EditGroup;
 
 import org.dromara.hutool.core.tree.MapTree;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
@@ -77,19 +75,16 @@ public class OrganizationsController {
     @Autowired
     HistorySystemLogsService historySystemLogsService;
 
-    @Autowired
-    IdentifierGenerator identifierGenerator;
-
     @GetMapping(value = {"/fetch"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Message<Page<Organizations>> fetch(@ParameterObject OrgPageDto dto, @CurrentUser UserInfo currentUser) {
+    public Message<JpaPageResults<Organizations>> fetch(@ParameterObject OrgPageDto dto, @CurrentUser UserInfo currentUser) {
         return organizationsService.pageList(dto);
     }
 
     @GetMapping(value = {"/query"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public Message<List<Organizations>> query(@ModelAttribute Organizations org, @CurrentUser UserInfo currentUser) {
         logger.debug("-query  {}", org);
-        LambdaQueryWrapper<Organizations> wrapper = new LambdaQueryWrapper<>();
-        List<Organizations> orgList = organizationsService.list(wrapper);
+        LambdaQuery<Organizations> wrapper = new LambdaQuery<>();
+        List<Organizations> orgList = organizationsService.query(wrapper);
         if (orgList != null) {
             return new Message<>(Message.SUCCESS, orgList);
         } else {
@@ -99,7 +94,7 @@ public class OrganizationsController {
 
     @GetMapping(value = {"/get/{id}"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public Message<Organizations> get(@PathVariable("id") String id) {
-        Organizations org = organizationsService.getById(id);
+        Organizations org = organizationsService.get(id);
         return new Message<>(org);
     }
 
@@ -141,7 +136,7 @@ public class OrganizationsController {
     @DeleteMapping(value = {"/delete"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public Message<Organizations> delete(@RequestParam("ids") List<String> ids, @CurrentUser UserInfo currentUser) {
         logger.debug("-delete  ids : {} ", ids);
-        if (organizationsService.removeByIds(ids)) {
+        if (organizationsService.deleteBatch(ids)) {
             historySystemLogsService.log(
                     ConstsEntryType.ORGANIZATION,
                     ids,

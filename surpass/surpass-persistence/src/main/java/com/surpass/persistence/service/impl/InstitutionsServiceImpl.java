@@ -25,17 +25,10 @@ package com.surpass.persistence.service.impl;
 import java.awt.print.Book;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.surpass.entity.Message;
-import com.surpass.entity.dto.InstitutionsPageDto;
-import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.surpass.entity.Institutions;
@@ -46,7 +39,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class InstitutionsServiceImpl extends ServiceImpl<InstitutionsMapper,Institutions> implements InstitutionsService {
+public class InstitutionsServiceImpl extends JpaServiceImpl<InstitutionsMapper,Institutions> implements InstitutionsService {
 	private static final Logger logger = LoggerFactory.getLogger(InstitutionsServiceImpl.class);
 
 	@Autowired
@@ -83,9 +76,4 @@ public class InstitutionsServiceImpl extends ServiceImpl<InstitutionsMapper,Inst
 	        }
 		 return inst;
 	 }
-
-	@Override
-	public Page<Institutions> fetch(InstitutionsPageDto dto) {
-        return institutionsMapper.fetch(dto.build(), dto);
-	}
 }

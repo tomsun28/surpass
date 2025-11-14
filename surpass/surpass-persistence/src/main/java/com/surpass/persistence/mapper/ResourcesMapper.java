@@ -26,21 +26,19 @@
 package com.surpass.persistence.mapper;
 
 import java.util.List;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.permissions.Resources;
 import com.surpass.entity.permissions.dto.ResourcesPageDto;
 import org.apache.ibatis.annotations.Param;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
 /**
  * @author Crystal.sea
  *
  */
 
-public  interface ResourcesMapper extends BaseMapper<Resources> {
+public  interface ResourcesMapper extends IJpaMapper<Resources> {
 
 	public List<Resources> queryResourcesTree(Resources resource);
 
-	Page<Resources> pageList(Page page, @Param("Dto") ResourcesPageDto dto);
+	List<Resources> pageList(@Param("Dto") ResourcesPageDto dto);
 }

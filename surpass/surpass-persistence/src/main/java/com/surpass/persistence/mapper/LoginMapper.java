@@ -25,19 +25,20 @@
  */
 package com.surpass.persistence.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.idm.UserInfo;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
 /**
  * @author Crystal.sea
  *
  */
-
-public  interface LoginMapper extends BaseMapper<UserInfo> {
+@Mapper
+public  interface LoginMapper extends IJpaMapper<UserInfo> {
 
 	@Select("select * from  surpass_userinfo where  id = #{id} and  deleted = 'n' ")
 	public UserInfo findById(@Param ("id") String id ) ;

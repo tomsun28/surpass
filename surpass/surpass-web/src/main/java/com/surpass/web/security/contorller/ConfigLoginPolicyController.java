@@ -57,7 +57,7 @@ public class ConfigLoginPolicyController {
 	@PutMapping(value={"/update"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<ConfigLoginPolicy> update(@Valid @RequestBody ConfigLoginPolicy configLoginPolicy,@CurrentUser UserInfo currentUser) {
 		logger.debug("updateRole configLoginPolicy : {}" ,configLoginPolicy);
-		if(configLoginPolicyService.updateById(configLoginPolicy)) {
+		if(configLoginPolicyService.update(configLoginPolicy)) {
 			return new Message<>(Message.SUCCESS);
 		} else {
 			return new Message<>(Message.ERROR);

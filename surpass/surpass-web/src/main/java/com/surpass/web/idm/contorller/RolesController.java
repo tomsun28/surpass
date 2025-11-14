@@ -24,10 +24,6 @@ package com.surpass.web.idm.contorller;
 
 import java.util.Arrays;
 import java.util.List;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.constants.ConstsAct;
 import com.surpass.constants.ConstsActResult;
@@ -43,10 +39,13 @@ import com.surpass.validate.EditGroup;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -72,27 +71,25 @@ public class RolesController {
 	@Autowired
 	HistorySystemLogsService historySystemLogsService;
 
-	@Autowired
-	IdentifierGenerator identifierGenerator;
-
 	@GetMapping(value = { "/fetch" }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	public Message<Page<Roles>> fetch(
+	public Message<JpaPageResults<Roles>> fetch(
 			@ParameterObject RolesPageDto dto,
 			@CurrentUser UserInfo currentUser) {
 
-		LambdaQueryWrapper<Roles> wrapper = new LambdaQueryWrapper<>();
+		LambdaQuery<Roles> wrapper = new LambdaQuery<>();
 
 		if (StringUtils.isNotEmpty(dto.getRoleName())) {
 			wrapper.like(Roles::getRoleName, dto.getRoleName());
 		}
-		return new Message<>(Message.SUCCESS, groupsService.page(dto.build(), wrapper));
+		dto.build();
+		return new Message<>(Message.SUCCESS, groupsService.fetch(dto, wrapper));
 	}
 
 	@GetMapping(value={"/query"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Roles> query(@ModelAttribute Roles group,@CurrentUser UserInfo currentUser) {
 		logger.debug("-query  : {}" , group);
-		LambdaQueryWrapper<Roles> wrapper = new LambdaQueryWrapper<>();
-		if (ObjectUtils.isNotEmpty(groupsService.list(wrapper))) {
+		LambdaQuery<Roles> wrapper = new LambdaQuery<>();
+		if (ObjectUtils.isNotEmpty(groupsService.query(wrapper))) {
 			 return new Message<>(Message.SUCCESS);
 		} else {
 			 return new Message<>(Message.FAIL);
@@ -102,19 +99,19 @@ public class RolesController {
 
 	@GetMapping(value = { "/get/{id}" }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Roles> get(@PathVariable("id") String id,@CurrentUser UserInfo currentUser) {
-		Roles group = groupsService.getById(id);
+		Roles group = groupsService.get(id);
 		return new Message<>(group);
 	}
 
 	@PostMapping(value={"/add"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<Roles> insert(@Validated(value = AddGroup.class) @RequestBody Roles group, @CurrentUser UserInfo currentUser) {
 		logger.debug("-Add  : {}" , group);
-		group.setId(identifierGenerator.nextId("groups").toString());
+		group.setId(group.generateId());
 		if(StringUtils.isBlank(group.getRoleCode())) {
 			group.setRoleCode(group.getId());
 		}
 		group.setCreatedBy(currentUser.getId());
-		if (groupsService.save(group)) {
+		if (groupsService.insert(group)) {
 			groupsService.refreshDynamicRoles(group);
 		    historySystemLogsService.log(
 					ConstsEntryType.ROLE,
@@ -135,7 +132,7 @@ public class RolesController {
 			group.setDefaultAllUser();
 		}
 		group.setModifiedBy(currentUser.getId());
-		if (groupsService.updateById(group)) {
+		if (groupsService.update(group)) {
 			groupsService.refreshDynamicRoles(group);
 		    historySystemLogsService.log(
 					ConstsEntryType.ROLE,
@@ -153,7 +150,7 @@ public class RolesController {
 	public Message<Roles> delete(@RequestParam("ids") List<String> ids,@CurrentUser UserInfo currentUser) {
 		logger.debug("-delete ids : {}" , ids);
 		ids.removeAll(Arrays.asList("ROLE_ALL_USER","ROLE_ADMINISTRATORS","-1"));
-		if (groupsService.removeByIds(ids)) {
+		if (groupsService.deleteBatch(ids)) {
 			historySystemLogsService.log(
 					ConstsEntryType.ROLE,
 					ids,

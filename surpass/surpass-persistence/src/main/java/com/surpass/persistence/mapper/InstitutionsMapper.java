@@ -21,17 +21,17 @@
 
 
 package com.surpass.persistence.mapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.dto.InstitutionsPageDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.Institutions;
+import org.dromara.mybatis.jpa.IJpaMapper;
+import org.springframework.data.domain.Page;
 
 @Mapper
-public interface InstitutionsMapper extends BaseMapper<Institutions> {
+public interface InstitutionsMapper extends IJpaMapper<Institutions> {
 
 	@Select("select * from  surpass_institutions where deleted = 'n' and id = #{value} or domain = #{value}  or console_domain = #{value}" )
 	Institutions getByInstIdOrDomain(String instIdOrDomain);

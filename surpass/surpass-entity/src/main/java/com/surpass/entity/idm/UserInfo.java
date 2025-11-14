@@ -21,9 +21,6 @@
 
 
 package com.surpass.entity.idm;
-
-import com.baomidou.mybatisplus.annotation.*;
-import com.surpass.entity.BaseEntity;
 import com.surpass.validate.AddGroup;
 import com.surpass.validate.EditGroup;
 
@@ -32,12 +29,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.dromara.mybatis.jpa.annotations.SoftDelete;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 /**
  * .
@@ -48,8 +48,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("surpass_userinfo")
-public class UserInfo extends BaseEntity  implements Serializable {
+@Table(name = "surpass_userinfo")
+@Entity
+public class UserInfo extends JpaEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 6402443942083382236L;
 
@@ -57,134 +58,176 @@ public class UserInfo extends BaseEntity  implements Serializable {
 
     public  static final String DEFAULT_PASSWORD_SUFFIX = "MaxKey@888";
 
-    @TableField(exist = false)
     String sessionId;
 
-    @TableId(type = IdType.ASSIGN_ID)
-    String id;
+    @Id
+    @Column
+    @GeneratedValue
+    private String id;
 
-
+    @Column
     @NotEmpty(message = "登录账号不能为空", groups = {AddGroup.class, EditGroup.class})
     @Size(max = 32, message = "登录账号的长度不能超过32位", groups = {AddGroup.class, EditGroup.class})
     protected String username;
 
+    @Column
     @NotEmpty(message = "密码不能为空", groups = {AddGroup.class})
     protected String password;
 
+    @Column
     protected String decipherable;
 
+    @Column
     protected String sharedSecret;
 
+    @Column
     protected String sharedCounter;
 
     /**
      * "Employee", "Supplier","Dealer","Contractor",Partner,Customer "Intern",
      * "Temp", "External", and "Unknown" .
      */
+    @Column
     @NotEmpty(message = "用户类型不能为空", groups = {AddGroup.class, EditGroup.class})
     protected String userType;
 
+    @Column
     @NotEmpty(message = "用户状态不能为空", groups = {AddGroup.class, EditGroup.class})
     protected String userState;
 
 
     // for user name
+    @Column
     @NotEmpty(message = "姓名不能为空", groups = {AddGroup.class, EditGroup.class})
     @Size(max = 32, message = "姓名的长度不能超过32位", groups = {AddGroup.class, EditGroup.class})
     protected String displayName;
 
+    @Column
     @Size(max = 32, message = "昵称的长度不能超过32位", groups = {AddGroup.class, EditGroup.class})
     protected String nickName;
 
+    @Column
     @NotNull(message = "排序序号不能为空", groups = {AddGroup.class, EditGroup.class})
     protected Integer sortIndex;
 
+    @Column
     @Schema(name = "nameZhSpell", description = "名字中文拼音")
     protected String nameZhSpell;
 
+    @Column
     @Schema(name = "nameZhShortSpell", description = "名字中文拼音简称")
     protected String nameZhShortSpell;
 
+    @Column
     protected String  pictureId;
 
+    @Column
     protected String email;
 
+    @Column
     protected int emailVerified;
 
+    @Column
     protected String mobile;
 
+    @Column
     protected int mobileVerified;
 
+    @Column
     protected String passwordQuestion;
 
+    @Column
     protected String passwordAnswer;
 
+    @Column
     protected Date passwordLastSetTime;
 
+    @Column
     protected int badPasswordCount;
 
+    @Column
     protected Date badPasswordTime;
 
+    @Column
     protected Date unLockTime;
 
+    @Column
     protected int isLocked;
 
+    @Column
     protected Date lastLoginTime;
 
+    @Column
     protected String lastLoginIp;
 
+    @Column
     protected Date lastLogoffTime;
 
+    @Column
     protected int passwordSetType;
 
+    @Column
     protected Integer loginCount;
 
-    @TableField(exist = false)
     protected String regionHistory;
 
-    @TableField(exist = false)
     protected String passwordHistory;
 
+    @Column
     protected Integer loginFailedCount;
 
+    @Column
     protected Date loginFailedTime;
 
+    @Column
     protected String locale;
 
+    @Column
     protected String timeZone;
 
+    @Column
     protected String preferredLanguage;
 
+    @Column
     protected int isOnline;
 
+    @Column
     protected String ldapDn;
 
+    @Column
     @NotNull(message = "状态不能为空", groups = {AddGroup.class, EditGroup.class})
     int status;
 
-    @TableField(fill = FieldFill.INSERT)
-    @TableLogic(value="n",delval="y")
+    @SoftDelete
+    @Column
     String deleted;
 
-
+    @Column
     String description;
 
-    @TableField(updateStrategy = FieldStrategy.NEVER)
+    @Column
+    private String createdBy;
+
+    @Column
+    private Date createdDate;
+
+    @Column
+    private String modifiedBy;
+
+    @Column
+    private Date modifiedDate;
+
+    @Column
     String instId;
 
-    @TableField(exist = false)
     String syncId;
 
-    @TableField(exist = false)
     String syncName;
 
-    @TableField(exist = false)
     String originId;
 
-    @TableField(exist = false)
     String originId2;
 
-    @TableField(exist = false)
     String gradingUserId;
 
     public UserInfo(String username) {

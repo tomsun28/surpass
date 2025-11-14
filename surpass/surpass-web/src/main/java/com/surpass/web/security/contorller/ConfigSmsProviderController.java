@@ -22,8 +22,8 @@
 
 package com.surpass.web.security.contorller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +52,9 @@ public class ConfigSmsProviderController {
 
 	@GetMapping(value={"/get"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<ConfigSmsProvider> get(@CurrentUser UserInfo currentUser){
-		LambdaQueryWrapper<ConfigSmsProvider> wrapper = new LambdaQueryWrapper<>();
-		wrapper.isNotNull(ConfigSmsProvider::getId);
-		ConfigSmsProvider smsProvider = configSmsProviderService.getOne(wrapper);
+		LambdaQuery<ConfigSmsProvider> wrapper = new LambdaQuery<>();
+		wrapper.notNull(ConfigSmsProvider::getId);
+		ConfigSmsProvider smsProvider = configSmsProviderService.get(wrapper);
 		if(smsProvider != null && StringUtils.isNoneBlank(smsProvider.getId())) {
 			smsProvider.setAppSecret(PasswordReciprocal.getInstance().decoder(smsProvider.getAppSecret()));
 		}
@@ -67,9 +67,9 @@ public class ConfigSmsProviderController {
 		smsProvider.setAppSecret(PasswordReciprocal.getInstance().encode(smsProvider.getAppSecret()));
 		boolean updateResult = false;
 		if(StringUtils.isBlank(smsProvider.getId())) {
-			updateResult = configSmsProviderService.save(smsProvider);
+			updateResult = configSmsProviderService.insert(smsProvider);
 		}else {
-			updateResult = configSmsProviderService.updateById(smsProvider);
+			updateResult = configSmsProviderService.update(smsProvider);
 		}
 		if(updateResult) {
 			return new Message<>(Message.SUCCESS);

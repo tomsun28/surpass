@@ -22,8 +22,6 @@ package com.surpass.authn.dto;
 
 import com.surpass.authn.jwt.AuthJwt;
 import com.surpass.entity.Institutions;
-import com.surpass.entity.SocialsProviderLogin;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -50,10 +48,6 @@ public class LoginConfigDto{
 	 * 是否首次登录修改密码
 	 */
 	String isFirstPasswordModify;
-	/**
-	 * 社交登录提供者
-	 */
-	SocialsProviderLogin  socials;
 
 	/**
 	 * jwt令牌

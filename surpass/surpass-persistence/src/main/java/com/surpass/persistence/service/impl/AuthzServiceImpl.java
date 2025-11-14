@@ -22,14 +22,14 @@ package com.surpass.persistence.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.constants.ConstsRoles;
 import com.surpass.entity.dto.QueryGroupMembersDto;
 import com.surpass.entity.idm.UserInfo;
@@ -38,14 +38,11 @@ import com.surpass.persistence.mapper.AuthzMapper;
 import com.surpass.persistence.service.AuthzService;
 
 @Repository
-public class AuthzServiceImpl   extends ServiceImpl<AuthzMapper,UserInfo> implements AuthzService {
+public class AuthzServiceImpl   extends JpaServiceImpl<AuthzMapper,UserInfo> implements AuthzService {
 	private static final Logger logger = LoggerFactory.getLogger(AuthzServiceImpl.class);
 
 	@Autowired
 	AuthzMapper authzMapper;
-
-	@Autowired
-    FileStorageServiceImpl fileStorageService;
 
 	@Override
 	public List<Roles> queryRoles(UserInfo userInfo){

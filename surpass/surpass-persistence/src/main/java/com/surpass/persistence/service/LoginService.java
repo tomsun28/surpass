@@ -21,15 +21,14 @@ package com.surpass.persistence.service;
 import java.util.List;
 import java.util.Set;
 
+import org.dromara.mybatis.jpa.service.IJpaService;
 import org.springframework.security.core.GrantedAuthority;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.config.ConfigLoginPolicy;
 import com.surpass.entity.history.HistoryLogin;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.Resources;
 
-public interface LoginService extends IService<UserInfo> {
+public interface LoginService extends IJpaService<UserInfo> {
 
 	public void updateLastLogin(UserInfo userInfo);
 

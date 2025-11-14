@@ -21,11 +21,11 @@
 
 package com.surpass.entity.permissions;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -35,79 +35,70 @@ import java.util.Date;
 /**
  * @author 24096
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("surpass_role_member")
-public class RoleMember implements Serializable {
+@Table(name = "surpass_role_member")
+@Entity
+public class RoleMember extends JpaEntity implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = -8059639972590554760L;
 
-	@TableId(type = IdType.ASSIGN_ID)
+	@Id
+	@Column
+	@GeneratedValue
 	String id;
 
+	@Column
 	String roleId;
 
-	@TableField(exist = false)
 	String roleName;
 
+	@Column
 	String memberId;
 
-	@TableField(exist = false)
 	String memberName;
 
 	// USER or POST
+	@Column
 	String type;
 
-	@TableField(exist = false)
 	String instName;
 	// for user
-	@TableField(exist = false)
 	String username;
 
-	@TableField(exist = false)
 	String displayName;
 
-	@TableField(exist = false)
 	String jobTitle;
 
-	@TableField(exist = false)
 	int gender;
 	// for post
-	@TableField(exist = false)
 	String postCode;
 
-	@TableField(exist = false)
 	String postName;
 
 	// department
-	@TableField(exist = false)
 	String departmentId;
 
-	@TableField(exist = false)
 	String department;
 
-	@TableField(exist = false)
 	String gradingUserId;
 
 	/**
 	 * 创建者
 	 */
-	@TableField(fill = FieldFill.INSERT)
-	@Schema(name = "createdBy",description = "创建人")
-	@JsonFormat(shape = JsonFormat.Shape.STRING)
+	@Column
 	protected String createdBy;
 
 	/**
 	 * 创建时间
 	 */
-	@TableField(fill = FieldFill.INSERT)
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-	@Schema(name = "createdDate",description = "创建时间")
+	@Column
 	protected Date createdDate;
 
 	/**
-	 * @param groupId
+	 * @param roleId
 	 * @param memberId
 	 * @param type
 	 */

@@ -18,12 +18,12 @@
 
 package com.surpass.persistence.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.Message;
 import com.surpass.entity.permissions.Resources;
 import com.surpass.entity.permissions.dto.ResourcesPageDto;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface ResourcesService extends IService<Resources> {
-    Message<Page<Resources>> pageList(ResourcesPageDto dto);
+public interface ResourcesService extends IJpaService<Resources> {
+    Message<JpaPageResults<Resources>> pageList(ResourcesPageDto dto);
 }

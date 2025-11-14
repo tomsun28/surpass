@@ -17,22 +17,20 @@
 
 
 package com.surpass.persistence.service;
-
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.Message;
 import com.surpass.entity.idm.dto.OrgPageDto;
 import org.dromara.hutool.core.tree.MapTree;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.idm.Organizations;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
 import java.util.List;
 
-public interface OrganizationsService extends IService<Organizations> {
+public interface OrganizationsService extends IJpaService<Organizations> {
     List<MapTree<String>> tree(Organizations org);
 
-    Message<Page<Organizations>> pageList(OrgPageDto dto);
+    Message<JpaPageResults<Organizations>> pageList(OrgPageDto dto);
 
     boolean updateOneOrg(Organizations organizations);
 

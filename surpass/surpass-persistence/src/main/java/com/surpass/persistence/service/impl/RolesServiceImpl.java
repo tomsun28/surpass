@@ -25,13 +25,12 @@ package com.surpass.persistence.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.constants.ConstsRoles;
 import com.surpass.constants.ConstsStatus;
 import com.surpass.entity.Institutions;
@@ -41,7 +40,7 @@ import com.surpass.persistence.service.RolesService;
 import com.surpass.util.StrUtils;
 
 @Repository
-public class RolesServiceImpl  extends ServiceImpl<RolesMapper,Roles>  implements RolesService {
+public class RolesServiceImpl  extends JpaServiceImpl<RolesMapper,Roles> implements RolesService {
     static final  Logger logger = LoggerFactory.getLogger(RolesServiceImpl.class);
 
     @Autowired
@@ -63,7 +62,7 @@ public class RolesServiceImpl  extends ServiceImpl<RolesMapper,Roles>  implement
 	}
 
 	public boolean deleteById(String groupId) {
-	    this.removeById(groupId);
+	    this.delete(groupId);
 	    groupMemberService.deleteByRoleId(groupId);
 	    return true;
 	}
@@ -110,9 +109,9 @@ public class RolesServiceImpl  extends ServiceImpl<RolesMapper,Roles>  implement
     }
 
 	public void refreshAllDynamicRoles(){
-		 LambdaQueryWrapper<Institutions> queryWrapper = new LambdaQueryWrapper<Institutions>();
+		 LambdaQuery<Institutions> queryWrapper = new LambdaQuery<Institutions>();
 		 queryWrapper.eq(Institutions::getStatus, ConstsStatus.ACTIVE);
-		List<Institutions> instList = institutionsService.list(queryWrapper);
+		List<Institutions> instList = institutionsService.query(queryWrapper);
 		for(Institutions inst : instList) {
 			Roles group = new Roles();
 		    List<Roles>  groupsList = queryDynamicRoles(group);

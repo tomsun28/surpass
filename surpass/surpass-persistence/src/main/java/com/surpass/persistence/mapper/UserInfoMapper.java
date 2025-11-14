@@ -24,26 +24,28 @@ package com.surpass.persistence.mapper;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.idm.dto.UserInfoPageDto;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.constants.ConstsStatus;
 import com.surpass.entity.ChangePassword;
 import com.surpass.entity.idm.Organizations;
 import com.surpass.entity.idm.UserInfo;
+import org.dromara.mybatis.jpa.IJpaMapper;
+import org.springframework.data.domain.Page;
 
 
 /**
  * @author Crystal.Sea
  *
  */
-public interface UserInfoMapper  extends BaseMapper<UserInfo>{
+@Mapper
+public interface UserInfoMapper  extends IJpaMapper<UserInfo> {
 
-	Page<UserInfo> fetchPageResults(Page page, @Param("Dto") UserInfoPageDto dto);
+	List<UserInfo> fetchPageResults(@Param("Dto") UserInfoPageDto dto);
 
 	@Select("select * from  surpass_userinfo where deleted = 'n' and username = #{value} and status = " + ConstsStatus.ACTIVE)
 	public UserInfo findByUsername(String username);

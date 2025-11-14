@@ -27,6 +27,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.surpass.persistence.service.OrganizationsService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -36,13 +37,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.surpass.constants.ConstsHttpHeader;
 import com.surpass.constants.ContentType;
@@ -59,12 +59,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 @Repository
-public class OrganizationsExcelServiceImpl extends ServiceImpl<OrganizationsMapper,Organizations> implements OrganizationsExcelService {
+public class OrganizationsExcelServiceImpl extends JpaServiceImpl<OrganizationsMapper,Organizations> implements OrganizationsExcelService {
 	static final Logger logger = LoggerFactory.getLogger(OrganizationsExcelServiceImpl.class);
 
 	@Autowired
-	OrganizationsServiceImpl organizationsService;
-
+    OrganizationsMapper organizationsMapper;
 
 	 /**
 	     *       根据数据格式返回数据
@@ -159,14 +158,23 @@ public class OrganizationsExcelServiceImpl extends ServiceImpl<OrganizationsMapp
 				}
 			}
 			// 数据去重
-			if (!CollectionUtils.isEmpty(orgsList)) {
-				orgsList = orgsList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getId()))), ArrayList::new));
-				for (Organizations org : orgsList) {
-					organizationsService.saveOrUpdate(org);
-				}
-			}
+            if (!CollectionUtils.isEmpty(orgsList)) {
+                orgsList = orgsList.stream()
+                        .collect(Collectors.collectingAndThen(
+                                Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Organizations::getId))),
+                                ArrayList::new));
+
+                for (Organizations org : orgsList) {
+                    Organizations exist = super.get(org.getId());
+                    if (exist == null) {
+                        organizationsMapper.insert(org);
+                    } else {
+                        organizationsMapper.update(org);
+                    }
+                }
+            }
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} finally {
           excelImportFile.closeWorkbook();
 		}
@@ -177,7 +185,7 @@ public class OrganizationsExcelServiceImpl extends ServiceImpl<OrganizationsMapp
 		List<Organizations> allOrg = null;
 		//判断导出模板还是导出组织机构 org 还是template
         if (StringUtils.isNotEmpty(exportType) && "org".equalsIgnoreCase(exportType)) {
-            allOrg = organizationsService.queryOrgs(organization);
+            allOrg = organizationsMapper.queryOrgs(organization);
         }
         Workbook workbook = null;
         try {

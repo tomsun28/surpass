@@ -25,15 +25,11 @@ package com.surpass.entity.history;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-
+import jakarta.persistence.*;
+import jdk.jfr.Enabled;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 /**
  * .
@@ -43,47 +39,57 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@TableName("surpass_history_system_logs")
-public class HistorySystemLogs implements Serializable {
+@Table(name = "surpass_history_system_logs")
+@Entity
+public class HistorySystemLogs extends JpaEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 6560201093784960493L;
 
-    @TableId(type = IdType.ASSIGN_ID)
+    @Id
+    @Column
+    @GeneratedValue
     String id;
 
+    @Column
     String topic;
 
+    @Column
     String message;
 
+    @Column
     String messageAction;
 
+    @Column
     String messageResult;
 
+    @Column
     String targetId;
 
+    @Column
     String targetName;
 
+    @Column
     String cipherText;
 
+    @Column
     String userId;
 
+    @Column
     String username;
 
+    @Column
     String displayName;
 
+    @Column
     Date executeTime;
 
-    @TableField(exist = false)
 	String jsonCotent;
 
-    @TableField(exist = false)
 	private String instName;
 
-    @TableField(exist = false)
 	Date startDate;
 
-    @TableField(exist = false)
 	Date endDate;
 
 }

@@ -25,14 +25,17 @@
  */
 package com.surpass.persistence.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.history.HistorySystemLogs;
+import org.apache.ibatis.annotations.Mapper;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
 /**
  * @author Crystal.sea
  *
  */
-public interface HistorySystemLogsMapper extends BaseMapper<HistorySystemLogs> {
+
+@Mapper
+public interface HistorySystemLogsMapper extends IJpaMapper<HistorySystemLogs> {
 
 
 }

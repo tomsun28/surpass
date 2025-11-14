@@ -27,12 +27,11 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.dto.QueryAppResourceDto;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.Roles;
@@ -41,7 +40,7 @@ import com.surpass.persistence.mapper.AuthzResourceMapper;
 import com.surpass.persistence.service.AuthzResourceService;
 
 @Repository
-public class AuthzResourceServiceImpl   extends ServiceImpl<AuthzResourceMapper,UserInfo> implements AuthzResourceService {
+public class AuthzResourceServiceImpl  extends JpaServiceImpl<AuthzResourceMapper,UserInfo> implements AuthzResourceService {
 	private static final Logger logger = LoggerFactory.getLogger(AuthzResourceServiceImpl.class);
 
 	@Autowired

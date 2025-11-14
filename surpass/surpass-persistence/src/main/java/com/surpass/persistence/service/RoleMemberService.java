@@ -19,21 +19,20 @@
 package com.surpass.persistence.service;
 
 import java.util.List;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.RoleMember;
 import com.surpass.entity.permissions.Roles;
 import com.surpass.entity.permissions.dto.RoleMemberPageDto;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface RoleMemberService extends IService<RoleMember> {
+public interface RoleMemberService extends IJpaService<RoleMember> {
 	List<UserInfo> queryMemberByRoleId(String groupId);
 
-	Page<Roles> rolesNoMember(Page page, RoleMemberPageDto dto);
+	JpaPageResults<Roles> rolesNoMember(RoleMemberPageDto dto);
 
-	Page<RoleMember> memberInRole(Page page, RoleMemberPageDto dto);
+	JpaPageResults<RoleMember> memberInRole(RoleMemberPageDto dto);
 
-	Page<RoleMember> memberNotInRole(Page page, RoleMemberPageDto dto);
+	JpaPageResults<RoleMember> memberNotInRole(RoleMemberPageDto dto);
 
 }

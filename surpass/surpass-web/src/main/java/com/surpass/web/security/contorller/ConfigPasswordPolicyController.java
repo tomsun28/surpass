@@ -57,7 +57,7 @@ public class ConfigPasswordPolicyController {
 		logger.debug("updateRole passwordPolicy : {}" ,passwordPolicy);
 		//Message message = this.validate(result, passwordPolicy);
 
-		if(configPasswordPolicyService.updateById(passwordPolicy)) {
+		if(configPasswordPolicyService.update(passwordPolicy)) {
 			return new Message<>(Message.SUCCESS);
 		} else {
 			return new Message<>(Message.ERROR);

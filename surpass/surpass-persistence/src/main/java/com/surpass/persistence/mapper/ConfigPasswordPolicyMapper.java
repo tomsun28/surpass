@@ -20,19 +20,17 @@
 
 
 
-/**
- *
- */
 package com.surpass.persistence.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.config.ConfigPasswordPolicy;
+import org.apache.ibatis.annotations.Mapper;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
 /**
  * @author Crystal.sea
  *
  */
-public  interface ConfigPasswordPolicyMapper extends BaseMapper<ConfigPasswordPolicy> {
 
+@Mapper
+public interface ConfigPasswordPolicyMapper extends IJpaMapper<ConfigPasswordPolicy> {
 
 }

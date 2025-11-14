@@ -18,6 +18,7 @@
 package com.surpass;
 
 import org.joda.time.DateTime;
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -36,6 +37,7 @@ import com.surpass.web.WebContext;
  *
  */
 @SpringBootApplication
+@MapperScan("com.surpass.persistence.mapper")
 public class SurpassApplication extends SpringBootServletInitializer {
     private static final Logger _logger = LoggerFactory.getLogger(SurpassApplication.class);
 

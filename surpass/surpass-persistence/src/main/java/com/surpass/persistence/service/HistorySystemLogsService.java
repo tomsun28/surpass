@@ -18,10 +18,10 @@
 
 package com.surpass.persistence.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.history.HistorySystemLogs;
 import com.surpass.entity.idm.UserInfo;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface HistorySystemLogsService  extends IService<HistorySystemLogs> {
+public interface HistorySystemLogsService  extends IJpaService<HistorySystemLogs> {
 	public void log(String topic,Object entity,String action,String result,UserInfo operator);
 }

@@ -21,9 +21,6 @@
 
 
 package com.surpass.web.historys.contorller;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.entity.Message;
 import com.surpass.entity.history.HistoryLogin;
@@ -31,9 +28,13 @@ import com.surpass.entity.history.dto.HistoryLoginPageDto;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.persistence.service.HistoryLoginService;
 
+import org.dromara.mybatis.jpa.entity.JpaPage;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,15 +60,16 @@ public class LoginHistoryController {
 	 * @return
 	 */
 	@GetMapping(value={"/loginHistory/fetch"})
-	public Message<Page<HistoryLogin>> fetch(
+	public Message<JpaPageResults<HistoryLogin>> fetch(
 				@ModelAttribute("historyLogin") HistoryLoginPageDto dto,
 				@CurrentUser UserInfo currentUser
 			){
 		logger.debug("historys/loginHistory/fetch/ {}",dto);
 
-		LambdaQueryWrapper<HistoryLogin> wrapper = new LambdaQueryWrapper<>();
+		LambdaQuery<HistoryLogin> wrapper = new LambdaQuery<>();
 
-		return new Message<>(historyLoginService.page(dto.build(), wrapper));
+		dto.build();
+		return new Message<>(historyLoginService.fetch(dto, wrapper));
 	}
 
 }

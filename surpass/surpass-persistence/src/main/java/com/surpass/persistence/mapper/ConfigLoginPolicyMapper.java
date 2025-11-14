@@ -21,8 +21,8 @@ package com.surpass.persistence.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.config.ConfigLoginPolicy;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
 /**
  * @author Crystal.sea
@@ -30,6 +30,6 @@ import com.surpass.entity.config.ConfigLoginPolicy;
  */
 
 @Mapper
-public interface ConfigLoginPolicyMapper extends BaseMapper<ConfigLoginPolicy> {
+public interface ConfigLoginPolicyMapper extends IJpaMapper<ConfigLoginPolicy> {
 
 }

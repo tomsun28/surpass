@@ -26,16 +26,16 @@
 package com.surpass.persistence.mapper;
 
 import java.util.List;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.permissions.Roles;
+import org.apache.ibatis.annotations.Mapper;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
 /**
  * @author Crystal.sea
  *
  */
-
-public  interface RolesMapper extends BaseMapper<Roles> {
+@Mapper
+public  interface RolesMapper extends IJpaMapper<Roles> {
 
     public List<Roles> queryDynamicRoles(Roles roles);
 

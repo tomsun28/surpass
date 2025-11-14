@@ -21,9 +21,6 @@
 package com.surpass.persistence.service.impl;
 
 import java.util.*;
-
-import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.Message;
 import com.surpass.entity.idm.dto.OrgPageDto;
 import org.apache.commons.lang3.ObjectUtils;
@@ -31,13 +28,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.hutool.core.tree.MapTree;
 import org.dromara.hutool.core.tree.TreeNode;
 import org.dromara.hutool.core.tree.TreeUtil;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.idm.Organizations;
 import com.surpass.enums.OrgsBusinessExceptionEnum;
 import com.surpass.exception.BusinessException;
@@ -46,15 +44,12 @@ import com.surpass.persistence.service.OrganizationsService;
 
 
 @Service
-public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, Organizations> implements OrganizationsService {
+public class OrganizationsServiceImpl extends JpaServiceImpl<OrganizationsMapper, Organizations> implements OrganizationsService {
     static final Logger logger = LoggerFactory.getLogger(OrganizationsServiceImpl.class);
 
 
     @Autowired
     OrganizationsMapper organizationsMapper;
-
-    @Autowired
-    IdentifierGenerator identifierGenerator;
 
     public OrganizationsMapper getMapper() {
         return organizationsMapper;
@@ -63,7 +58,7 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
     @Override
     @Transactional
     public boolean saveOneOrg(Organizations organization) {
-        organization.setId(identifierGenerator.nextId(organization).toString());
+        organization.setId(organization.generateId());
 
         //检查同级是否存在相同的组织机构名称
         saveCheckDuplicateOrgs(organization);
@@ -71,7 +66,7 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
         organization.setCodePath(generateIdPath(organization.getParentId(), organization.getId()));
         organization.setNamePath(generateNamePath(organization.getParentId(), organization.getOrgName()));
 
-        return super.save(organization);
+        return super.insert(organization);
     }
 
     /**
@@ -98,7 +93,7 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
             return "";
         }
 
-        Organizations parent = getById(parentId);
+        Organizations parent = get(parentId);
         if (Objects.isNull(parent)) {
             return "";
         }
@@ -130,7 +125,7 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
      */
     private String generateNamePathRecursive(String parentId) {
         if (StringUtils.isNotBlank(parentId)) {
-            Organizations parent = getById(parentId);
+            Organizations parent = get(parentId);
             if (Objects.nonNull(parent) && !parent.getId().equals(parent.getParentId())) {
                 String namePath = generateNamePathRecursive(parent.getParentId());
                 if (namePath.isEmpty()) {
@@ -167,10 +162,10 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
         }
 
         //修改当前组织
-        LambdaQueryWrapper<Organizations> queryWrapper = new LambdaQueryWrapper<>();
+        LambdaQuery<Organizations> queryWrapper = new LambdaQuery<>();
         queryWrapper.like(Organizations::getCodePath, organization.getId());
-        queryWrapper.ne(Organizations::getId, currentId);
-        List<Organizations> orgInfos = super.list(queryWrapper);
+        queryWrapper.notEq(Organizations::getId, currentId);
+        List<Organizations> orgInfos = super.query(queryWrapper);
         if (orgInfos.stream().anyMatch(orgInfo -> Objects.equals(parentId, orgInfo.getId()))) {
             throw new BusinessException(
                     OrgsBusinessExceptionEnum.ILLEGAL_MOVE_ORG.getCode(),
@@ -181,7 +176,7 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
         organization.setCodePath(generateIdPath(parentId, currentId));
         organization.setNamePath(generateNamePath(parentId, organization.getOrgName()));
 
-        boolean result = super.updateById(organization);
+        boolean result = super.update(organization);
 
         List<Organizations> updatedOrgInfos = orgInfos.stream()
                 .map(orgInfo -> {
@@ -193,7 +188,9 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
                     return orgInfo;
                 }).toList();
         if (ObjectUtils.isNotEmpty(updatedOrgInfos)) {
-           super.updateBatchById(updatedOrgInfos);
+            for (Organizations organizations : updatedOrgInfos) {
+                super.update(organizations);
+            }
         }
 
 
@@ -205,7 +202,7 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
     }
 
     public boolean delete(Organizations organization) {
-        if (this.removeById(organization.getId())) {
+        if (this.delete(organization.getId())) {
             return true;
         }
         return false;
@@ -222,10 +219,10 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
         String orgCode = entity.getOrgCode();
 
         //检查名称
-        LambdaQueryWrapper<Organizations> wrapper = new LambdaQueryWrapper<>();
+        LambdaQuery<Organizations> wrapper = new LambdaQuery<>();
         wrapper.eq(Organizations::getParentId, parentId);
         wrapper.eq(Organizations::getOrgName, orgName);
-        List<Organizations> organizationsList = super.list(wrapper);
+        List<Organizations> organizationsList = super.query(wrapper);
         if (ObjectUtils.isNotEmpty(organizationsList)) {
             throw new BusinessException(
                     OrgsBusinessExceptionEnum.DUPLICATE_ORGS_EXIST.getCode(),
@@ -234,9 +231,9 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
         }
 
         //检查编码
-        LambdaQueryWrapper<Organizations> secondWrapper = new LambdaQueryWrapper<>();
+        LambdaQuery<Organizations> secondWrapper = new LambdaQuery<>();
         secondWrapper.eq(Organizations::getOrgCode, orgCode);
-        List<Organizations> secondOrgs = super.list(secondWrapper);
+        List<Organizations> secondOrgs = super.query(secondWrapper);
         if (ObjectUtils.isNotEmpty(secondOrgs)) {
             throw new BusinessException(
                     OrgsBusinessExceptionEnum.DUPLICATE_ORGSCODE_EXIST.getCode(),
@@ -257,11 +254,11 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
         String id = entity.getId();
 
         //检查名称
-        LambdaQueryWrapper<Organizations> wrapper = new LambdaQueryWrapper<Organizations>();
+        LambdaQuery<Organizations> wrapper = new LambdaQuery<>();
         wrapper.eq(Organizations::getParentId, parentId);
         wrapper.eq(Organizations::getOrgName, orgName);
-        wrapper.notIn(Organizations::getId, id);
-        List<Organizations> organizationsList = super.list(wrapper);
+        wrapper.notEq(Organizations::getId, id);
+        List<Organizations> organizationsList = super.query(wrapper);
         if (ObjectUtils.isNotEmpty(organizationsList)) {
             throw new BusinessException(
                     OrgsBusinessExceptionEnum.DUPLICATE_ORGS_EXIST.getCode(),
@@ -270,10 +267,10 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
         }
 
         //检查编码
-        LambdaQueryWrapper<Organizations> secondWrapper = new LambdaQueryWrapper<Organizations>();
+        LambdaQuery<Organizations> secondWrapper = new LambdaQuery<>();
         secondWrapper.eq(Organizations::getOrgCode, orgCode);
-        secondWrapper.notIn(Organizations::getId, id);
-        List<Organizations> secondOrgs = super.list(secondWrapper);
+        secondWrapper.notEq(Organizations::getId, id);
+        List<Organizations> secondOrgs = super.query(secondWrapper);
         if (ObjectUtils.isNotEmpty(secondOrgs)) {
             throw new BusinessException(
                     OrgsBusinessExceptionEnum.DUPLICATE_ORGSCODE_EXIST.getCode(),
@@ -284,8 +281,8 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
 
     @Override
     public List<MapTree<String>> tree(Organizations org) {
-        LambdaQueryWrapper<Organizations> wrapper = new LambdaQueryWrapper<>();;
-        List<Organizations> orgInfos = organizationsMapper.selectList(wrapper);
+        LambdaQuery<Organizations> wrapper = new LambdaQuery<>();
+        List<Organizations> orgInfos = super.query(wrapper);
         List<TreeNode<String>> treeNode = new ArrayList<>();
         orgInfos.forEach(temp -> treeNode.add(new TreeNode<>(temp.getId(),
                 String.valueOf(temp.getParentId()),
@@ -299,8 +296,10 @@ public class OrganizationsServiceImpl extends ServiceImpl<OrganizationsMapper, O
     }
 
     @Override
-    public Message<Page<Organizations>> pageList(OrgPageDto dto) {
-        return new Message<>(Message.SUCCESS, organizationsMapper.pageList(dto.build(), dto));
+    public Message<JpaPageResults<Organizations>> pageList(OrgPageDto orgPageDto) {
+        orgPageDto.build();
+        JpaPageResults<Organizations> jpaPageResults = (JpaPageResults<Organizations>) this.buildPageResults(orgPageDto, getMapper().queryPageResults(orgPageDto));
+        return new Message<>(Message.SUCCESS, jpaPageResults);
     }
 
 }

@@ -20,12 +20,11 @@ package com.surpass.persistence.service;
 
 import java.util.ArrayList;
 
+import org.dromara.mybatis.jpa.service.IJpaService;
 import org.passay.Rule;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.config.ConfigPasswordPolicy;
 
-public interface ConfigPasswordPolicyService  extends IService<ConfigPasswordPolicy> {
+public interface ConfigPasswordPolicyService extends IJpaService<ConfigPasswordPolicy> {
 	public ConfigPasswordPolicy  getPasswordPolicy();
 
 	public ArrayList<Rule> getRuleList(ConfigPasswordPolicy passwordPolicy);

@@ -24,32 +24,25 @@ package com.surpass.persistence.service.impl;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.RoleMember;
 import com.surpass.entity.permissions.Roles;
 import com.surpass.entity.permissions.dto.RoleMemberPageDto;
 import com.surpass.persistence.mapper.RoleMemberMapper;
 import com.surpass.persistence.service.RoleMemberService;
-
 import org.springframework.stereotype.Service;
 
 @Service
-public class RoleMemberServiceImpl  extends ServiceImpl<RoleMemberMapper,RoleMember> implements RoleMemberService {
+public class RoleMemberServiceImpl extends JpaServiceImpl<RoleMemberMapper, RoleMember> implements RoleMemberService {
 	static final  Logger logger = LoggerFactory.getLogger(RoleMemberServiceImpl.class);
 
 	@Autowired
-	RoleMemberMapper groupMemberMapper;
-
-	public RoleMemberMapper getMapper() {
-		return groupMemberMapper;
-	}
+	RoleMemberMapper roleMemberMapper;
 
 	public int addDynamicRoleMember(Roles dynamicGroup) {
 	    return getMapper().addDynamicRoleMember(dynamicGroup);
@@ -70,18 +63,21 @@ public class RoleMemberServiceImpl  extends ServiceImpl<RoleMemberMapper,RoleMem
 
 
 	@Override
-	public Page<Roles> rolesNoMember(Page page, RoleMemberPageDto dto) {
-		return groupMemberMapper.rolesNoMember(page, dto);
+	public JpaPageResults<Roles> rolesNoMember(RoleMemberPageDto dto) {
+		dto.build();
+		return (JpaPageResults<Roles>) this.buildPageResults(dto, roleMemberMapper.rolesNoMember(dto));
 	}
 
 	@Override
-	public Page<RoleMember> memberInRole(Page page, RoleMemberPageDto dto) {
-		return groupMemberMapper.memberInRole(page, dto);
+	public JpaPageResults<RoleMember> memberInRole(RoleMemberPageDto dto) {
+		dto.build();
+		return (JpaPageResults<RoleMember>) this.buildPageResults(dto, roleMemberMapper.memberInRole(dto));
 	}
 
 	@Override
-	public Page<RoleMember> memberNotInRole(Page page, RoleMemberPageDto dto) {
-		return groupMemberMapper.memberNotInRole(page, dto);
+	public JpaPageResults<RoleMember> memberNotInRole(RoleMemberPageDto dto) {
+		dto.build();
+		return (JpaPageResults<RoleMember>) this.buildPageResults(dto, roleMemberMapper.memberNotInRole(dto));
 	}
 
 }

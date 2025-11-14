@@ -30,9 +30,9 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.access.SessionList;
 import com.surpass.entity.idm.UserInfo;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
 /**
  * @author Crystal.sea
@@ -40,7 +40,7 @@ import com.surpass.entity.idm.UserInfo;
  */
 
 @Mapper
-public interface SessionListMapper extends BaseMapper<SessionList> {
+public interface SessionListMapper extends IJpaMapper<SessionList> {
 
 	@Select("select * from surpass_session_list  where session_id = #{sessionId}")
 	public SessionList getBySessionId(@Param ("sessionId") String sessionId) ;
@@ -56,6 +56,4 @@ public interface SessionListMapper extends BaseMapper<SessionList> {
 
 	@Select("select * from surpass_session_list where style = #{style}")
 	public List<SessionList> listByStyle(@Param ("style") String style) ;
-
-
 }

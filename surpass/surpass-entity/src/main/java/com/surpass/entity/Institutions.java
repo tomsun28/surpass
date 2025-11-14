@@ -21,68 +21,106 @@
 package com.surpass.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.*;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.dromara.mybatis.jpa.annotations.SoftDelete;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-@TableName("surpass_institutions")
-public class Institutions extends BaseEntity implements Serializable {
+@Table(name = "surpass_institutions")
+@Entity
+public class Institutions extends JpaEntity implements Serializable {
 	static final long serialVersionUID = -2375872012431214098L;
 
-	@TableId(type = IdType.ASSIGN_ID)
-	String id;
+	@Id
+	@Column
+	@GeneratedValue
+	private String id;
 
+	@Column
 	String fullName;
 
+	@Column
 	String instName;
 
+	@Column
 	Integer instType;
 
+	@Column
 	String division;
 
+	@Column
 	String country;
 
+	@Column
 	String region;
 
+	@Column
 	String locality;
 
+	@Column
 	String street;
 
+	@Column
 	String address;
 
+	@Column
 	String contact;
 
+	@Column
 	String postalCode;
 
+	@Column
 	String phone;
 
+	@Column
 	String fax;
 
+	@Column
 	String email;
 
+	@Column
 	String description;
 
+	@Column
 	String logo;
 
+	@Column
 	String backgroundImage;
 
+	@Column
 	String domain;
 
+	@Column
 	int status;
 
-	@TableField(fill = FieldFill.INSERT)
-	@TableLogic(value="n",delval="y")
+	@SoftDelete
+	@Column
 	String deleted;
 
+	@Column
+	private String createdBy;
+
+	@Column
+	private Date createdDate;
+
+	@Column
+	private String modifiedBy;
+
+	@Column
+	private Date modifiedDate;
+
+	@Column
 	String ownerId;
 
+	@Column
 	Integer maxBook;
 
-	@TableField(exist = false)
 	String ownerName;
 }

@@ -27,16 +27,13 @@ package com.surpass.persistence.mapper;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.RoleMember;
 import com.surpass.entity.permissions.Roles;
 import com.surpass.entity.permissions.dto.RoleMemberPageDto;
-
 import org.apache.ibatis.annotations.Param;
+import org.dromara.mybatis.jpa.IJpaMapper;
 import org.mapstruct.Mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * @author Crystal.sea
@@ -44,13 +41,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 
 @Mapper
-public  interface RoleMemberMapper extends BaseMapper<RoleMember> {
+public interface RoleMemberMapper extends IJpaMapper<RoleMember> {
 
-	Page<RoleMember> memberInRole(Page page, @Param("Dto") RoleMemberPageDto dto);
+	List<RoleMember> memberInRole(@Param("Dto") RoleMemberPageDto dto);
 
-	Page<RoleMember> memberNotInRole(Page page, @Param("Dto") RoleMemberPageDto dto);
+	List<RoleMember> memberNotInRole(@Param("Dto") RoleMemberPageDto dto);
 
-	Page<Roles> rolesNoMember(Page page, @Param("Dto") RoleMemberPageDto dto);
+	List<Roles> rolesNoMember(@Param("Dto") RoleMemberPageDto dto);
 
 	public int addDynamicRoleMember(Roles dynamicRole);
 
@@ -59,7 +56,4 @@ public  interface RoleMemberMapper extends BaseMapper<RoleMember> {
 	public int deleteByRoleId(String roleId);
 
 	public List<UserInfo> queryMemberByRoleId(String roleId);
-
-
-
 }

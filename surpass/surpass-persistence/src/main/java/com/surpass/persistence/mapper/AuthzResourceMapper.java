@@ -21,18 +21,14 @@ package com.surpass.persistence.mapper;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.surpass.entity.dto.QueryAppResourceDto;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.Resources;
+import org.apache.ibatis.annotations.Mapper;
+import org.dromara.mybatis.jpa.IJpaMapper;
 
-public  interface AuthzResourceMapper extends BaseMapper<UserInfo> {
-
-	public List<Resources> queryResourcesByUserId(QueryAppResourceDto dto) ;
+@Mapper
+public  interface AuthzResourceMapper extends IJpaMapper<UserInfo> {
 
 	public List<Resources> queryResourcesByRoleId(QueryAppResourceDto dto) ;
-
-	public List<Resources> queryResourcesByOrgId(QueryAppResourceDto dto) ;
-
-
 }

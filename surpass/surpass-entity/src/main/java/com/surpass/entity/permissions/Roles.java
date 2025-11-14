@@ -24,17 +24,18 @@ package com.surpass.entity.permissions;
 
 import java.io.Serial;
 import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.*;
+import java.util.Date;
 import com.surpass.constants.ConstsRoles;
-import com.surpass.entity.BaseEntity;
 import com.surpass.validate.AddGroup;
 import com.surpass.validate.EditGroup;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.dromara.mybatis.jpa.annotations.SoftDelete;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 /**
  * @author 24096
@@ -42,43 +43,65 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName( "surpass_roles")
-public class Roles extends BaseEntity implements Serializable {
+@Table( name = "surpass_roles")
+@Entity
+public class Roles extends JpaEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 4660258495864814777L;
 
-    @TableId(type = IdType.ASSIGN_ID)
-    String id;
+    @Id
+    @Column
+    @GeneratedValue
+    private String id;
 
+    @Column
     @NotEmpty(message = "用户组编码不能为空", groups = {AddGroup.class, EditGroup.class})
     String roleCode;
 
+    @Column
     @NotEmpty(message = "用户组名称不能为空", groups = {AddGroup.class, EditGroup.class})
     String roleName;
 
+    @Column
     String pattern;
 
+    @Column
     String category;
 
+    @Column
     String filters ;
 
+    @Column
     String orgIdsList;
 
+    @Column
     int isdefault;
 
+    @Column
     String description;
 
+    @Column
     int status;
 
-    @TableField(fill = FieldFill.INSERT)
-    @TableLogic(value="n",delval="y")
+    @SoftDelete
+    @Column
     String deleted;
 
-    @TableField(exist = false)
+    @Column
+    private String createdBy;
+
+    @Column
+    private Date createdDate;
+
+    @Column
+    private String modifiedBy;
+
+    @Column
+    private Date modifiedDate;
+
 	private String instName;
 
-    @TableField(exist = false)
 	String gradingUserId;
 
 

@@ -24,15 +24,17 @@ package com.surpass.entity.permissions;
 
 import java.io.Serial;
 import java.io.Serializable;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import java.util.Date;
+
+import com.surpass.constants.ConstsStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.surpass.constants.ConstsStatus;
-import com.surpass.entity.BaseEntity;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 /**
  * @author 24096
@@ -40,21 +42,39 @@ import com.surpass.entity.BaseEntity;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@TableName("surpass_permission")
-public class Permission  extends BaseEntity implements Serializable {
+@Table(name = "surpass_permission")
+public class Permission  extends JpaEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -8783585691243853899L;
 
-    @TableId(type = IdType.ASSIGN_ID)
+    @Id
+    @Column
+    @GeneratedValue
     String id;
 
+    @Column
     String roleId;
 
+    @Column
     String resourceId;
 
+    @Column
     int status = ConstsStatus.ACTIVE;
 
+    @Column
 	private String instName;
+
+    @Column
+    private String createdBy;
+
+    @Column
+    private Date createdDate;
+
+    @Column
+    private String modifiedBy;
+
+    @Column
+    private Date modifiedDate;
 
     public Permission(String roleId) {
         this.roleId = roleId;

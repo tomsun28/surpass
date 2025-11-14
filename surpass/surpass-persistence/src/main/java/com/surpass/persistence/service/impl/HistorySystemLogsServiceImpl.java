@@ -24,13 +24,12 @@ package com.surpass.persistence.service.impl;
 
 import java.util.Date;
 
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.ChangePassword;
 import com.surpass.entity.Institutions;
-import com.surpass.entity.SocialsProvider;
 import com.surpass.entity.history.HistorySystemLogs;
 import com.surpass.entity.idm.Organizations;
 import com.surpass.entity.idm.UserInfo;
@@ -45,7 +44,7 @@ import com.surpass.util.JsonUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HistorySystemLogsServiceImpl  extends ServiceImpl<HistorySystemLogsMapper,HistorySystemLogs> implements HistorySystemLogsService {
+public class HistorySystemLogsServiceImpl  extends JpaServiceImpl<HistorySystemLogsMapper,HistorySystemLogs> implements HistorySystemLogsService {
 	static final Logger logger = LoggerFactory.getLogger(HistorySystemLogsServiceImpl.class);
 
 	@Autowired
@@ -83,10 +82,6 @@ public class HistorySystemLogsServiceImpl  extends ServiceImpl<HistorySystemLogs
 				targetName =  model.getRoleName();
 				message = buildMsg(model);
 			}else if(entity instanceof Resources model) {
-				message = buildMsg(model);
-			}else if(entity instanceof SocialsProvider model) {
-				targetId = model.getId();
-				targetName =  model.getProviderName();
 				message = buildMsg(model);
 			}else if(entity instanceof Permission model) {
 				targetId = model.getId();
@@ -188,17 +183,6 @@ public class HistorySystemLogsServiceImpl  extends ServiceImpl<HistorySystemLogs
 				.append("]")
 				.toString();
 	}
-
-
-	public String buildMsg(SocialsProvider s) {
-		return new StringBuilder()
-				.append(s.getProviderName())
-				.append("[")
-				.append(s.getProvider())
-				.append("]")
-				.toString();
-	}
-
 
 	public String buildMsg(Institutions inst) {
 		return new StringBuilder()

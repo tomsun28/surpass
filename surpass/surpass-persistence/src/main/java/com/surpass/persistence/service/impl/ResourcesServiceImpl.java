@@ -24,19 +24,19 @@ package com.surpass.persistence.service.impl;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.entity.Message;
+import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.dto.ResourcesPageDto;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.entity.permissions.Resources;
 import com.surpass.persistence.mapper.ResourcesMapper;
 import com.surpass.persistence.service.ResourcesService;
 
 @Repository
-public class ResourcesServiceImpl  extends ServiceImpl<ResourcesMapper,Resources> implements ResourcesService {
+public class ResourcesServiceImpl  extends JpaServiceImpl<ResourcesMapper,Resources> implements ResourcesService {
 
 	@Autowired
 	ResourcesMapper resourcesMapper;
@@ -46,7 +46,9 @@ public class ResourcesServiceImpl  extends ServiceImpl<ResourcesMapper,Resources
 	}
 
 	@Override
-	public Message<Page<Resources>> pageList(ResourcesPageDto dto) {
-		return new Message<>(Message.SUCCESS, resourcesMapper.pageList(dto.build(), dto));
+	public Message<JpaPageResults<Resources>> pageList(ResourcesPageDto dto) {
+		dto.build();
+		JpaPageResults<Resources> jpaPageResults = (JpaPageResults<Resources>) this.buildPageResults(dto, resourcesMapper.pageList(dto));
+		return new Message<>(Message.SUCCESS, jpaPageResults);
 	}
 }

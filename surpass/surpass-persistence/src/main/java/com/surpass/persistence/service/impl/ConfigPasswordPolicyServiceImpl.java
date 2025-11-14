@@ -29,6 +29,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
+import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.passay.CharacterOccurrencesRule;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -40,11 +42,6 @@ import org.passay.UsernameRule;
 import org.passay.WhitespaceRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.surpass.constants.ConstsRegex;
 import com.surpass.entity.Message;
 import com.surpass.entity.config.ConfigPasswordPolicy;
@@ -52,18 +49,11 @@ import com.surpass.entity.idm.UserInfo;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.ConfigPasswordPolicyMapper;
 import com.surpass.persistence.service.ConfigPasswordPolicyService;
+import org.springframework.stereotype.Service;
 
-@Repository
-public class ConfigPasswordPolicyServiceImpl  extends ServiceImpl<ConfigPasswordPolicyMapper,ConfigPasswordPolicy> implements ConfigPasswordPolicyService {
+@Service
+public class ConfigPasswordPolicyServiceImpl  extends JpaServiceImpl<ConfigPasswordPolicyMapper,ConfigPasswordPolicy> implements ConfigPasswordPolicyService {
 	private static final Logger logger = LoggerFactory.getLogger(ConfigPasswordPolicyServiceImpl.class);
-
-    @Autowired
-    ConfigPasswordPolicyMapper configPasswordPolicyMapper;
-
-
-	public ConfigPasswordPolicyMapper getMapper() {
-		return configPasswordPolicyMapper;
-	}
 
     /**
      * init PasswordPolicy and load Rules
@@ -129,9 +119,9 @@ public class ConfigPasswordPolicyServiceImpl  extends ServiceImpl<ConfigPassword
 
     @Override
     public ConfigPasswordPolicy  getPasswordPolicy() {
-    	LambdaQueryWrapper<ConfigPasswordPolicy> lambdaQueryWrapper = new LambdaQueryWrapper<ConfigPasswordPolicy>();
-    	lambdaQueryWrapper.isNotNull(ConfigPasswordPolicy::getId);
-    	return this.getOne(lambdaQueryWrapper);
+    	LambdaQuery<ConfigPasswordPolicy> lambdaQueryWrapper = new LambdaQuery<>();
+    	lambdaQueryWrapper.notNull(ConfigPasswordPolicy::getId);
+    	return this.get(lambdaQueryWrapper);
     }
 
     public Message<String> validateUserPassword(UserInfo userInfo) {
@@ -140,9 +130,9 @@ public class ConfigPasswordPolicyServiceImpl  extends ServiceImpl<ConfigPassword
         //密码校验结果
         List<String> resultMsgList = new ArrayList<>();
 
-        LambdaQueryWrapper<ConfigPasswordPolicy> lambdaQueryWrapper = new LambdaQueryWrapper<ConfigPasswordPolicy>();
+        LambdaQuery<ConfigPasswordPolicy> lambdaQueryWrapper = new LambdaQuery<>();
     	//lambdaQueryWrapper.eq(ConfigPasswordPolicy::getInstId,instId);
-        ConfigPasswordPolicy policy = this.getOne(lambdaQueryWrapper);
+        ConfigPasswordPolicy policy = this.get(lambdaQueryWrapper);
         if (Objects.isNull(policy)) {
             throw new BusinessException(
                     400,

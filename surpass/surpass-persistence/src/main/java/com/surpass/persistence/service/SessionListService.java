@@ -19,11 +19,10 @@
 package com.surpass.persistence.service;
 
 import java.util.List;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.access.SessionList;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface SessionListService extends IService<SessionList> {
+public interface SessionListService extends IJpaService<SessionList> {
 
 	public void insertOnline(SessionList sessionList);
 

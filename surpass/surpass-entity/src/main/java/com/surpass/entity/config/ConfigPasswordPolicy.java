@@ -21,15 +21,12 @@
 
 
 package com.surpass.entity.config;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -41,13 +38,16 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@TableName("surpass_config_password_policy")
-public class ConfigPasswordPolicy implements Serializable {
+@Table(name = "surpass_config_password_policy")
+@Entity
+public class ConfigPasswordPolicy extends JpaEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -4797776994287829182L;
 
-    @TableId(type = IdType.ASSIGN_ID)
+    @Id
+    @Column
+    @GeneratedValue
     String id;
 
     /**
@@ -55,67 +55,78 @@ public class ConfigPasswordPolicy implements Serializable {
      */
 
     @NotNull
+    @Column
     private int minLength;
 
     /**
      * maximum password lengths
      */
+    @Column
     @NotNull
     private int maxLength;
 
     /**
      * least lowercase letter
      */
+    @Column
     @NotNull
     private int lowerCase;
 
     /**
      * least uppercase letter
      */
+    @Column
     @NotNull
     private int upperCase;
 
     /**
      * inclusion of numerical digits
      */
+    @Column
     @NotNull
     private int digits;
 
     /**
      * inclusion of special characters
      */
+    @Column
     @NotNull
     private int specialChar;
 
     /**
      * require users to change passwords periodically
      */
+    @Column
     private int expiration;
 
     /**
      * 0 no 1 yes
      */
+    @Column
     private int username;
 
     /**
      * not include password list
      */
+    @Column
     private int history;
 
+    @Column
     private int dictionary;
 
+    @Column
     private int alphabetical;
 
+    @Column
     private int numerical;
 
+    @Column
     private int qwerty;
 
+    @Column
     private int occurances;
 
-    @TableField(exist = false)
     private int randomPasswordLength = 12;
 
-    @TableField(exist = false)
     List<String> policMessageList;
-
 }

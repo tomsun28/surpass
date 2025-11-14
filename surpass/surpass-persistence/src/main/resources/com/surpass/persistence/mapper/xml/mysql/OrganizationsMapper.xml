@@ -39,7 +39,7 @@
     </select>
 
 
-   <select id="pageList" parameterType="com.surpass.entity.idm.dto.OrgPageDto"
+   <select id="queryPageResults" parameterType="com.surpass.entity.idm.dto.OrgPageDto"
 		   resultType="com.surpass.entity.idm.Organizations">
     	select
 			*

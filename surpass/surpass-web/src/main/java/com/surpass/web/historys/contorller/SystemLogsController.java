@@ -22,8 +22,6 @@
 
 package com.surpass.web.historys.contorller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.entity.Message;
 import com.surpass.entity.history.HistorySystemLogs;
@@ -31,6 +29,8 @@ import com.surpass.entity.history.dto.HistorySystemLogsPageDto;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.persistence.service.HistorySystemLogsService;
 
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
@@ -62,13 +62,14 @@ public class SystemLogsController {
 	 */
 	@GetMapping(value={"/systemLogs/fetch"})
 	@ResponseBody
-	public Message<Page<HistorySystemLogs>> fetch(@ParameterObject HistorySystemLogsPageDto dto,
-												  @CurrentUser UserInfo currentUser){
+	public Message<JpaPageResults<HistorySystemLogs>> fetch(@ParameterObject HistorySystemLogsPageDto dto,
+															@CurrentUser UserInfo currentUser){
 		logger.debug("historys/historyLog/fetch {} ",dto);
 
-		LambdaQueryWrapper<HistorySystemLogs> wrapper = new LambdaQueryWrapper<>();
+		LambdaQuery<HistorySystemLogs> wrapper = new LambdaQuery<>();
 
-		return new Message<>(historySystemLogsService.page(dto.build(), wrapper));
+		dto.build();
+		return new Message<>(historySystemLogsService.fetch(dto, wrapper));
 	}
 
 }

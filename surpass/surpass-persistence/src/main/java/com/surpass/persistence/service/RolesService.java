@@ -20,10 +20,10 @@ package com.surpass.persistence.service;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.surpass.entity.permissions.Roles;
+import org.dromara.mybatis.jpa.service.IJpaService;
 
-public interface RolesService  extends IService<Roles> {
+public interface RolesService extends IJpaService<Roles> {
 	public void refreshAllDynamicRoles();
 
 	List<Roles> queryRolesByUserId(String userId);

@@ -20,15 +20,12 @@
 
 
 package com.surpass.entity.config;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -38,59 +35,78 @@ import java.io.Serializable;
  *
  */
 @NoArgsConstructor
-@TableName(value = "surpass_config_login_policy")
 @Data
-public class ConfigLoginPolicy implements Serializable {
+@Table(name = "surpass_config_login_policy")
+@Entity
+public class ConfigLoginPolicy extends JpaEntity implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 2563009899218736769L;
 
-	@TableId(type = IdType.ASSIGN_ID)
+	@Id
+	@Column
+	@GeneratedValue
 	String id;
 
 	@NotNull
+	@Column
 	int sessionValidity;
 
+	@Column
 	@NotNull
 	int tokenValidity;
 
+	@Column
 	@NotNull
 	String isFirstPasswordModify;
 
+	@Column
 	@NotNull
 	String captcha;
 
+	@Column
 	@NotNull
 	String captchaMgt;
 
+	@Column
 	@JsonFormat(shape = JsonFormat.Shape.STRING)
 	int twoFactor;
 
+	@Column
 	@NotNull
 	int loginAttempts;
 
+	@Column
 	@NotNull
 	String isAutoLock;
 
+	@Column
 	@NotNull
 	int lockInterval;
 
+	@Column
 	@NotNull
 	int passwordAttempts;
 
+	@Column
 	@NotNull
 	String passwordAttemptsCaptcha;
 
+	@Column
 	@NotNull
 	String scanCode;
 
+	@Column
 	@NotNull
 	String isMobile;
 
+	@Column
 	@NotNull
 	String isSocial;
 
+	@Column
 	String redirectUri;
 
+	@Column
 	int terminals;
 
 	public boolean isTwoFactor(){
