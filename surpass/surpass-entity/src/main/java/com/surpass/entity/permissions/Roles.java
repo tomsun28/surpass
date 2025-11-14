@@ -55,11 +55,11 @@ public class Roles extends JpaEntity implements Serializable {
     @GeneratedValue
     private String id;
 
-    @Column
+    @Column(name = "role_code")
     @NotEmpty(message = "用户组编码不能为空", groups = {AddGroup.class, EditGroup.class})
     String roleCode;
 
-    @Column
+    @Column(name = "role_name")
     @NotEmpty(message = "用户组名称不能为空", groups = {AddGroup.class, EditGroup.class})
     String roleName;
 
@@ -72,7 +72,7 @@ public class Roles extends JpaEntity implements Serializable {
     @Column
     String filters ;
 
-    @Column
+    @Column(name = "org_ids_list")
     String orgIdsList;
 
     @Column
@@ -88,16 +88,16 @@ public class Roles extends JpaEntity implements Serializable {
     @Column
     String deleted;
 
-    @Column
+    @Column(name = "created_by")
     private String createdBy;
 
-    @Column
+    @Column(name = "created_date")
     private Date createdDate;
 
-    @Column
+    @Column(name = "modified_date")
     private String modifiedBy;
 
-    @Column
+    @Column(name = "modified_date")
     private Date modifiedDate;
 
 	private String instName;

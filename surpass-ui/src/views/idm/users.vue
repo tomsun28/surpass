@@ -268,7 +268,7 @@ const changePasRef = ref<InstanceType<typeof changePassword> | null>(null);
 function getList(): any {
   listUsers(userParams.value).then((res: any) => {
     if (res.code === 0) {
-      usersList.value = res.data.records;
+      usersList.value = res.data.rows;
       total.value = res.data.total;
       loading.value = false;
     }

@@ -221,7 +221,7 @@ function getList(): any {
   listDept(queryParams.value).then((res: any) => {
     if (res.code === 0) {
       loading.value = false;
-      deptList.value = res.data.records;
+      deptList.value = res.data.rows;
       total.value = res.data.total
     }
   });

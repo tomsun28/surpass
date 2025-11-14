@@ -122,7 +122,7 @@ function resetQuery(): any {
 function getList(): any {
   listNoUserGroup(queryParams.value).then((res: any) =>  {
     if (res.code === 0) {
-      groupNoList.value = res.data.records;
+      groupNoList.value = res.data.rows;
       total.value = res.data.total;
       loading.value = false;
     }

@@ -198,7 +198,7 @@ function reset(): any {
 function getList(): any {
   listUserGroup(queryParams.value).then((res: any) =>  {
     if (res.code === 0) {
-      dataList.value = res.data.records;
+      dataList.value = res.data.rows;
       total.value = res.data.total;
       loading.value = false;
     }

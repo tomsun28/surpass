@@ -137,7 +137,7 @@ function getList(): any {
   getStandards();
   userApi.userNotAccessBook(queryParams.value).then((res: any) =>  {
     if (res.code === 0) {
-      list.value = res.data.records;
+      list.value = res.data.rows;
       total.value = res.data.total;
       loading.value = false;
     }

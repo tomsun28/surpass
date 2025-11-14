@@ -120,8 +120,8 @@ export default {
       this.params.startDate = this.formatTimestamp(this.params.startDatePicker, 'yyyy-MM-dd HH:mm:ss');
       this.params.endDate = this.formatTimestamp(this.params.endDatePicker, 'yyyy-MM-dd HH:mm:ss');
       loginAppsHistory(this.params).then((res: any) =>  {
-        this.sessions = res.data.records;
-        this.total = res.data.records;
+        this.sessions = res.data.rows;
+        this.total = res.data.rows;
         this.loading = false;
       })
     },

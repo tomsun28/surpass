@@ -164,7 +164,7 @@ function dialogOfClosedMethods(val: any): any {
 
 function getList(): any {
   getUsersPosts(postParams.value).then((res: any) =>  {
-    userPost.value = res.data.records;
+    userPost.value = res.data.rows;
     total.value = res.data.total;
     loading.value = false;
   })

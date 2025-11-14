@@ -162,7 +162,7 @@ watch(
 function getList(): any {
   listUserGroup(queryParams.value).then((res: any) => {
     if (res.code === 0) {
-      groupsList.value = res.data.records;
+      groupsList.value = res.data.rows;
       total.value = res.data.total;
       loading.value = false;
     }

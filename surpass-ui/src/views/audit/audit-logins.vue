@@ -119,7 +119,7 @@ export default {
         this.params.startDate = '';
       }
       loginHistory(this.params).then((res: any) => {
-        this.sessions = res.data.records;
+        this.sessions = res.data.rows;
         this.total = res.data.total;
         this.loading = false;
       })

@@ -187,7 +187,7 @@ function getList(): any {
   memberInRole(queryParams.value).then((res: any) =>  {
     loading.value = false;
     if (res.code === 0) {
-      list.value = res.data.records;
+      list.value = res.data.rows;
       total.value = res.data.total;
     }
   });

@@ -134,7 +134,7 @@ function getList(): any {
   listGroup(queryParams.value).then((res: any) => {
     if (res.code === 0) {
       loading.value = false;
-      groupList.value = res.data.records;
+      groupList.value = res.data.rows;
       total.value = res.data.total;
     }
   })

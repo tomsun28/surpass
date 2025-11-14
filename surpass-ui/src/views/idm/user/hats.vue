@@ -269,7 +269,7 @@ function reset(): any {
 function getList(): any {
   listHats(queryParams.value).then((res: any) =>  {
     if (res.code === 0) {
-      hatsList.value = res.data.records;
+      hatsList.value = res.data.rows;
       total.value = res.data.total;
       loading.value = false;
     }
