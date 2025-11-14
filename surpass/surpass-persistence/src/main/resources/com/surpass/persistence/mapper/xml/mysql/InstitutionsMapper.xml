@@ -20,20 +20,4 @@
 		<include refid="where_statement"/>
 		order by  sortindex
 	</select>
-
-	<select id="fetch" parameterType="com.surpass.entity.dto.InstitutionsPageDto"
-			resultType="com.surpass.entity.Institutions">
-		select ji.*, ju.username as ownerName
-		    from surpass_institutions ji
-		join surpass_userinfo ju on ji.owner_id = ju.id
-		and ju.deleted = 'n'
-		where ji.deleted = 'n'
-		<if test="dto.instName != null and dto.instName != '' ">
-			and ji.inst_name like CONCAT ('%', #{dto.instName}, '%')
-		</if>
-		<if test="dto.instType != null">
-			and ji.inst_type = #{dto.instType}
-		</if>
-		 order by created_date desc
-	</select>
 </mapper>

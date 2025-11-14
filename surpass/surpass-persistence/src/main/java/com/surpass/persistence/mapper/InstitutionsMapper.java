@@ -35,6 +35,4 @@ public interface InstitutionsMapper extends IJpaMapper<Institutions> {
 
 	@Select("select * from  surpass_institutions where deleted = 'n' and id = #{value} or domain = #{value}  or console_domain = #{value}" )
 	Institutions getByInstIdOrDomain(String instIdOrDomain);
-
-	Page<Institutions> fetch(Page page, @Param("dto") InstitutionsPageDto dto);
 }
