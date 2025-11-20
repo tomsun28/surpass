@@ -1,0 +1,134 @@
+package com.surpass.persistence.util;
+
+import com.surpass.exception.BusinessException;
+import com.surpass.persistence.service.DataSourceService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.mybatis.jpa.datasource.DataSourceSwitch;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Component;
+
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Map;
+
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class SqlExecutor {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    private final DataSourceService dataSourceService;
+
+    public List<Map<String, Object>> executeQuery(String dataSourceName, String sql, List<Object> params) {
+        try {
+            // 动态切换到指定数据源
+            switchDataSource(dataSourceName);
+
+            log.debug("执行查询SQL: {}, 参数: {}", sql, params);
+
+            if (params == null || params.isEmpty()) {
+                return jdbcTemplate.queryForList(sql);
+            } else {
+                return jdbcTemplate.queryForList(sql, params.toArray());
+            }
+        } catch (Exception e) {
+            log.error("执行SQL查询失败: {}", sql, e);
+            throw new BusinessException(50001, "SQL执行失败: " + e.getMessage());
+        }
+    }
+
+    public int executeUpdate(String dataSourceName, String sql, List<Object> params) {
+        try {
+            // 动态切换到指定数据源
+            switchDataSource(dataSourceName);
+
+            log.debug("执行更新SQL: {}, 参数: {}", sql, params);
+
+            if (params == null || params.isEmpty()) {
+                return jdbcTemplate.update(sql);
+            } else {
+                return jdbcTemplate.update(sql, params.toArray());
+            }
+        } catch (Exception e) {
+            log.error("执行SQL更新失败: {}", sql, e);
+            throw new BusinessException(50001, "SQL执行失败: " + e.getMessage());
+        }
+    }
+
+    public Long executeInsert(String dataSourceName, String sql, List<Object> params) {
+        try {
+            // 动态切换到指定数据源
+            switchDataSource(dataSourceName);
+
+            log.debug("执行插入SQL: {}, 参数: {}", sql, params);
+
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            if (params == null || params.isEmpty()) {
+                jdbcTemplate.update(connection -> {
+                    PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                    return ps;
+                }, keyHolder);
+            } else {
+                jdbcTemplate.update(connection -> {
+                    PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                    for (int i = 0; i < params.size(); i++) {
+                        ps.setObject(i + 1, params.get(i));
+                    }
+                    return ps;
+                }, keyHolder);
+            }
+
+            if (keyHolder.getKey() != null) {
+                return keyHolder.getKey().longValue();
+            }
+            return null;
+        } catch (Exception e) {
+            log.error("执行SQL插入失败: {}", sql, e);
+            throw new BusinessException(50001, "SQL执行失败: " + e.getMessage());
+        }
+    }
+
+    public List<Map<String, Object>> executeQueryWithPagination(
+            String dataSourceName,
+            String sql,
+            List<Object> params,
+            int pageNum,
+            int pageSize) {
+
+        try {
+            // 动态切换到指定数据源
+            switchDataSource(dataSourceName);
+
+            // 构建分页SQL
+            String countSql = "SELECT COUNT(*) FROM (" + sql + ") t";
+            String paginationSql = sql + " LIMIT " + (pageNum - 1) * pageSize + ", " + pageSize;
+
+            log.debug("执行分页查询SQL: {}, 参数: {}, 页码: {}, 页大小: {}",
+                    paginationSql, params, pageNum, pageSize);
+
+            // 执行查询
+            List<Map<String, Object>> data;
+            if (params == null || params.isEmpty()) {
+                data = jdbcTemplate.queryForList(paginationSql);
+            } else {
+                data = jdbcTemplate.queryForList(paginationSql, params.toArray());
+            }
+
+            return data;
+        } catch (Exception e) {
+            log.error("执行分页SQL查询失败: {}", sql, e);
+            throw new BusinessException(50001, "SQL执行失败: " + e.getMessage());
+        }
+    }
+
+    private void switchDataSource(String dataSourceName) {
+        DataSourceSwitch.change(dataSourceName);
+        log.debug("切换到数据源: {}", dataSourceName);
+    }
+}

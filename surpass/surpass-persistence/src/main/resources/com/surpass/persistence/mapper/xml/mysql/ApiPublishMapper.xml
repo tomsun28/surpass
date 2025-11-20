@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.surpass.persistence.mapper.ApiPublishMapper">
+    <select id="findByApiIdOrderByPublishTimeDesc"
+            resultType="com.surpass.entity.api.ApiPublishRecord">
+        SELECT apr.*
+        FROM t_api_publish apr
+                 LEFT JOIN t_api_version v
+                           ON apr.version_id = v.id and v.deleted = 'n'
+        WHERE apr.api_id = #{apiId}
+
+        ORDER BY apr.publish_time DESC
+    </select>
+</mapper>
