@@ -1,0 +1,329 @@
+<template>
+  <div class="api-page">
+    <div class="page-header">
+      <h2>API管理</h2>
+      <p>管理API定义，配置API路径、方法和关联的数据源</p>
+    </div>
+
+    <div class="page-content">
+      <!-- 操作栏 -->
+      <div class="action-bar">
+        <el-button type="primary" @click="showCreateDialog">
+          <el-icon><Plus /></el-icon>
+          新增API
+        </el-button>
+        <el-button @click="refreshList">
+          <el-icon><Refresh /></el-icon>
+          刷新
+        </el-button>
+      </div>
+
+      <!-- API列表 -->
+      <el-table :data="apiList" v-loading="loading" style="width: 100%">
+        <el-table-column prop="id" label="ID" width="80" />
+        <el-table-column prop="name" label="API名称" />
+        <el-table-column prop="path" label="路径" />
+        <el-table-column prop="method" label="方法" width="100">
+          <template #default="{ row }">
+            <el-tag :type="getMethodTagType(row.method)">
+              {{ row.method }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="datasourceId" label="数据源ID" width="100" />
+        <el-table-column prop="description" label="描述" />
+        <el-table-column prop="createTime" label="创建时间" width="180" />
+        <el-table-column label="操作" width="200" fixed="right">
+          <template #default="{ row }">
+            <el-button size="small" @click="viewVersions(row)">版本</el-button>
+            <el-button size="small" type="primary" @click="editApi(row)">编辑</el-button>
+            <el-button size="small" type="danger" @click="deleteApi(row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <!-- 空状态 -->
+      <el-empty v-if="!loading && apiList.length === 0" description="暂无API定义" />
+    </div>
+
+    <!-- 新增/编辑对话框 -->
+    <el-dialog
+      :title="dialogTitle"
+      v-model="dialogVisible"
+      width="600px"
+      :before-close="handleDialogClose"
+    >
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="100px"
+      >
+        <el-form-item label="API名称" prop="name">
+          <el-input v-model="formData.name" placeholder="请输入API名称" />
+        </el-form-item>
+
+        <el-form-item label="路径" prop="path">
+          <el-input v-model="formData.path" placeholder="请输入API路径，如：/users" />
+        </el-form-item>
+
+        <el-form-item label="HTTP方法" prop="method">
+          <el-select v-model="formData.method" placeholder="请选择HTTP方法" style="width: 100%">
+            <el-option label="GET" value="GET" />
+            <el-option label="POST" value="POST" />
+            <el-option label="PUT" value="PUT" />
+            <el-option label="DELETE" value="DELETE" />
+            <el-option label="PATCH" value="PATCH" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="数据源" prop="datasourceId">
+          <el-select
+            v-model="formData.datasourceId"
+            placeholder="请选择数据源"
+            style="width: 100%"
+            :loading="dataSourceLoading"
+          >
+            <el-option
+              v-for="ds in dataSourceList"
+              :key="ds.id"
+              :label="ds.name"
+              :value="ds.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="描述" prop="description">
+          <el-input
+            v-model="formData.description"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入API描述"
+          />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="handleDialogClose">取消</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="submitting">
+            保存
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import * as dataSourceApi from '@/api/api-service/dataSource.ts'
+import * as apiDefinitionApi from '@/api/api-service/apiDefinitionApi.ts'
+import { Plus, Refresh } from '@element-plus/icons-vue'
+
+const router = useRouter()
+
+// 响应式数据
+const loading = ref(false)
+const dataSourceLoading = ref(false)
+const dialogVisible = ref(false)
+const submitting = ref(false)
+const isEdit = ref(false)
+const formRef = ref()
+
+const apiList = ref([])
+const dataSourceList = ref([])
+
+const formData = reactive({
+  id: null,
+  name: '',
+  path: '',
+  method: '',
+  datasourceId: null,
+  description: ''
+})
+
+// 表单验证规则
+const formRules = {
+  name: [
+    { required: true, message: '请输入API名称', trigger: 'blur' }
+  ],
+  path: [
+    { required: true, message: '请输入API路径', trigger: 'blur' }
+  ],
+  method: [
+    { required: true, message: '请选择HTTP方法', trigger: 'change' }
+  ],
+  datasourceId: [
+    { required: true, message: '请选择数据源', trigger: 'change' }
+  ]
+}
+
+// 计算属性
+const dialogTitle = computed(() => isEdit.value ? '编辑API' : '新增API')
+
+// 生命周期
+onMounted(() => {
+  loadApis()
+  loadDataSources()
+})
+
+// 方法
+const loadApis = async () => {
+  try {
+    loading.value = true
+    const response = await apiDefinitionApi.list()
+    apiList.value = response.data || []
+  } catch (error) {
+    ElMessage.error('加载API列表失败')
+    console.error('加载API列表失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const loadDataSources = async () => {
+  try {
+    dataSourceLoading.value = true
+    const response = await dataSourceApi.list()
+    dataSourceList.value = response.data || []
+  } catch (error) {
+    ElMessage.error('加载数据源列表失败')
+    console.error('加载数据源列表失败:', error)
+  } finally {
+    dataSourceLoading.value = false
+  }
+}
+
+const refreshList = () => {
+  loadApis()
+}
+
+const showCreateDialog = () => {
+  isEdit.value = false
+  resetForm()
+  dialogVisible.value = true
+}
+
+const editApi = (row) => {
+  isEdit.value = true
+  Object.assign(formData, { ...row })
+  dialogVisible.value = true
+}
+
+const resetForm = () => {
+  Object.assign(formData, {
+    id: null,
+    name: '',
+    path: '',
+    method: '',
+    datasourceId: null,
+    description: ''
+  })
+  formRef.value?.clearValidate()
+}
+
+const handleDialogClose = () => {
+  dialogVisible.value = false
+  resetForm()
+}
+
+const handleSubmit = async () => {
+  try {
+    await formRef.value.validate()
+    submitting.value = true
+
+    if (isEdit.value) {
+      await apiDefinitionApi.update(formData.id, formData)
+      ElMessage.success('更新成功')
+    } else {
+      await apiDefinitionApi.create(formData)
+      ElMessage.success('创建成功')
+    }
+
+    dialogVisible.value = false
+    loadApis()
+  } catch (error) {
+    ElMessage.error(isEdit.value ? '更新失败' : '创建失败')
+    console.error('保存失败:', error)
+  } finally {
+    submitting.value = false
+  }
+}
+
+const viewVersions = (row) => {
+  router.push(`/version?apiId=${row.id}`)
+}
+
+const deleteApi = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除API "${row.name}" 吗？此操作不可恢复。`,
+      '确认删除',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    )
+
+    await apiDefinitionApi.deleteData(row.id)
+    ElMessage.success('删除成功')
+    loadApis()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除失败')
+      console.error('删除失败:', error)
+    }
+  }
+}
+
+const getMethodTagType = (method) => {
+  const types = {
+    'GET': 'success',
+    'POST': 'primary',
+    'PUT': 'warning',
+    'DELETE': 'danger',
+    'PATCH': 'info'
+  }
+  return types[method] || 'info'
+}
+</script>
+
+<style scoped>
+.api-page {
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  min-height: calc(100vh - 140px);
+}
+
+.page-header {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.page-header h2 {
+  margin: 0 0 8px 0;
+  color: #303133;
+}
+
+.page-header p {
+  margin: 0;
+  color: #909399;
+  font-size: 14px;
+}
+
+.action-bar {
+  margin-bottom: 20px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+</style>
