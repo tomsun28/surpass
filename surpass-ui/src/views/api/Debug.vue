@@ -236,11 +236,11 @@ const loadApiDetail = async () => {
 
   try {
     // 加载API详情
-    selectedApi.value = await apiDefinitionApi.getById(selectedApiId.value)
+    selectedApi.value = (await apiDefinitionApi.getById(selectedApiId.value)).data;
 
     // 加载当前版本
     const versionResponse = await apiVersionApi.getPublishedVersion(selectedApiId.value)
-    if (versionResponse) {
+    if (versionResponse.data) {
       currentVersion.value = versionResponse
       // 解析参数定义并初始化请求参数
       initRequestParams(versionResponse.paramDefinition)

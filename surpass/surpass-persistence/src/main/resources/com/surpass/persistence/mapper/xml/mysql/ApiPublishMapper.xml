@@ -4,8 +4,8 @@
     <select id="findByApiIdOrderByPublishTimeDesc"
             resultType="com.surpass.entity.api.ApiPublishRecord">
         SELECT apr.*
-        FROM t_api_publish apr
-                 LEFT JOIN t_api_version v
+        FROM surpass_api_publish apr
+                 LEFT JOIN surpass_api_version v
                            ON apr.version_id = v.id and v.deleted = 'n'
         WHERE apr.api_id = #{apiId}
 

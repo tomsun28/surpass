@@ -76,7 +76,7 @@ public class ApiDefinitionServiceImpl extends JpaServiceImpl<ApiDefinitionMapper
         wrapper.eq(ApiDefinition::getMethod, method);
         wrapper.orderBy(ApiDefinition::getCreatedDate, OrderBy.DESC.getOrder());
 
-        return super.query(wrapper).get(0);
+        return super.query(wrapper).stream().findFirst().orElse(null);
     }
 
     private boolean isExistDuplicate(ApiDefinition apiDefinition) {

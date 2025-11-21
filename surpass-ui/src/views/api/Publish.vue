@@ -168,11 +168,11 @@ const loadPublishHistory = async () => {
 
     // 加载发布历史
     const historyResponse = await publishApi.getPublishHistory(selectedApiId.value)
-    publishHistory.value = historyResponse || []
+    publishHistory.value = historyResponse.data || []
 
     // 加载已发布版本
     const versionResponse = await apiVersionApi.getPublishedVersion(selectedApiId.value)
-    if (versionResponse) {
+    if (versionResponse.data) {
       // 直接使用已发布版本信息
       latestPublish.value = {
         apiVersion: versionResponse,

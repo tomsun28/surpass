@@ -85,7 +85,7 @@ const loadApis = async () => {
   try {
     apiLoading.value = true
     const response = await apiDefinitionApi.list()
-    apiList.value = response.data || []
+    apiList.value = response || []
   } catch (error) {
     ElMessage.error('加载API列表失败')
     console.error('加载API列表失败:', error)

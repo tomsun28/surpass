@@ -13,6 +13,8 @@ public interface DataSourceService extends IJpaService<DataSource> {
 
     Message<String> updateDataSource(DataSource dataSource);
 
+    Message<String> deleteDataSource(String id);
+
     boolean testConnection(DataSource dataSource);
 
     void updateStatus(String id, DataSourceStatus status);

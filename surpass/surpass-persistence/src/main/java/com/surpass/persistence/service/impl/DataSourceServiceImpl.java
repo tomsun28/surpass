@@ -7,16 +7,18 @@ import com.surpass.enums.DataSourceStatus;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.DataSourceMapper;
 import com.surpass.persistence.service.DataSourceService;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.datasource.DynamicRoutingDataSource;
 import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -26,22 +28,110 @@ import java.util.Objects;
  */
 
 @Service
+@RequiredArgsConstructor
 public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, DataSource> implements DataSourceService {
 
     private static final Logger logger = LoggerFactory.getLogger(DataSourceServiceImpl.class);
 
-    @Override
-    public Message<String> saveDataSource(DataSource dataSource) {
-        checkDuplicateName(dataSource);
+    private final DynamicRoutingDataSource dynamicRoutingDataSource;
 
-        return super.insert(dataSource) ? Message.ok("新增成功") : Message.failed("新增失败");
+    @Override
+    public Message<String> saveDataSource(DataSource config) {
+
+        // 1. 校验是否重复（你已有）
+        checkDuplicateName(config);
+
+        // 2. 插入记录
+        boolean inserted = super.insert(config);
+        if (!inserted) {
+            return Message.failed("新增失败");
+        }
+
+        // 3. 运行时动态增加 DataSource
+        try {
+            addDynamicDataSource(config);
+        } catch (Exception e) {
+            // 动态数据源添加失败时，可以选择删除插入的记录，保持一致性
+            logger.error("动态添加数据源失败: {}", config.getName(), e);
+            return Message.failed("新增成功，但创建数据源失败：" + e.getMessage());
+        }
+
+        return Message.ok("新增成功");
     }
+
 
     @Override
     public Message<String> updateDataSource(DataSource dataSource) {
+
+        // 1. 检查重名（排除自身）
         checkDuplicateName(dataSource);
 
-        return super.update(dataSource) ? Message.ok("新增成功") : Message.failed("新增失败");
+        // 2. 查询原来的配置
+        DataSource oldCfg = super.get(dataSource.getId());
+        if (oldCfg == null) {
+            return Message.failed("数据源不存在");
+        }
+
+        // 默认数据源不能修改名称
+        if ("default".equals(oldCfg.getName()) &&
+                !oldCfg.getName().equals(dataSource.getName())) {
+            return Message.failed("默认数据源名称不允许修改");
+        }
+
+        // 3. 先修改数据库记录
+        boolean updated = super.update(dataSource);
+        if (!updated) {
+            return Message.failed("修改数据源失败");
+        }
+
+        // 4. 创建新的 DataSource 对象
+        javax.sql.DataSource newDs = buildDataSource(dataSource);
+        if (newDs == null) {
+            return Message.failed("数据源连接失败，请检查配置");
+        }
+
+        // 5. 如果名字变了，先移除旧的
+        if (!oldCfg.getName().equals(dataSource.getName())) {
+            dynamicRoutingDataSource.removeDataSource(oldCfg.getName());
+        }
+
+        // 6. 覆盖添加新的数据源
+        boolean added = dynamicRoutingDataSource.addDataSource(dataSource.getName(), newDs);
+        if (!added) {
+            return Message.failed("动态数据源加载失败，已更新数据库但未生效");
+        }
+
+        return Message.ok("修改成功");
+    }
+
+
+    @Override
+    public Message<String> deleteDataSource(String id) {
+
+        // 1. 根据 id 查询数据源配置
+        DataSource cfg = super.get(id);
+        if (cfg == null) {
+            return Message.failed("数据源不存在");
+        }
+
+        // 默认数据源不能删除
+        if ("default".equals(cfg.getName())) {
+            return Message.failed("默认数据源不可删除");
+        }
+
+        // 2. 先从数据库删除记录
+        boolean deleted = super.delete(id);
+        if (!deleted) {
+            return Message.failed("删除数据源记录失败");
+        }
+
+        // 3. 从动态路由中移除数据源
+        boolean removed = dynamicRoutingDataSource.removeDataSource(cfg.getName());
+        if (!removed) {
+            return Message.failed("动态数据源移除失败，记录已删除");
+        }
+
+        return Message.ok("删除成功");
     }
 
     @Override
@@ -85,11 +175,49 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
         LambdaQuery<DataSource> wrapper = new LambdaQuery<>();
         wrapper.eq(DataSource::getName, dataSource.getName());
         if (StringUtils.isNotBlank(dataSource.getId())) {
-            wrapper.notEq(DataSource::getId ,dataSource.getId());
+            wrapper.notEq(DataSource::getId, dataSource.getId());
         }
 
         if (super.count(wrapper) > 0) {
             throw new BusinessException(50001, "数据源名称已存在");
         }
+    }
+
+
+    private void addDynamicDataSource(DataSource cfg) {
+
+        // 1. 使用 Spring Boot 的 DataSourceBuilder 构建数据源
+        javax.sql.DataSource ds = org.springframework.boot.jdbc.DataSourceBuilder
+                .create()
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url(cfg.getUrl())
+                .username(cfg.getUsername())
+                .password(cfg.getPassword())
+                .build();
+
+        // 2. 注册动态数据源（立刻生效）
+        boolean ok = dynamicRoutingDataSource.addDataSource(cfg.getName(), ds);
+        if (!ok) {
+            throw new BusinessException(50001, "数据源已存在: " + cfg.getName());
+        }
+
+        logger.info("动态添加数据源 [{}] 成功", cfg.getName());
+    }
+
+    private javax.sql.DataSource buildDataSource(DataSource cfg) {
+        // 1. 使用 Spring Boot 的 DataSourceBuilder 构建数据源
+        javax.sql.DataSource ds = org.springframework.boot.jdbc.DataSourceBuilder
+                .create()
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url(cfg.getUrl())
+                .username(cfg.getUsername())
+                .password(cfg.getPassword())
+                .build();
+        try {
+            ds.getConnection().close(); // 测试有效性
+        } catch (Exception e) {
+            return null;
+        }
+        return ds;
     }
 }

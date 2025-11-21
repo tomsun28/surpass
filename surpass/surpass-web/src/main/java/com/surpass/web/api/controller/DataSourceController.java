@@ -43,8 +43,7 @@ public class DataSourceController {
 
     @DeleteMapping("/{id}")
     public Message<String> delete(@PathVariable String id) {
-        dataSourceService.delete(id);
-        return Message.ok("删除成功");
+        return dataSourceService.deleteDataSource(id);
     }
 
     @PostMapping("/{id}/test")

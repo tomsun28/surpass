@@ -298,8 +298,8 @@ const loadVersions = async () => {
       apiVersionApi.getVersionStatistics(selectedApiId.value)
     ])
 
-    versionList.value = versionsResponse || []
-    versionStatistics.value = statisticsResponse || null
+    versionList.value = versionsResponse.data || []
+    versionStatistics.value = statisticsResponse.data || null
   } catch (error) {
     ElMessage.error('加载版本列表失败')
     console.error('加载版本列表失败:', error)

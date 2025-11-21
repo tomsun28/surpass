@@ -36,7 +36,7 @@ public class ApiVersionServiceImpl extends JpaServiceImpl<ApiVersionMapper, ApiV
         wrapper.eq(ApiVersion::getApiId, apiId);
         wrapper.eq(ApiVersion::getStatus, status);
         wrapper.orderBy(ApiVersion::getCreatedDate, OrderBy.DESC.getOrder());
-        return super.query(wrapper).get(0);
+        return super.query(wrapper).stream().findFirst().orElse(null);
     }
 
     @Override

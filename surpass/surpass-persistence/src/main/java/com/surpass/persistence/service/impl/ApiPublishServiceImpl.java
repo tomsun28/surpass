@@ -52,7 +52,7 @@ public class ApiPublishServiceImpl extends JpaServiceImpl<ApiPublishMapper, ApiP
             wrapperPublish.eq(ApiPublishRecord::getApiId, apiId);
             wrapperPublish.eq(ApiPublishRecord::getVersionId, apiVersion.getId());
             wrapperPublish.orderBy(ApiPublishRecord::getPublishTime, OrderBy.DESC.getOrder());
-            ApiPublishRecord apiPublishRecord = super.query(wrapperPublish).get(0);
+            ApiPublishRecord apiPublishRecord = super.query(wrapperPublish).stream().findFirst().orElse(null);
 
             return Optional.ofNullable(apiPublishRecord);
         }
@@ -231,6 +231,6 @@ public class ApiPublishServiceImpl extends JpaServiceImpl<ApiPublishMapper, ApiP
         wrapper.eq(ApiVersion::getApiId, apiId);
         wrapper.eq(ApiVersion::getStatus, ApiVersionStatus.PUBLISHED.getCode());
         wrapper.orderBy(ApiVersion::getCreatedDate, OrderBy.DESC.getOrder());
-        return apiVersionService.query(wrapper).get(0);
+        return apiVersionService.query(wrapper).stream().findFirst().orElse(null);
     }
 }
