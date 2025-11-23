@@ -16,7 +16,7 @@ public class ResponseTemplateRenderer {
 
     private final ObjectMapper objectMapper;
 
-    public String renderResponse(String responseTemplate, Object data) {
+    public Object renderResponse(String responseTemplate, Object data) {
         if (responseTemplate == null || responseTemplate.trim().isEmpty()) {
             // 如果没有响应模板，使用默认模板
             return renderDefaultResponse(data);
@@ -30,9 +30,7 @@ public class ResponseTemplateRenderer {
             String renderedResponse = responseTemplate.replace("#{data}", dataJson);
 
             // 验证渲染后的JSON是否有效
-            objectMapper.readTree(renderedResponse);
-
-            return renderedResponse;
+            return objectMapper.readTree(renderedResponse);
 
         } catch (JsonProcessingException e) {
             log.error("响应模板渲染失败", e);

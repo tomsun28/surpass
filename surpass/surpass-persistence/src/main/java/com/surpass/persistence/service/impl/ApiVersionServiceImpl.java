@@ -47,8 +47,8 @@ public class ApiVersionServiceImpl extends JpaServiceImpl<ApiVersionMapper, ApiV
     @Override
     public Message<ApiVersion> createNewVersion(ApiVersion apiVersion) {
         // 获取当前最大版本号
-        Integer maxVersion = apiVersionMapper.findMaxVersionByApiId(apiVersion.getApiId());
-        int newVersion = (maxVersion != null ? maxVersion : 0) + 1;
+        int maxVersion = apiVersionMapper.findMaxVersionByApiId(apiVersion.getApiId());
+        int newVersion = maxVersion + 1;
 
         apiVersion.setVersion(newVersion);
         apiVersion.setStatus(ApiVersionStatus.DRAFT.getCode());

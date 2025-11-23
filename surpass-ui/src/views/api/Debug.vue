@@ -9,17 +9,17 @@
       <!-- API选择 -->
       <div class="api-selector">
         <el-select
-          v-model="selectedApiId"
-          placeholder="请选择API"
-          style="width: 300px"
-          @change="loadApiDetail"
-          :loading="apiLoading"
+            v-model="selectedApiId"
+            placeholder="请选择API"
+            style="width: 300px"
+            @change="loadApiDetail"
+            :loading="apiLoading"
         >
           <el-option
-            v-for="api in apiList"
-            :key="api.id"
-            :label="api.name"
-            :value="api.id"
+              v-for="api in apiList"
+              :key="api.id"
+              :label="api.name"
+              :value="api.id"
           />
         </el-select>
       </div>
@@ -83,50 +83,53 @@
             <h4>请求参数</h4>
             <div class="params-list">
               <div
-                v-for="(param, index) in requestParams"
-                :key="index"
-                class="param-item"
+                  v-for="(param, index) in requestParams"
+                  :key="index"
+                  class="param-item"
               >
                 <el-input
-                  v-model="param.name"
-                  placeholder="参数名"
-                  style="width: 150px"
-                  :class="{ 'required-param': param.required }"
+                    v-model="param.name"
+                    placeholder="参数名"
+                    style="width: 150px"
+                    :class="{ 'required-param': param.required }"
                 />
                 <el-select
-                  v-model="param.type"
-                  placeholder="类型"
-                  style="width: 100px"
+                    v-model="param.type"
+                    placeholder="类型"
+                    style="width: 100px"
                 >
-                  <el-option label="字符串" value="string" />
-                  <el-option label="数字" value="number" />
-                  <el-option label="布尔" value="boolean" />
+                  <el-option label="字符串" value="string"/>
+                  <el-option label="数字" value="number"/>
+                  <el-option label="布尔" value="boolean"/>
                 </el-select>
                 <el-input
-                  v-model="param.value"
-                  placeholder="参数值"
-                  style="flex: 1"
+                    v-model="param.value"
+                    placeholder="参数值"
+                    style="flex: 1"
                 />
                 <el-tooltip
-                  :content="param.required ? '必填参数' : '可选参数'"
-                  placement="top"
+                    :content="param.required ? '必填参数' : '可选参数'"
+                    placement="top"
                 >
                   <el-icon :color="param.required ? '#f56c6c' : '#909399'">
-                    <InfoFilled />
+                    <InfoFilled/>
                   </el-icon>
                 </el-tooltip>
                 <el-button
-                  type="danger"
-                  size="small"
-                  @click="removeParam(index)"
-                  v-if="!param.required"
+                    type="danger"
+                    @click="removeParam(index)"
+                    v-if="!param.required"
                 >
-                  <el-icon><Delete /></el-icon>
+                  <el-icon>
+                    <Delete/>
+                  </el-icon>
                 </el-button>
               </div>
             </div>
-            <el-button @click="addParam" size="small">
-              <el-icon><Plus /></el-icon>
+            <el-button @click="addParam">
+              <el-icon>
+                <Plus/>
+              </el-icon>
               添加参数
             </el-button>
           </div>
@@ -134,12 +137,14 @@
           <!-- 执行按钮 -->
           <div class="execute-section">
             <el-button
-              type="primary"
-              @click="executeApi"
-              :loading="executing"
-              :disabled="!selectedApi"
+                type="primary"
+                @click="executeApi"
+                :loading="executing"
+                :disabled="!selectedApi"
             >
-              <el-icon><Promotion /></el-icon>
+              <el-icon>
+                <Promotion/>
+              </el-icon>
               执行API
             </el-button>
           </div>
@@ -175,15 +180,15 @@
 
           <div class="response-data">
             <h4>响应数据：</h4>
-            <pre>{{ formatResponseData(responseData.data) }}</pre>
+            <pre>{{ formatResponseData(responseData) }}</pre>
           </div>
         </el-card>
       </div>
 
       <!-- 空状态 -->
       <el-empty
-        v-if="!selectedApiId"
-        description="请选择API"
+          v-if="!selectedApiId"
+          description="请选择API"
       />
     </div>
   </div>
@@ -209,7 +214,7 @@ const responseData = ref(null)
 const executionTime = ref(0)
 
 const requestParams = ref([
-  { name: '', value: '' }
+  {name: '', value: ''}
 ])
 
 // 生命周期
@@ -241,9 +246,9 @@ const loadApiDetail = async () => {
     // 加载当前版本
     const versionResponse = await apiVersionApi.getPublishedVersion(selectedApiId.value)
     if (versionResponse.data) {
-      currentVersion.value = versionResponse
+      currentVersion.value = versionResponse.data
       // 解析参数定义并初始化请求参数
-      initRequestParams(versionResponse.paramDefinition)
+      initRequestParams(versionResponse.data.paramDefinition)
     } else {
       currentVersion.value = null
       ElMessage.warning('该API没有已发布的版本')
@@ -259,7 +264,7 @@ const loadApiDetail = async () => {
 }
 
 const addParam = () => {
-  requestParams.value.push({ name: '', value: '' })
+  requestParams.value.push({name: '', value: ''})
 }
 
 const removeParam = (index) => {
@@ -270,7 +275,7 @@ const removeParam = (index) => {
 
 const initRequestParams = (paramDefinition) => {
   if (!paramDefinition) {
-    requestParams.value = [{ name: '', value: '' }]
+    requestParams.value = [{name: '', value: ''}]
     return
   }
 
@@ -294,11 +299,11 @@ const initRequestParams = (paramDefinition) => {
 
     // 确保至少有一个参数项
     if (requestParams.value.length === 0) {
-      requestParams.value = [{ name: '', value: '' }]
+      requestParams.value = [{name: '', value: ''}]
     }
   } catch (error) {
     console.error('解析参数定义失败:', error)
-    requestParams.value = [{ name: '', value: '' }]
+    requestParams.value = [{name: '', value: ''}]
   }
 }
 
@@ -310,8 +315,8 @@ const executeApi = async () => {
 
   // 验证必填参数
   const missingParams = requestParams.value
-    .filter(param => param.required && (!param.name || !param.value))
-    .map(param => param.name || '未命名参数')
+      .filter(param => param.required && (!param.name || !param.value))
+      .map(param => param.name || '未命名参数')
 
   if (missingParams.length > 0) {
     ElMessage.warning(`请填写必填参数: ${missingParams.join(', ')}`)
@@ -344,9 +349,9 @@ const executeApi = async () => {
 
     // 执行API
     const response = await gatewayApi.execute(
-      selectedApi.value.path,
-      selectedApi.value.method,
-      params
+        selectedApi.value.path,
+        selectedApi.value.method,
+        params
     )
 
     // 计算执行时间

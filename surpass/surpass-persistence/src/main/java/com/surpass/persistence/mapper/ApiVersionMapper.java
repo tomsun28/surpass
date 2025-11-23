@@ -7,5 +7,5 @@ import org.springframework.data.repository.query.Param;
 
 @Mapper
 public interface ApiVersionMapper extends IJpaMapper<ApiVersion> {
-    Integer findMaxVersionByApiId(@Param("apiId") String apiId);
+    int findMaxVersionByApiId(@Param("apiId") String apiId);
 }

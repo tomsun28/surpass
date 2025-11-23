@@ -17,7 +17,8 @@ const usePermissionStore: any = defineStore(
             addRoutes: [],
             defaultRoutes: [],
             topbarRouters: [],
-            sidebarRouters: []
+            sidebarRouters: [],
+            routesLoaded: false // 添加路由加载状态
         }),
         actions: {
             setRoutes(routes: any) {
@@ -32,9 +33,13 @@ const usePermissionStore: any = defineStore(
             },
             setSidebarRouters(routes: any) {
                 this.sidebarRouters = routes
+                this.routesLoaded = true // 标记路由已加载完成
             },
             generateRoutes() {
                 return new Promise((resolve: any) => {
+                    // 重置路由加载状态
+                    this.routesLoaded = false;
+                    
                     // 向后端请求路由数据
                     getRouters().then((res: any) => {
                         const sdata: any = JSON.parse(JSON.stringify(res.data))
@@ -54,6 +59,7 @@ const usePermissionStore: any = defineStore(
                         resolve(rewriteRoutes)
                     }).catch((err: any) => {
                         console.error(err)
+                        this.routesLoaded = true; // 即使出错也标记为已加载
                         resolve([])
                     })
                 })

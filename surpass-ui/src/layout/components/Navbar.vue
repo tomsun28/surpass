@@ -2,40 +2,12 @@
   <div class="navbar">
     <div class="left-main">
       <Logo class="logo" :collapse="false"/>
-<!--      <hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container"-->
-<!--                 @toggleClick="toggleSideBar"/>-->
     </div>
 
     <div class="right-menu">
-      <!--
-      <el-tooltip content="选择语言" placement="top" effect="dark">
-        <Language class="right-menu-item hover-effect"></Language>
-      </el-tooltip>
-      -->
       <el-divider direction="vertical"></el-divider>
       <div class="right-menu-item">
         <ScreenFull id="screenfull" class="right-menu-item hover-effect"></ScreenFull>
-        <!--
-        <el-dropdown placement="bottom" trigger="click">
-          <svg-icon icon-class="setting"></svg-icon>
-          <template #dropdown>
-            <el-dropdown-menu>
-
-              <el-dropdown-item>
-                <svg-icon icon-class="border-left"></svg-icon>
-                <span style="margin-left: 5px">RTL</span>
-              </el-dropdown-item>
-
-              <el-dropdown-item>
-
-              </el-dropdown-item>
-              <el-dropdown-item>
-                <CleanSession class="right-menu-item hover-effect"/>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-         -->
       </div>
       <el-divider direction="vertical"></el-divider>
       <div class="right-menu-item avatar-box">

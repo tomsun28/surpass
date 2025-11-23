@@ -1,4 +1,5 @@
 package com.surpass.web.api.controller;
+
 import com.surpass.entity.Message;
 import com.surpass.entity.api.DataSource;
 import com.surpass.enums.DataSourceStatus;
@@ -32,7 +33,7 @@ public class DataSourceController {
 
     @PostMapping
     public Message<String> create(@Valid @RequestBody DataSource dataSource) {
-       return dataSourceService.saveDataSource(dataSource);
+        return dataSourceService.saveDataSource(dataSource);
     }
 
     @PutMapping("/{id}")

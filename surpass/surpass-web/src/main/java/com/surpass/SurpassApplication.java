@@ -33,8 +33,8 @@ import com.surpass.web.WebContext;
 
 /**
  * Surpass系统启动入口
- * @author Surpass
  *
+ * @author Surpass
  */
 @SpringBootApplication
 @MapperScan("com.surpass.persistence.mapper")
@@ -47,8 +47,8 @@ public class SurpassApplication extends SpringBootServletInitializer {
 
         new InitializeContext(SpringApplication.run(SurpassApplication.class, args)).init();
 
-        _logger.info("Surpass at {}" , new DateTime());
-        _logger.info("Surpass Port {}",WebContext.getServerPort());
+        _logger.info("Surpass at {}", new DateTime());
+        _logger.info("Surpass Port {}", WebContext.getServerPort());
         _logger.info("Surpass started.");
     }
 

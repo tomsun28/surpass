@@ -1,7 +1,6 @@
 package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
-import com.surpass.entity.api.ApiDefinition;
 import com.surpass.entity.api.DataSource;
 import com.surpass.enums.DataSourceStatus;
 import com.surpass.exception.BusinessException;
@@ -14,7 +13,6 @@ import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -91,9 +89,7 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
         }
 
         // 5. 如果名字变了，先移除旧的
-        if (!oldCfg.getName().equals(dataSource.getName())) {
-            dynamicRoutingDataSource.removeDataSource(oldCfg.getName());
-        }
+        dynamicRoutingDataSource.removeDataSource(oldCfg.getName());
 
         // 6. 覆盖添加新的数据源
         boolean added = dynamicRoutingDataSource.addDataSource(dataSource.getName(), newDs);
@@ -189,7 +185,7 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
         // 1. 使用 Spring Boot 的 DataSourceBuilder 构建数据源
         javax.sql.DataSource ds = org.springframework.boot.jdbc.DataSourceBuilder
                 .create()
-                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .driverClassName(cfg.getDriverClassName())
                 .url(cfg.getUrl())
                 .username(cfg.getUsername())
                 .password(cfg.getPassword())
@@ -204,11 +200,12 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
         logger.info("动态添加数据源 [{}] 成功", cfg.getName());
     }
 
-    private javax.sql.DataSource buildDataSource(DataSource cfg) {
+    @Override
+    public javax.sql.DataSource buildDataSource(DataSource cfg) {
         // 1. 使用 Spring Boot 的 DataSourceBuilder 构建数据源
         javax.sql.DataSource ds = org.springframework.boot.jdbc.DataSourceBuilder
                 .create()
-                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .driverClassName(cfg.getDriverClassName())
                 .url(cfg.getUrl())
                 .username(cfg.getUsername())
                 .password(cfg.getPassword())

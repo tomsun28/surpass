@@ -9,35 +9,44 @@
       <!-- 操作栏 -->
       <div class="action-bar">
         <el-button type="primary" @click="showCreateDialog">
-          <el-icon><Plus /></el-icon>
           新增API
         </el-button>
         <el-button @click="refreshList">
-          <el-icon><Refresh /></el-icon>
           刷新
         </el-button>
       </div>
 
       <!-- API列表 -->
-      <el-table :data="apiList" v-loading="loading" style="width: 100%">
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="API名称" />
-        <el-table-column prop="path" label="路径" />
-        <el-table-column prop="method" label="方法" width="100">
+      <el-table :data="apiList" border v-loading="loading" style="width: 100%">
+        <el-table-column header-align="center" prop="name" label="API名称" />
+        <el-table-column header-align="center" prop="path" label="路径" />
+        <el-table-column header-align="center" prop="method" label="方法" width="100">
           <template #default="{ row }">
             <el-tag :type="getMethodTagType(row.method)">
               {{ row.method }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="datasourceId" label="数据源ID" width="100" />
-        <el-table-column prop="description" label="描述" />
-        <el-table-column prop="createTime" label="创建时间" width="180" />
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column header-align="center" prop="datasourceId" label="数据源">
           <template #default="{ row }">
-            <el-button size="small" @click="viewVersions(row)">版本</el-button>
-            <el-button size="small" type="primary" @click="editApi(row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="deleteApi(row)">删除</el-button>
+            <el-tag v-if="row.datasourceId">
+              {{ dataSourceList.find(ds => ds.id === row.datasourceId)?.name }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column header-align="center" prop="description" label="描述" />
+        <el-table-column header-align="center" prop="createdDate" label="创建时间" width="180" />
+        <el-table-column header-align="center" label="操作" width="120" fixed="right">
+          <template #default="{ row }">
+            <el-tooltip content="版本管理" placement="top">
+              <el-button link icon="Document" @click="viewVersions(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="编辑" placement="top">
+              <el-button link icon="Edit" type="primary" @click="editApi(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button link icon="Delete" type="danger" @click="deleteApi(row)"></el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -121,7 +130,6 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import * as dataSourceApi from '@/api/api-service/dataSource.ts'
 import * as apiDefinitionApi from '@/api/api-service/apiDefinitionApi.ts'
-import { Plus, Refresh } from '@element-plus/icons-vue'
 
 const router = useRouter()
 
@@ -254,7 +262,7 @@ const handleSubmit = async () => {
 }
 
 const viewVersions = (row) => {
-  router.push(`/version?apiId=${row.id}`)
+  router.push(`/api/Version?apiId=${row.id}`)
 }
 
 const deleteApi = async (row) => {

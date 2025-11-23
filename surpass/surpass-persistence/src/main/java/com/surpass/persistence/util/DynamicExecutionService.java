@@ -53,7 +53,6 @@ public class DynamicExecutionService {
             if (Objects.isNull(dataSource)) {
                 throw new BusinessException(50001, "数据源不存在");
             }
-            String dataSourceName = dataSource.getName();
 
             // 4. 解析SQL模板
             SqlTemplateParser.ParsedSql parsedSql = sqlTemplateParser.parseSqlTemplate(
@@ -70,14 +69,14 @@ public class DynamicExecutionService {
 
             if (sql.startsWith("SELECT")) {
                 // 查询操作
-                return sqlExecutor.executeQuery(dataSourceName, parsedSql.getSql(), paramValues);
+                return sqlExecutor.executeQuery(dataSource, parsedSql.getSql(), paramValues);
             } else if (sql.startsWith("INSERT")) {
                 // 插入操作
-                Long generatedKey = sqlExecutor.executeInsert(dataSourceName, parsedSql.getSql(), paramValues);
+                Long generatedKey = sqlExecutor.executeInsert(dataSource, parsedSql.getSql(), paramValues);
                 return Map.of("affectedRows", 1, "generatedKey", generatedKey);
             } else if (sql.startsWith("UPDATE") || sql.startsWith("DELETE")) {
                 // 更新或删除操作
-                int affectedRows = sqlExecutor.executeUpdate(dataSourceName, parsedSql.getSql(), paramValues);
+                int affectedRows = sqlExecutor.executeUpdate(dataSource, parsedSql.getSql(), paramValues);
                 return Map.of("affectedRows", affectedRows);
             } else {
                 throw new BusinessException(50001, "不支持的SQL类型: " + sql);
@@ -134,7 +133,7 @@ public class DynamicExecutionService {
             }
 
             List<Map<String, Object>> data = sqlExecutor.executeQueryWithPagination(
-                    dataSourceName, parsedSql.getSql(), paramValues, pageNum, pageSize);
+                    dataSource, parsedSql.getSql(), paramValues, pageNum, pageSize);
 
             return Map.of(
                     "data", data,

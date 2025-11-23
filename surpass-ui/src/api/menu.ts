@@ -54,7 +54,7 @@ function formatMenu(menu: any): any {
             "noCache": menu.isCache === 'n',
             "link": menu.isFrame === 'y' ? menu.requestUrl : null,
             "activeMenu": mapMenu[menu.parentId]
-                ? (mapMenu[menu.parentId].requestUrl || mapMenu[menu.parentId].permission)
+                ? (mapMenu[menu.parentId].requestUrl || menu.requestUrl)
                 : null
         },
         "raw": menu

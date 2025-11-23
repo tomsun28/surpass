@@ -18,4 +18,6 @@ public interface DataSourceService extends IJpaService<DataSource> {
     boolean testConnection(DataSource dataSource);
 
     void updateStatus(String id, DataSourceStatus status);
+
+    javax.sql.DataSource buildDataSource(DataSource cfg);
 }

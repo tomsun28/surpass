@@ -37,6 +37,7 @@ public class ApiPublishServiceImpl extends JpaServiceImpl<ApiPublishMapper, ApiP
     private final ApiPublishMapper apiPublishMapper;
 
     private final ApiVersionService apiVersionService;
+    private final ApiVersionMapper apiVersionMapper;
 
     @Override
     public List<ApiPublishRecord> getPublishHistory(String apiId) {
@@ -65,7 +66,7 @@ public class ApiPublishServiceImpl extends JpaServiceImpl<ApiPublishMapper, ApiP
     public void publishVersion(String apiId, String versionId, String operator, String description) {
         // 检查版本是否存在且属于该API
         ApiVersion apiVersion = apiVersionService.get(versionId);
-        if (Objects.nonNull(apiVersion)) {
+        if (Objects.isNull(apiVersion)) {
             throw new BusinessException(50001, "API版本不存在");
         }
 
@@ -103,7 +104,7 @@ public class ApiPublishServiceImpl extends JpaServiceImpl<ApiPublishMapper, ApiP
     public void offlineVersion(String apiId, String versionId, String operator, String description) {
         // 检查版本是否存在且属于该API
         ApiVersion apiVersion = apiVersionService.get(versionId);
-        if (Objects.nonNull(apiVersion)) {
+        if (Objects.isNull(apiVersion)) {
             throw new BusinessException(50001, "API版本不存在");
         }
 
@@ -128,7 +129,7 @@ public class ApiPublishServiceImpl extends JpaServiceImpl<ApiPublishMapper, ApiP
         // 检查版本是否存在且属于该API
         ApiVersion apiVersion = apiVersionService.get(versionId);
 
-        if (Objects.nonNull(apiVersion)) {
+        if (Objects.isNull(apiVersion)) {
             throw new BusinessException(50001, "API版本不存在");
         }
 
@@ -152,7 +153,7 @@ public class ApiPublishServiceImpl extends JpaServiceImpl<ApiPublishMapper, ApiP
         // 检查版本是否存在且属于该API
         ApiVersion apiVersion = apiVersionService.get(versionId);
 
-        if (Objects.nonNull(apiVersion)) {
+        if (Objects.isNull(apiVersion)) {
             throw new BusinessException(50001, "API版本不存在");
         }
 

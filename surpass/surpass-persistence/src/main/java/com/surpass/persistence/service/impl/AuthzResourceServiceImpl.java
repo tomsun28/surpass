@@ -56,7 +56,6 @@ public class AuthzResourceServiceImpl  extends JpaServiceImpl<AuthzResourceMappe
 	/**
 	 * 根据主体获取用户对应得应用资源清单
 	 * @param user
-	 * @param app
 	 * @return 资源清单列表
 	 */
 	@Override

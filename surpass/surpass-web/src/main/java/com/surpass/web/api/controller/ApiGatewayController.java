@@ -5,6 +5,7 @@ import com.surpass.persistence.util.ResponseTemplateRenderer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/api-v1")
 @RequiredArgsConstructor
 @Slf4j
 public class ApiGatewayController {
@@ -22,57 +23,55 @@ public class ApiGatewayController {
     private final ResponseTemplateRenderer responseTemplateRenderer;
 
     @GetMapping("/**")
-    public ResponseEntity<String> handleGetRequest(HttpServletRequest request) {
+    public ResponseEntity<Object> handleGetRequest(HttpServletRequest request) {
         return handleRequest("GET", request);
     }
 
     @PostMapping("/**")
-    public ResponseEntity<String> handlePostRequest(HttpServletRequest request) {
+    public ResponseEntity<Object> handlePostRequest(HttpServletRequest request) {
         return handleRequest("POST", request);
     }
 
     @PutMapping("/**")
-    public ResponseEntity<String> handlePutRequest(HttpServletRequest request) {
+    public ResponseEntity<Object> handlePutRequest(HttpServletRequest request) {
         return handleRequest("PUT", request);
     }
 
     @DeleteMapping("/**")
-    public ResponseEntity<String> handleDeleteRequest(HttpServletRequest request) {
+    public ResponseEntity<Object> handleDeleteRequest(HttpServletRequest request) {
         return handleRequest("DELETE", request);
     }
 
-    private ResponseEntity<String> handleRequest(String method, HttpServletRequest request) {
+    private ResponseEntity<Object> handleRequest(String method, HttpServletRequest request) {
         try {
             // 1. 获取请求路径
             String path = extractApiPath(request);
-
             // 2. 解析请求参数
             Map<String, Object> params = extractRequestParams(request);
-
             // 3. 执行API
             Object result = dynamicExecutionService.executeApi(path, method, params);
-
             // 4. 渲染响应
-            String response = responseTemplateRenderer.renderResponse(
+            Object response = responseTemplateRenderer.renderResponse(
                     getDefaultResponseTemplate(), result);
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
 
         } catch (Exception e) {
             log.error("API网关处理失败: {} {}", method, request.getRequestURI(), e);
-            return ResponseEntity.badRequest().body(
-                    renderErrorResponse("API执行失败: " + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(renderErrorResponse("API执行失败: " + e.getMessage()));
         }
     }
 
     private String extractApiPath(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
-        // 移除 /api/v1 前缀
-        String path = requestUri.replaceFirst("/api/v1", "");
-        if (path.isEmpty()) {
-            path = "/";
+        int indexOf = requestUri.indexOf("/api-v1");
+        if (indexOf < 0) {
+            throw new IllegalArgumentException("Missing /api-v1 prefix in URI: " + requestUri);
         }
-        return path;
+        return requestUri.substring(indexOf + "/api-v1".length());
     }
 
     private Map<String, Object> extractRequestParams(HttpServletRequest request) {

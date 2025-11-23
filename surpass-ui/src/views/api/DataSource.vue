@@ -9,89 +9,92 @@
       <!-- 操作栏 -->
       <div class="action-bar">
         <el-button type="primary" @click="showCreateDialog">
-          <el-icon><Plus /></el-icon>
           新增数据源
         </el-button>
         <el-button @click="refreshList">
-          <el-icon><Refresh /></el-icon>
           刷新
         </el-button>
       </div>
 
       <!-- 数据源列表 -->
-      <el-table :data="dataSourceList" v-loading="loading" style="width: 100%">
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="driverClassName" label="驱动类型" />
-        <el-table-column prop="url" label="连接URL" />
-        <el-table-column prop="username" label="用户名" />
-        <el-table-column label="状态" width="100">
+      <el-table :data="dataSourceList" border v-loading="loading" style="width: 100%">
+        <el-table-column header-align="center" prop="name" label="名称"/>
+        <el-table-column header-align="center" prop="driverClassName" label="驱动类型"/>
+        <el-table-column header-align="center" prop="url" label="连接URL" show-overflow-tooltip/>
+        <el-table-column header-align="center" prop="username" label="用户名"/>
+        <el-table-column header-align="center" label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'danger'">
               {{ row.status === 1 ? '启用' : '禁用' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180" />
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column header-align="center" prop="createdDate" label="创建时间" width="180"/>
+        <el-table-column header-align="center" label="操作" width="120" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" @click="testConnection(row)">测试连接</el-button>
-            <el-button size="small" type="primary" @click="editDataSource(row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="deleteDataSource(row)">删除</el-button>
+            <el-tooltip content="测试连接" placement="top">
+              <el-button link icon="Position" @click="testConnection(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="编辑" placement="top">
+              <el-button link icon="Edit" type="primary" @click="editDataSource(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="移除" placement="top">
+              <el-button link icon="Delete" type="danger" @click="deleteDataSource(row)"></el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 空状态 -->
-      <el-empty v-if="!loading && dataSourceList.length === 0" description="暂无数据源" />
+      <el-empty v-if="!loading && dataSourceList.length === 0" description="暂无数据源"/>
     </div>
 
     <!-- 新增/编辑对话框 -->
     <el-dialog
-      :title="dialogTitle"
-      v-model="dialogVisible"
-      width="600px"
-      :before-close="handleDialogClose"
+        :title="dialogTitle"
+        v-model="dialogVisible"
+        width="600px"
+        :before-close="handleDialogClose"
     >
       <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="100px"
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          label-width="100px"
       >
         <el-form-item label="数据源名称" prop="name">
-          <el-input v-model="formData.name" placeholder="请输入数据源名称" />
+          <el-input v-model="formData.name" placeholder="请输入数据源名称"/>
         </el-form-item>
 
         <el-form-item label="驱动类型" prop="driverClassName">
           <el-select v-model="formData.driverClassName" placeholder="请选择驱动类型" style="width: 100%">
-            <el-option label="MySQL" value="com.mysql.cj.jdbc.Driver" />
-            <el-option label="PostgreSQL" value="org.postgresql.Driver" />
-            <el-option label="Oracle" value="oracle.jdbc.OracleDriver" />
-            <el-option label="SQL Server" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-            <el-option label="H2" value="org.h2.Driver" />
+            <el-option label="MySQL" value="com.mysql.cj.jdbc.Driver"/>
+            <el-option label="PostgreSQL" value="org.postgresql.Driver"/>
+            <el-option label="Oracle" value="oracle.jdbc.OracleDriver"/>
+            <el-option label="SQL Server" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+            <el-option label="H2" value="org.h2.Driver"/>
           </el-select>
         </el-form-item>
 
         <el-form-item label="连接URL" prop="url">
-          <el-input v-model="formData.url" placeholder="请输入数据库连接URL" />
+          <el-input v-model="formData.url" placeholder="请输入数据库连接URL"/>
         </el-form-item>
 
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="formData.username" placeholder="请输入用户名" />
+          <el-input v-model="formData.username" placeholder="请输入用户名"/>
         </el-form-item>
 
         <el-form-item label="密码" prop="password">
           <el-input
-            v-model="formData.password"
-            type="password"
-            placeholder="请输入密码"
-            show-password
+              v-model="formData.password"
+              type="password"
+              placeholder="请输入密码"
+              show-password
           />
         </el-form-item>
 
         <el-form-item label="测试SQL" prop="testSql">
-          <el-input v-model="formData.testSql" placeholder="请输入测试SQL，默认为 SELECT 1" />
+          <el-input v-model="formData.testSql" placeholder="请输入测试SQL，默认为 SELECT 1"/>
         </el-form-item>
 
         <el-form-item label="状态" prop="status">
@@ -118,10 +121,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import {ref, reactive, onMounted, computed} from 'vue'
+import {ElLoading, ElMessage, ElMessageBox} from 'element-plus'
 import * as dataSourceApi from '@/api/api-service/dataSource.ts'
-import { Plus, Refresh } from '@element-plus/icons-vue'
 
 // 响应式数据
 const loading = ref(false)
@@ -147,19 +149,19 @@ const formData = reactive({
 // 表单验证规则
 const formRules = {
   name: [
-    { required: true, message: '请输入数据源名称', trigger: 'blur' }
+    {required: true, message: '请输入数据源名称', trigger: 'blur'}
   ],
   driverClassName: [
-    { required: true, message: '请选择驱动类型', trigger: 'change' }
+    {required: true, message: '请选择驱动类型', trigger: 'change'}
   ],
   url: [
-    { required: true, message: '请输入连接URL', trigger: 'blur' }
+    {required: true, message: '请输入连接URL', trigger: 'blur'}
   ],
   username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' }
+    {required: true, message: '请输入用户名', trigger: 'blur'}
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' }
+    {required: true, message: '请输入密码', trigger: 'blur'}
   ]
 }
 
@@ -197,7 +199,7 @@ const showCreateDialog = () => {
 
 const editDataSource = (row) => {
   isEdit.value = true
-  Object.assign(formData, { ...row })
+  Object.assign(formData, {...row})
   // 注意：编辑时密码字段需要特殊处理，这里简单置空
   formData.password = ''
   dialogVisible.value = true
@@ -227,7 +229,7 @@ const testConnectionBeforeSave = async () => {
     await formRef.value.validate()
     testing.value = true
 
-    const testData = { ...formData }
+    const testData = {...formData}
     const response = await dataSourceApi.testConnectionWithData(testData)
 
     if (response.data) {
@@ -268,6 +270,7 @@ const handleSubmit = async () => {
 }
 
 const testConnection = async (row) => {
+  const loadingInstance = ElLoading.service({})
   try {
     const response = await dataSourceApi.testConnection(row.id)
     console.log(response)
@@ -279,19 +282,21 @@ const testConnection = async (row) => {
   } catch (error) {
     ElMessage.error('连接测试失败')
     console.error('连接测试失败:', error)
+  } finally {
+    loadingInstance.close()
   }
 }
 
 const deleteDataSource = async (row) => {
   try {
     await ElMessageBox.confirm(
-      `确定要删除数据源 "${row.name}" 吗？此操作不可恢复。`,
-      '确认删除',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
+        `确定要删除数据源 "${row.name}" 吗？此操作不可恢复。`,
+        '确认删除',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
     )
 
     await dataSourceApi.deleteData(row.id)
