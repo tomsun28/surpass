@@ -23,9 +23,12 @@
 package com.surpass.authn.jwt.service;
 
 import java.text.ParseException;
+
+import com.surpass.security.TokenStore;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
 import com.surpass.authn.congress.CongressService;
@@ -62,11 +65,14 @@ public class AuthTokenService  extends AuthJwtService{
 	 */
 	AuthRefreshTokenService refreshTokenService;
 
+	TokenStore tokenStore;
+
 	public AuthTokenService(
 				AuthJwkConfig authJwkConfig,
 				CongressService congressService,
 				MemCacheService memCacheService,
-				AuthRefreshTokenService refreshTokenService) throws JOSEException {
+				AuthRefreshTokenService refreshTokenService,
+				TokenStore tokenStore) throws JOSEException {
 
 		this.authJwkConfig = authJwkConfig;
 
@@ -77,6 +83,8 @@ public class AuthTokenService  extends AuthJwtService{
 		this.refreshTokenService = refreshTokenService;
 
 		this.hmac512Service = new Hmac512Service(authJwkConfig.getSecret());
+
+		this.tokenStore = tokenStore;
 
 	}
 
@@ -175,5 +183,7 @@ public class AuthTokenService  extends AuthJwtService{
     	 return false;
     }
 
-
+	public boolean validateAppToken(String token) {
+		return tokenStore.isValid(token);
+	}
 }

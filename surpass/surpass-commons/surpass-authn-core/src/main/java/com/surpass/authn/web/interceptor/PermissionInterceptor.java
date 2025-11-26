@@ -22,10 +22,12 @@
 
 package com.surpass.authn.web.interceptor;
 
+import com.surpass.security.TokenStore;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,7 @@ public class PermissionInterceptor  implements AsyncHandlerInterceptor  {
 	 */
 	@Autowired
 	AuthTokenService authTokenService ;
+
 	/**
 	 * 是否管理端
 	 */
@@ -72,22 +75,39 @@ public class PermissionInterceptor  implements AsyncHandlerInterceptor  {
 	 * @see org.springframework.web.servlet.handler.HandlerInterceptorAdapter#preHandle(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object)
 	 */
 	@Override
-	public boolean preHandle(HttpServletRequest request,HttpServletResponse response, Object handler) throws Exception {
-		 logger.trace("Permission Interceptor .");
-		 logger.trace("request URL {} ",request.getRequestURI());
-		 //认证信息识别
-		 AuthorizationUtils.authenticate(request, authTokenService, sessionManager);
-		 SignedPrincipal principal = AuthorizationUtils.getPrincipal();//读取认证当事人
-		//判断用户是否登录,判断用户是否登录用户
-		if(principal == null){
-			logger.trace("No Authentication ... forward to /auth/entrypoint , request URI {}" , request.getRequestURI());
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/auth/entrypoint");
-		    dispatcher.forward(request, response);
-		    return false;
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+		logger.trace("Permission Interceptor .");
+		logger.trace("request URL {} ", request.getRequestURI());
+
+		// ① 先走已有用户认证体系（JWT/Congress/Session）
+		AuthorizationUtils.authenticate(request, authTokenService, sessionManager);
+		SignedPrincipal principal = AuthorizationUtils.getPrincipal();
+
+		// ② 如果现有体系没认出来，再尝试当作第三方 App Token
+		String authHeader = request.getHeader("Authorization");
+		if (principal == null && StringUtils.isNotBlank(authHeader) && authHeader.startsWith("Bearer ")) {
+			String token = authHeader.substring(7);
+			if (!authTokenService.validateAppToken(token)) {
+				logger.debug("App token invalid, block request: {}", request.getRequestURI());
+				request.getRequestDispatcher("/auth/entrypoint").forward(request, response);
+				return false;
+			}
+
+			// 可选：如果你未来要区分 App 身份，可以这里 set principal
+			// AuthorizationUtils.setAuthentication(request, new SignedPrincipal(...));
+//			principal = AuthorizationUtils.getPrincipal(); // 重新获取一次（如果你塞入了）
+		}
+
+		// ③ 仍然没有 principal → 说明用户和第三方都没通过校验
+		if (principal == null) {
+			logger.trace("No Authentication ... forward to /auth/entrypoint");
+			request.getRequestDispatcher("/auth/entrypoint").forward(request, response);
+			return false;
 		}
 
 		return true;
 	}
+
 
 	/**
 	 * 设置管理

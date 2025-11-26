@@ -22,6 +22,7 @@
 
 package com.surpass.autoconfigure;
 
+import com.surpass.security.TokenStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -59,12 +60,13 @@ public class TokenAutoConfiguration{
      */
     @Bean
     AuthTokenService authTokenService(
-            AuthJwkConfig authJwkConfig,
-            RedisConnectionFactory redisConnFactory,
-            MemCacheService  memCacheService,
-            ConfigLoginPolicyService configLoginPolicyService,
-            AuthRefreshTokenService refreshTokenService,
-            ApplicationConfig applicationConfig) throws JOSEException {
+			AuthJwkConfig authJwkConfig,
+			RedisConnectionFactory redisConnFactory,
+			MemCacheService  memCacheService,
+			ConfigLoginPolicyService configLoginPolicyService,
+			AuthRefreshTokenService refreshTokenService,
+			ApplicationConfig applicationConfig,
+			TokenStore tokenStore) throws JOSEException {
     	ConfigLoginPolicy configLoginPolicy = configLoginPolicyService.getConfigLoginPolicy();
     	if(configLoginPolicy != null) {
     		authJwkConfig.setExpires(configLoginPolicy.getTokenValidity() * 3600 );
@@ -80,7 +82,7 @@ public class TokenAutoConfiguration{
     		logger.debug("InMemoryCongressService");
     	}
 
-    	return	new AuthTokenService(authJwkConfig,congressService,memCacheService,refreshTokenService);
+    	return	new AuthTokenService(authJwkConfig,congressService,memCacheService,refreshTokenService,tokenStore);
     }
 
     /**
