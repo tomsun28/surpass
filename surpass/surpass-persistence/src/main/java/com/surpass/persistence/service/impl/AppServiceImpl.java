@@ -4,11 +4,16 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.BCrypt;
 import com.surpass.entity.Message;
 import com.surpass.entity.app.App;
+import com.surpass.entity.app.dto.AppChangeDto;
+import com.surpass.entity.app.dto.AppPageDto;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.AppMapper;
 import com.surpass.persistence.service.AppService;
 import com.surpass.security.TokenStore;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
+import org.dromara.hutool.core.bean.BeanUtil;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
@@ -34,14 +39,23 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
     private final TokenStore tokenStore;
 
     @Override
-    public Message<String> create(App app) {
+    public Message<String> create(AppChangeDto dto) {
+        checkAppName(dto, false);
+        App app = BeanUtil.copyProperties(dto, App.class);
         app.setClientId(UUID.randomUUID().toString().replace("-", ""));
         app.setClientSecret(BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt()));
 
-        app.setStatus(0);
-
         boolean result = super.insert(app);
         return result ? Message.ok("创建成功") : Message.failed("创建失败");
+    }
+
+    @Override
+    public Message<String> updateApp(AppChangeDto dto) {
+        checkAppName(dto, true);
+        App app = BeanUtil.copyProperties(dto, App.class);
+
+        boolean result = super.update(app);
+        return result ? Message.ok("修改成功") : Message.failed("修改失败");
     }
 
     @Override
@@ -77,5 +91,25 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
     public void revokeToken(String token) {
         tokenStore.revoke(token);
         logger.info("Revoked app token {}", token);
+    }
+
+    @Override
+    public JpaPageResults<App> fetchPageResults(AppPageDto dto) {
+        App app = BeanUtil.copyProperties(dto, App.class);
+        app.setDeleted("n");
+        dto.build();
+        return super.fetch(dto, app);
+    }
+
+    private void checkAppName(AppChangeDto dto, boolean isEdit) {
+        LambdaQuery<App> wrapper = new LambdaQuery<>();
+        wrapper.eq(App::getAppName, dto.getAppName());
+        if (isEdit) {
+            wrapper.notEq(App::getId, dto.getId());
+        }
+        List<App> query = super.query(wrapper);
+        if (ObjectUtils.isNotEmpty(query)) {
+            throw new BusinessException(50001, "该应用名称已被使用，请重新输入");
+        }
     }
 }

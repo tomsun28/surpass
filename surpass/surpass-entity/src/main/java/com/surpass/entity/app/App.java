@@ -37,6 +37,7 @@ public class App extends JpaEntity implements Serializable {
     @Column(nullable = false, length = 512)
     private String clientSecret;
 
+    @Column
     private Integer status;
 
     @SoftDelete
