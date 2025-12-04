@@ -274,7 +274,7 @@ const testConnection = async (row) => {
   try {
     const response = await dataSourceApi.testConnection(row.id)
     console.log(response)
-    if (response) {
+    if (response.data) {
       ElMessage.success('连接测试成功')
     } else {
       ElMessage.error('连接测试失败')

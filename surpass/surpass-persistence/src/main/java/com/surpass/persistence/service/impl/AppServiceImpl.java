@@ -13,9 +13,6 @@ import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;

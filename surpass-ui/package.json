@@ -14,11 +14,11 @@
     "@element-plus/icons-vue": "2.3.1",
     "@vueup/vue-quill": "1.2.0",
     "@vueuse/core": "10.11.0",
-    "axios": "1.8.2",
+    "axios": "1.12.0",
     "dayjs": "^1.11.13",
     "decimal.js": "^10.5.0",
     "echarts": "^5.6.0",
-    "element-plus": "2.9.9",
+    "element-plus": "2.11.3",
     "file-saver": "^2.0.5",
     "fuse.js": "6.6.2",
     "surpass": "file:",
@@ -34,7 +34,7 @@
     "vue-router": "4.4.0",
     "vue3-treeselect": "^0.1.10",
     "vuedraggable": "^4.1.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "0.18.5"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
@@ -49,7 +49,7 @@
     "typescript": "^5.6.3",
     "unplugin-auto-import": "0.17.6",
     "unplugin-vue-setup-extend-plus": "1.0.1",
-    "vite": "5.4.19",
+    "vite": "7.1.11",
     "vite-plugin-compression": "0.5.1",
     "vite-plugin-svg-icons": "2.0.1"
   },
