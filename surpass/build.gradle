@@ -346,10 +346,10 @@ subprojects {
         implementation group: 'org.webjars', name: 'webjars-locator-core', version: "${webjarslocatorcoreVersion}"
         implementation group: 'org.webjars', name: 'webjars-locator', version: "${webjarslocatorVersion}"
         implementation group: 'org.webjars', name: 'swagger-ui', version: "${swaggeruiVersion}"
-        //knife4j
-        implementation group: 'com.github.xiaoymin', name: 'knife4j-core', version: "${knife4jVersion}"
-        implementation group: 'com.github.xiaoymin', name: 'knife4j-openapi3-ui', version: "${knife4jVersion}"
-        implementation group: 'com.github.xiaoymin', name: 'knife4j-openapi3-jakarta-spring-boot-starter', version: "${knife4jVersion}"
+//        //knife4j# 禁用knife4j
+//        implementation group: 'com.github.xiaoymin', name: 'knife4j-core', version: "${knife4jVersion}"
+//        implementation group: 'com.github.xiaoymin', name: 'knife4j-openapi3-ui', version: "${knife4jVersion}"
+//        implementation group: 'com.github.xiaoymin', name: 'knife4j-openapi3-jakarta-spring-boot-starter', version: "${knife4jVersion}"
 
         //mybatis-jpa
         implementation group: 'org.dromara.mybatis-jpa-extra', name: 'mybatis-jpa-extra', version: "${mybatisjpaextraVersion}"
