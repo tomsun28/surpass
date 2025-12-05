@@ -40,7 +40,7 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
 
     @Override
     public Message<String> create(AppChangeDto dto) {
-        checkAppName(dto, false);
+        checkAppCode(dto, false);
         App app = BeanUtil.copyProperties(dto, App.class);
         app.setClientId(UUID.randomUUID().toString().replace("-", ""));
         app.setClientSecret(BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt()));
@@ -51,7 +51,7 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
 
     @Override
     public Message<String> updateApp(AppChangeDto dto) {
-        checkAppName(dto, true);
+        checkAppCode(dto, true);
         App app = BeanUtil.copyProperties(dto, App.class);
 
         boolean result = super.update(app);
@@ -101,15 +101,15 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
         return super.fetch(dto, app);
     }
 
-    private void checkAppName(AppChangeDto dto, boolean isEdit) {
+    private void checkAppCode(AppChangeDto dto, boolean isEdit) {
         LambdaQuery<App> wrapper = new LambdaQuery<>();
-        wrapper.eq(App::getAppName, dto.getAppName());
+        wrapper.eq(App::getAppCode, dto.getAppCode());
         if (isEdit) {
             wrapper.notEq(App::getId, dto.getId());
         }
         List<App> query = super.query(wrapper);
         if (ObjectUtils.isNotEmpty(query)) {
-            throw new BusinessException(50001, "该应用名称已被使用，请重新输入");
+            throw new BusinessException(50001, "该应用编码已被使用，请重新输入");
         }
     }
 }

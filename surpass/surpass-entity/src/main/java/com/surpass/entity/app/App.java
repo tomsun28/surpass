@@ -31,6 +31,9 @@ public class App extends JpaEntity implements Serializable {
     @Column(nullable = false, length = 100)
     private String appName;
 
+    @Column(nullable = false, length = 50)
+    private String appCode;
+
     @Column(nullable = false, length = 128)
     private String clientId;
 

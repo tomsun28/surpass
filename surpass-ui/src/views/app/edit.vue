@@ -6,6 +6,9 @@
     </template>
     <template #default>
       <el-form :model="form" :rules="rules" ref="appRef" label-width="110px" inline-message>
+        <el-form-item prop="appName" label="应用编码" :required="true">
+          <el-input v-model="form.appCode"/>
+        </el-form-item>
         <el-form-item prop="appName" label="应用名称" :required="true">
           <el-input v-model="form.appName"/>
         </el-form-item>
@@ -72,10 +75,14 @@ const data: any = reactive({
   form: {
     status: 1,
     appName: null,
+    appCode: null,
     clientId: null,
     clientSecret: null,
   },
   rules: {
+    appCode: [
+      {required: true, message: "请输入应用编码", trigger: "blur"},
+    ],
     appName: [
       {required: true, message: "请输入应用名称", trigger: "blur"},
     ]
@@ -122,6 +129,7 @@ function reset(): any {
   form.value = {
     status: 1,
     appName: null,
+    appCode: null,
     clientId: null,
     clientSecret: null,
   };

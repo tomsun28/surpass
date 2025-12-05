@@ -23,5 +23,8 @@ public class AppChangeDto {
     @NotEmpty(message = "应用名称不能为空", groups = {AddGroup.class, EditGroup.class})
     private String appName;
 
+    @NotEmpty(message = "应用编码不能为空", groups = {AddGroup.class, EditGroup.class})
+    private String appCode;
+
     private Integer status;
 }

@@ -4,6 +4,14 @@
       <div class="queryForm">
         <el-form :model="queryParams" ref="queryRef" :inline="true"
                  @submit.native.prevent>
+          <el-form-item label="应用编码">
+            <el-input
+                v-model="queryParams.appCode"
+                clearable
+                style="width: 200px"
+                @keyup.enter="handleQuery"
+            />
+          </el-form-item>
           <el-form-item label="应用名称">
             <el-input
                 v-model="queryParams.appName"
@@ -40,11 +48,13 @@
           @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column prop="appCode" label="应用编码" align="center" min-width="80"
+                         :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="appName" label="应用名称" align="center" min-width="100"
                          :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="clientId" label="Client Id" align="center" min-width="100"
+        <el-table-column prop="clientId" label="Client Id" align="center" min-width="80"
                          :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="clientSecret" label="Client Secret" align="center" min-width="100"
+        <el-table-column prop="clientSecret" label="Client Secret" align="center" min-width="120"
                          :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="status" :label="t('org.status')" align="center" min-width="40">
           <template #default="scope">
@@ -138,7 +148,8 @@ function handleQuery(): any {
  * 重置
  */
 function resetQuery(): any {
-  queryParams.value.roleName = undefined;
+  queryParams.value.appName = undefined;
+  queryParams.value.appCode = undefined;
   handleQuery();
 }
 

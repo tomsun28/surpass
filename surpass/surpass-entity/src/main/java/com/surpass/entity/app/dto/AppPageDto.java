@@ -12,4 +12,6 @@ import org.dromara.mybatis.jpa.entity.JpaPage;
 @Data
 public class AppPageDto extends JpaPage {
     private String appName;
+
+    private String appCode;
 }
