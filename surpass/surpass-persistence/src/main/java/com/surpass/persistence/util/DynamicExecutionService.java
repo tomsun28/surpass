@@ -7,9 +7,7 @@ import com.surpass.exception.BusinessException;
 import com.surpass.persistence.service.ApiDefinitionService;
 import com.surpass.persistence.service.ApiVersionService;
 import com.surpass.persistence.service.DataSourceService;
-import com.surpass.persistence.service.impl.DataSourceServiceImpl;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,6 +32,9 @@ public class DynamicExecutionService {
 
     private final DataSourceService dataSourceService;
 
+    private final String DEFAULT_PAGE_NUM_KEY = "_pageNum";
+    private final String DEFAULT_PAGE_SIZE_KEY = "_pageSize";
+
     public Object executeApi(String path, String method, Map<String, Object> params) {
         try {
             // 1. 根据路径和方法查找API定义
@@ -46,6 +47,13 @@ public class DynamicExecutionService {
             ApiVersion apiVersion = apiVersionService.findPublishedVersionByApiId(apiDefinition.getId());
             if (Objects.isNull(apiVersion)) {
                 throw new BusinessException(50001, "API未发布");
+            }
+
+            // 判断是否分页
+            if (apiVersion.getSupportsPaging() != null && apiVersion.getSupportsPaging().equals(1)) {
+                int pageNum = Integer.parseInt(params.getOrDefault(DEFAULT_PAGE_NUM_KEY, "1").toString());
+                int pageSize = Integer.parseInt(params.getOrDefault(DEFAULT_PAGE_SIZE_KEY, "20").toString());
+                return executeApiWithPagination(apiDefinition, apiVersion, params, pageNum, pageSize);
             }
 
             // 3. 获取数据源名称
@@ -88,35 +96,17 @@ public class DynamicExecutionService {
         }
     }
 
-    public Object executeApiWithPagination(
-            String path,
-            String method,
+    public SqlExecutor.PaginatedResult executeApiWithPagination(
+            ApiDefinition apiDefinition,
+            ApiVersion apiVersion,
             Map<String, Object> params,
             int pageNum,
             int pageSize) {
-
         try {
-            // 1. 根据路径和方法查找API定义
-            ApiDefinition apiDefinition = apiDefinitionService.findByPathAndMethod(path, method);
-            if (Objects.isNull(apiDefinition)) {
-                throw new BusinessException(50001, "API不存在");
-            }
-
-            // 2. 查找已发布的版本
-            ApiVersion apiVersion = apiVersionService.findPublishedVersionByApiId(apiDefinition.getId());
-            if (Objects.isNull(apiVersion)) {
-                throw new BusinessException(50001, "API未发布");
-            }
-
-            // 3. 获取数据源名称
-            // 3. 获取数据源名称
             DataSource dataSource = dataSourceService.get(apiDefinition.getDatasourceId());
             if (Objects.isNull(dataSource)) {
                 throw new BusinessException(50001, "数据源不存在");
             }
-            String dataSourceName = dataSource.getName();
-
-            // 4. 解析SQL模板
             SqlTemplateParser.ParsedSql parsedSql = sqlTemplateParser.parseSqlTemplate(
                     apiVersion.getSqlTemplate(), params);
 
@@ -132,17 +122,10 @@ public class DynamicExecutionService {
                 throw new BusinessException(50001, "分页查询只支持SELECT语句");
             }
 
-            List<Map<String, Object>> data = sqlExecutor.executeQueryWithPagination(
+            return sqlExecutor.executeQueryWithPagination(
                     dataSource, parsedSql.getSql(), paramValues, pageNum, pageSize);
-
-            return Map.of(
-                    "data", data,
-                    "pageNum", pageNum,
-                    "pageSize", pageSize
-            );
-
         } catch (Exception e) {
-            logger.error("执行分页API失败: {} {}", method, path, e);
+            logger.error("执行分页API失败: {} {}", apiDefinition.getMethod(), apiDefinition.getPath(), e);
             throw new BusinessException(50001, "API执行失败: " + e.getMessage());
         }
     }

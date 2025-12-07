@@ -136,7 +136,7 @@
               v-loading="loading"
               border
           >
-            <el-table-column header-align="center" align="center" prop="version" label="版本号" width="120">
+            <el-table-column header-align="center" align="center" prop="version" label="版本号" width="80">
               <template #default="{ row }">
                 <span class="version-number">v{{ row.version }}</span>
               </template>
@@ -158,15 +158,22 @@
               </template>
             </el-table-column>
 
+            <el-table-column prop="supportsPaging" label="分页" width="80" align="center">
+              <template #default="{ row }">
+                {{ row.supportsPaging ? '是' : '否' }}
+              </template>
+            </el-table-column>
+
             <el-table-column header-align="center" prop="description" label="描述" min-width="150">
               <template #default="{ row }">
                 <span class="description-text">{{ row.description || '-' }}</span>
               </template>
             </el-table-column>
 
-            <el-table-column header-align="center" align="center" prop="createdDate" label="创建时间" width="180"/>
 
-            <el-table-column header-align="center" align="center" label="操作" width="280" fixed="right">
+            <el-table-column header-align="center" prop="createdDate" label="创建时间" width="180"/>
+
+            <el-table-column header-align="center" align="center" label="操作" width="220" fixed="right">
               <template #default="{ row }">
                 <div class="action-buttons-group">
                   <el-tooltip content="查看" placement="top">
@@ -271,33 +278,60 @@
               <el-table :data="paramList" border style="width: 100%; margin-top: 10px;">
                 <el-table-column prop="name" label="参数名" width="120">
                   <template #default="{ row, $index }">
-                    <el-input v-model="row.name" placeholder="参数名"/>
+                    <el-input
+                        v-model="row.name"
+                        placeholder="参数名"
+                        :readonly="row.readOnly"
+                        :class="{ 'read-only-param': row.readOnly }"
+                    />
                   </template>
                 </el-table-column>
                 <el-table-column prop="type" label="类型" width="120">
                   <template #default="{ row }">
-                    <el-select v-model="row.type" placeholder="选择类型">
+                    <el-select
+                        v-model="row.type"
+                        placeholder="选择类型"
+                        :disabled="row.readOnly"
+                    >
                       <el-option label="字符串" value="string"/>
                       <el-option label="数字" value="number"/>
                       <el-option label="布尔值" value="boolean"/>
                       <el-option label="数组" value="array"/>
-                      <el-option label="对象" value="object"/>
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column prop="required" label="必填" width="80">
+                <el-table-column prop="rules" label="输入规则">
                   <template #default="{ row }">
-                    <el-checkbox v-model="row.required"/>
+                    <el-button
+                        link
+                        type="primary"
+                        @click="openRuleConfig(row)"
+                        :title="JSON.stringify(row.rules, null, 2)"
+                        :disabled="row.readOnly"
+                    >
+                      {{ getRuleDisplayText(row.rules) || '配置规则' }}
+                    </el-button>
                   </template>
                 </el-table-column>
                 <el-table-column prop="description" label="描述">
                   <template #default="{ row }">
-                    <el-input v-model="row.description" placeholder="参数描述"/>
+                    <el-input
+                        v-model="row.description"
+                        placeholder="参数描述"
+                        :readonly="row.readOnly"
+                    />
                   </template>
                 </el-table-column>
                 <el-table-column label="操作" width="60" align="center">
                   <template #default="{ $index }">
-                    <el-button icon="Delete" link type="danger" size="small" @click="removeParam($index)"></el-button>
+                    <el-button
+                        icon="Delete"
+                        link
+                        type="danger"
+                        size="small"
+                        @click="removeParam($index)"
+                        :disabled="paramList[$index]?.readOnly"
+                    ></el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -327,6 +361,43 @@
                 placeholder="请输入版本描述"
             />
           </el-form-item>
+
+          <!-- 分页和限流配置 -->
+          <el-divider content-position="left">分页和限流配置</el-divider>
+
+          <el-form-item label="是否分页">
+            <el-switch
+                v-model="formData.supportsPaging"
+                :active-value="1"
+                :inactive-value="0"
+                active-text="是"
+                inactive-text="否"
+                @change="handlePagingParams"
+            />
+          </el-form-item>
+
+          <el-form-item label="最大页面大小" prop="pageSizeMax">
+            <el-input-number
+                style="width: 200px;"
+                v-model="formData.pageSizeMax"
+                :min="1"
+                :max="10000"
+                placeholder=""
+                controls-position="right"
+            />
+            <div class="form-item-tip">限制每页最大记录数</div>
+          </el-form-item>
+
+          <el-form-item label="速率限制" prop="rateLimit">
+            <el-input-number
+                style="width: 200px;"
+                v-model="formData.rateLimit"
+                :min="0"
+                placeholder="次/分钟"
+                controls-position="right"
+            />
+            <div class="form-item-tip">0表示不限制，限制API每分钟调用次数</div>
+          </el-form-item>
         </el-form>
 
         <div class="drawer-footer">
@@ -337,6 +408,58 @@
         </div>
       </div>
     </el-drawer>
+
+    <!-- 规则配置对话框 -->
+    <el-dialog
+        v-model="ruleConfigDialog"
+        title="输入规则配置"
+        width="500px"
+    >
+      <el-form label-width="100px">
+        <el-form-item label="必填">
+          <el-switch v-model="ruleFormData.required"/>
+        </el-form-item>
+        <div v-if="currentEditingParam?.type === 'string'">
+          <el-form-item label="最小长度">
+            <el-input-number v-model="ruleFormData.minLength" :min="0" controls-position="right"/>
+          </el-form-item>
+          <el-form-item label="最大长度">
+            <el-input-number v-model="ruleFormData.maxLength" :min="0" controls-position="right"/>
+          </el-form-item>
+          <el-form-item label="枚举值">
+            <el-input v-model="ruleFormData.enumValues" placeholder="多个值用逗号分隔，如: admin,user,guest"/>
+          </el-form-item>
+        </div>
+        <div v-if="currentEditingParam?.type === 'number'">
+          <el-form-item label="最小值">
+            <el-input-number v-model="ruleFormData.minValue" controls-position="right"/>
+          </el-form-item>
+          <el-form-item label="最大值">
+            <el-input-number v-model="ruleFormData.maxValue" controls-position="right"/>
+          </el-form-item>
+        </div>
+        <el-form-item label="格式">
+          <el-select v-model="ruleFormData.format" placeholder="选择格式" clearable @change="handleFormatChange">
+            <el-option label="邮箱" value="email"/>
+            <el-option label="手机号" value="phone"/>
+            <el-option label="URL" value="url"/>
+            <el-option label="日期" value="date"/>
+            <el-option label="时间" value="time"/>
+            <el-option label="IPv4" value="ipv4"/>
+            <el-option label="IPv6" value="ipv6"/>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="正则表达式">
+          <el-input v-model="ruleFormData.pattern" placeholder="例如: ^[a-zA-Z]+$" @input="handlePatternChange"/>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="ruleConfigDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveRuleConfig">确定</el-button>
+      </template>
+    </el-dialog>
 
     <!-- 版本详情对话框 -->
     <el-dialog
@@ -367,6 +490,17 @@
             </el-descriptions-item>
             <el-descriptions-item label="描述">
               {{ currentVersion.description || '无' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="是否分页">
+              <el-tag :type="currentVersion.supportsPaging ? 'success' : 'info'" size="small">
+                {{ currentVersion.supportsPaging ? '是' : '否' }}
+              </el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="最大页面大小" v-if="currentVersion.pageSizeMax">
+              {{ currentVersion.pageSizeMax }}
+            </el-descriptions-item>
+            <el-descriptions-item label="速率限制">
+              {{ currentVersion.rateLimit || '无' }} 次/分钟
             </el-descriptions-item>
           </el-descriptions>
         </el-card>
@@ -407,17 +541,23 @@
                   </el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="required" label="必填" width="80" align="center">
-                <template #default="{ row }">
-                  <el-tag v-if="row.required" type="danger" size="small">是</el-tag>
-                  <el-tag v-else type="info" size="small">否</el-tag>
-                </template>
-              </el-table-column>
               <el-table-column prop="description" label="描述">
                 <template #default="{ row }">
                   {{ row.description || '-' }}
                 </template>
               </el-table-column>
+              <el-table-column prop="required" label="必填" width="80" align="center">
+                <template #default="{ row }">
+                  <el-tag v-if="row.rules.required" type="danger" size="small">是</el-tag>
+                  <el-tag v-else type="info" size="small">否</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="rules" label="输入规则">
+                <template #default="{ row }">
+                  {{ getRuleDisplayText(row.rules) || '无' }}
+                </template>
+              </el-table-column>
+
             </el-table>
           </div>
           <div v-else class="empty-state">
@@ -451,6 +591,7 @@
         </el-card>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -461,21 +602,7 @@ import {ElMessage, ElMessageBox} from 'element-plus'
 import * as publishApi from '@/api/api-service/publishApi.ts'
 import * as apiDefinitionApi from '@/api/api-service/apiDefinitionApi.ts'
 import * as apiVersionApi from '@/api/api-service/apiVersionApi.ts'
-import {
-  Plus,
-  Refresh,
-  CopyDocument,
-  Collection,
-  Edit,
-  Clock,
-  Check,
-  View,
-  Upload,
-  Close,
-  Remove,
-  CircleCheck,
-  Delete
-} from '@element-plus/icons-vue'
+import {getById} from "@/api/api-service/apiVersionApi.ts";
 
 const route = useRoute()
 
@@ -501,11 +628,28 @@ const formData = reactive({
   sqlTemplate: '',
   paramDefinition: '',
   responseTemplate: '',
-  description: ''
+  description: '',
+  supportsPaging: 0,
+  pageSizeMax: 20,
+  rateLimit: null
 })
 
 // 参数列表
 const paramList = ref([])
+
+// 规则配置相关
+const ruleConfigDialog = ref(false)
+const currentEditingParam = ref(null)
+const ruleFormData = reactive({
+  required: false,
+  minLength: '',
+  maxLength: '',
+  pattern: '',
+  minValue: '',
+  maxValue: '',
+  enumValues: '',
+  format: ''
+})
 
 // 表单验证规则
 const formRules = {
@@ -604,22 +748,26 @@ const showCreateDialog = () => {
     formData.version = 1
   }
 
+  // 处理分页参数
+  handlePagingParams()
+
   drawerVisible.value = true
 }
 
-const editVersion = (row) => {
+const editVersion = async (row) => {
   if (row.status !== 0) {
     ElMessage.warning('只有草稿状态的版本可以编辑')
     return
   }
 
   isEdit.value = true
-  Object.assign(formData, {...row})
+  const apiVersionResponse = await apiVersionApi.getById(row.id)
+  Object.assign(formData, {...apiVersionResponse.data})
 
   // 解析参数定义
   if (row.paramDefinition) {
     try {
-      paramList.value = JSON.parse(row.paramDefinition)
+      paramList.value = Array.isArray(row.paramDefinition) ? row.paramDefinition : JSON.parse(row.paramDefinition)
     } catch (error) {
       console.error('解析参数定义失败:', error)
       paramList.value = []
@@ -627,6 +775,9 @@ const editVersion = (row) => {
   } else {
     paramList.value = []
   }
+
+  // 处理分页参数
+  handlePagingParams()
 
   drawerVisible.value = true
 }
@@ -644,7 +795,10 @@ const resetForm = () => {
     sqlTemplate: '',
     paramDefinition: '',
     responseTemplate: '',
-    description: ''
+    description: '',
+    supportsPaging: 0,
+    pageSizeMax: 20,
+    rateLimit: null
   })
   paramList.value = []
   formRef.value?.clearValidate()
@@ -660,12 +814,17 @@ const addParam = () => {
   paramList.value.push({
     name: '',
     type: 'string',
-    required: false,
+    rules: {},
     description: ''
   })
 }
 
 const removeParam = (index) => {
+  // 不允许删除分页参数
+  if (paramList.value[index].readOnly) {
+    ElMessage.warning('只读参数不能删除')
+    return
+  }
   paramList.value.splice(index, 1)
 }
 
@@ -674,8 +833,12 @@ const handleSubmit = async () => {
     await formRef.value.validate()
     submitting.value = true
 
+    // 处理分页参数
+    handlePagingParams()
+
     // 将参数列表转换为JSON字符串
     const validParams = paramList.value.filter(param => param.name.trim() !== '')
+    // 将 paramDefinition 转换为 JSON 字符串后提交
     formData.paramDefinition = validParams.length > 0 ? JSON.stringify(validParams, null, 2) : ''
 
     if (isEdit.value) {
@@ -841,16 +1004,22 @@ const createNextVersion = async () => {
     formData.paramDefinition = publishedVersion.paramDefinition
     formData.responseTemplate = publishedVersion.responseTemplate
     formData.description = `基于版本 v${publishedVersion.version} 迭代`
+    formData.pageSizeMax = publishedVersion.pageSizeMax
+    formData.supportsPaging = publishedVersion.supportsPaging
+    formData.rateLimit = publishedVersion.rateLimit
 
     // 解析参数定义
     if (publishedVersion.paramDefinition) {
       try {
-        paramList.value = JSON.parse(publishedVersion.paramDefinition)
+        paramList.value = Array.isArray(publishedVersion.paramDefinition) ? publishedVersion.paramDefinition : JSON.parse(publishedVersion.paramDefinition)
       } catch (error) {
         console.error('解析参数定义失败:', error)
         paramList.value = []
       }
     }
+
+    // 处理分页参数
+    handlePagingParams()
 
     drawerVisible.value = true
 
@@ -936,6 +1105,226 @@ const truncateSQL = (sql) => {
   if (sql.length <= 80) return sql
   return sql.substring(0, 80) + '...'
 }
+
+// 在 data 部分添加新属性
+
+// 在方法部分添加新方法
+const openRuleConfig = (param) => {
+  // 不允许编辑只读参数的规则
+  if (param.readOnly) {
+    ElMessage.warning('不能编辑只读参数的规则')
+    return
+  }
+
+  currentEditingParam.value = param
+  // 解析现有的规则
+  parseRulesToForm(param.rules)
+  ruleConfigDialog.value = true
+}
+
+const parseRulesToForm = (rulesObj) => {
+  // 重置表单
+  Object.assign(ruleFormData, {
+    required: false,
+    minLength: '',
+    maxLength: '',
+    pattern: '',
+    minValue: '',
+    maxValue: '',
+    enumValues: '',
+    format: ''
+  })
+
+  if (!rulesObj || Object.keys(rulesObj).length === 0) return
+
+  try {
+    ruleFormData.required = !!rulesObj.required
+    if (rulesObj.minLength !== undefined) ruleFormData.minLength = rulesObj.minLength
+    if (rulesObj.maxLength !== undefined) ruleFormData.maxLength = rulesObj.maxLength
+    if (rulesObj.pattern) ruleFormData.pattern = rulesObj.pattern
+    if (rulesObj.minValue !== undefined) ruleFormData.minValue = rulesObj.minValue
+    if (rulesObj.maxValue !== undefined) ruleFormData.maxValue = rulesObj.maxValue
+    if (rulesObj.enumValues) ruleFormData.enumValues = rulesObj.enumValues.join(',')
+    if (rulesObj.format) ruleFormData.format = rulesObj.format
+
+    // 如果有预设的格式，则尝试匹配
+    if (rulesObj.pattern && !rulesObj.format) {
+      const matchedFormat = Object.keys(formatPatterns).find(key => formatPatterns[key] === rulesObj.pattern)
+      if (matchedFormat) {
+        ruleFormData.format = matchedFormat
+      }
+    }
+  } catch (e) {
+    console.warn('Failed to parse rules:', e)
+  }
+}
+
+const saveRuleConfig = () => {
+  if (!currentEditingParam.value) return
+
+  // 检查规则冲突
+  const conflict = checkRuleConflict()
+  if (conflict) {
+    ElMessage.warning(conflict)
+    return
+  }
+
+  // 构造规则对象
+  const rules = {}
+  if (ruleFormData.required) rules.required = true
+  if (ruleFormData.minLength !== '') rules.minLength = parseInt(ruleFormData.minLength)
+  if (ruleFormData.maxLength !== '') rules.maxLength = parseInt(ruleFormData.maxLength)
+  if (ruleFormData.pattern) rules.pattern = ruleFormData.pattern
+  if (ruleFormData.minValue !== '') rules.minValue = parseFloat(ruleFormData.minValue)
+  if (ruleFormData.maxValue !== '') rules.maxValue = parseFloat(ruleFormData.maxValue)
+  if (ruleFormData.enumValues) {
+    const values = ruleFormData.enumValues.split(',').map(val => val.trim()).filter(val => val)
+    if (values.length > 0) rules.enumValues = values
+  }
+  if (ruleFormData.format) rules.format = ruleFormData.format
+
+  // 直接存储为对象而不是序列化为字符串
+  currentEditingParam.value.rules = Object.keys(rules).length > 0 ? rules : {}
+  ruleConfigDialog.value = false
+}
+
+// 检查规则冲突
+const checkRuleConflict = () => {
+  // 检查枚举值与正则表达式冲突
+  if (ruleFormData.enumValues && ruleFormData.pattern) {
+    const enumValues = ruleFormData.enumValues.split(',').map(val => val.trim()).filter(val => val)
+    if (enumValues.length > 0) {
+      return '不能同时设置枚举值和正则表达式'
+    }
+  }
+
+  // 检查数值范围与长度限制冲突
+  if ((ruleFormData.minValue !== '' || ruleFormData.maxValue !== '') &&
+      (ruleFormData.minLength !== '' || ruleFormData.maxLength !== '')) {
+    if (currentEditingParam.value?.type === 'number') {
+      return '数值类型不能设置长度限制'
+    }
+  }
+
+  // 检查最小值大于最大值
+  if (ruleFormData.minValue !== '' && ruleFormData.maxValue !== '' &&
+      parseFloat(ruleFormData.minValue) > parseFloat(ruleFormData.maxValue)) {
+    return '最小值不能大于最大值'
+  }
+
+  // 检查最小长度大于最大长度
+  if (ruleFormData.minLength !== '' && ruleFormData.maxLength !== '' &&
+      parseInt(ruleFormData.minLength) > parseInt(ruleFormData.maxLength)) {
+    return '最小长度不能大于最大长度'
+  }
+
+  return null
+}
+
+const getRuleDisplayText = (rulesObj) => {
+  if (!rulesObj || Object.keys(rulesObj).length === 0) return ''
+
+  try {
+    const descriptions = []
+
+    if (rulesObj.required) descriptions.push('必填')
+    if (rulesObj.minLength !== undefined) descriptions.push(`最短${rulesObj.minLength}字符`)
+    if (rulesObj.maxLength !== undefined) descriptions.push(`最长${rulesObj.maxLength}字符`)
+    if (rulesObj.pattern) descriptions.push('正则匹配')
+    if (rulesObj.minValue !== undefined) descriptions.push(`最小值${rulesObj.minValue}`)
+    if (rulesObj.maxValue !== undefined) descriptions.push(`最大值${rulesObj.maxValue}`)
+    if (rulesObj.enumValues) descriptions.push(`枚举值(${rulesObj.enumValues.length}个)`)
+    if (rulesObj.format) descriptions.push(`${rulesObj.format}格式`)
+
+    return descriptions.join(', ') || '已配置'
+  } catch (e) {
+    return '规则格式错误'
+  }
+}
+
+// 格式选项对应的正则表达式
+const formatPatterns = {
+  email: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+  phone: '^1[3-9]\\d{9}$',
+  url: '^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$',
+  date: '^\\d{4}-\\d{2}-\\d{2}$',
+  time: '^([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$',
+  ipv4: '^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$',
+  ipv6: '^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$'
+}
+
+// 当格式改变时，自动填充对应的正则表达式
+const handleFormatChange = (format) => {
+  if (format && formatPatterns[format]) {
+    // 如果选择了格式并且有对应的正则表达式，则自动填充
+    ruleFormData.pattern = formatPatterns[format]
+  } else if (!format) {
+    // 如果清空了格式，也清空正则表达式（除非用户自己输入的）
+    if (Object.values(formatPatterns).includes(ruleFormData.pattern)) {
+      ruleFormData.pattern = ''
+    }
+  }
+}
+
+// 当手动输入正则表达式时，清除格式选择（如果有冲突）
+const handlePatternChange = (pattern) => {
+  ruleFormData.pattern = pattern
+  // 检查是否与预定义的格式匹配
+  const matchedFormat = Object.keys(formatPatterns).find(key => formatPatterns[key] === pattern)
+  if (matchedFormat) {
+    ruleFormData.format = matchedFormat
+  } else if (ruleFormData.format && formatPatterns[ruleFormData.format] !== pattern) {
+    // 如果pattern与当前选择的format不匹配，则清空format
+    ruleFormData.format = ''
+  }
+}
+
+const handlePagingParams = () => {
+  // 如果启用了分页，则确保分页参数存在
+  if (formData.supportsPaging) {
+    // 检查是否已经存在分页参数
+    const pageNumIndex = paramList.value.findIndex(param => param.name === '_pageNum')
+    const pageSizeIndex = paramList.value.findIndex(param => param.name === '_pageSize')
+
+    // 添加或更新 _pageNum 参数
+    if (pageNumIndex === -1) {
+      paramList.value.unshift({
+        name: '_pageNum',
+        type: 'number',
+        rules: {required: true, minValue: 1},
+        description: '页码',
+        readOnly: true
+      })
+    } else {
+      // 确保只读属性设置正确
+      paramList.value[pageNumIndex].readOnly = true
+      paramList.value[pageNumIndex].type = 'number'
+      paramList.value[pageNumIndex].rules = {required: true, minValue: 1}
+    }
+
+    // 添加或更新 _pageSize 参数
+    if (pageSizeIndex === -1) {
+      paramList.value.unshift({
+        name: '_pageSize',
+        type: 'number',
+        rules: {required: true, minValue: 1, maxValue: formData.pageSizeMax || 10000},
+        description: '每页条数',
+        readOnly: true
+      })
+    } else {
+      // 确保只读属性设置正确
+      paramList.value[pageSizeIndex].readOnly = true
+      paramList.value[pageSizeIndex].type = 'number'
+      paramList.value[pageSizeIndex].rules = {required: true, minValue: 1, maxValue: formData.pageSizeMax || 10000}
+    }
+  } else {
+    // 如果禁用了分页，则移除分页参数
+    paramList.value = paramList.value.filter(param =>
+        param.name !== '_pageNum' && param.name !== '_pageSize'
+    )
+  }
+}
+
 </script>
 
 <style scoped>
@@ -1262,6 +1651,15 @@ const truncateSQL = (sql) => {
   flex-direction: column;
 }
 
+.read-only-param input {
+  color: #909399 !important;
+  background-color: #f5f7fa !important;
+}
+
+.read-only-param input:focus {
+  border-color: #dcdfe6 !important;
+}
+
 .drawer-footer {
   margin-top: auto;
   padding-top: 20px;
@@ -1439,5 +1837,11 @@ pre {
   font-size: 12px;
   white-space: pre-wrap;
   word-break: break-all;
+}
+
+.form-item-tip {
+  font-size: 12px;
+  color: #909399;
+  margin-top: 4px;
 }
 </style>

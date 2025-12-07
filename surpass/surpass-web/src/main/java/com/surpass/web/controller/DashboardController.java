@@ -26,6 +26,11 @@ import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.entity.Message;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.report.vo.DashBoardVo;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -38,10 +43,15 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
+@Tag(name = "Dashboard API", description = "仪表板相关接口")
 public class DashboardController {
 
 	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
+	@Operation(summary = "获取仪表板数据", description = "获取系统仪表板统计数据，包括用户数量、在线用户、活跃用户以及各类报表数据")
+	@ApiResponse(responseCode = "200", description = "成功返回仪表板数据",
+			content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+					schema = @Schema(implementation = Message.class)))
 	@GetMapping(value={"/dashboard"}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<DashBoardVo> dashboard(@CurrentUser UserInfo currentUser) {
 

@@ -1,77 +1,92 @@
 <template>
   <div class="debug-page">
+    <!-- 页面头部 -->
     <div class="page-header">
-      <h2>API调试</h2>
-      <p>测试和调试已发布的API</p>
+      <div class="header-content">
+        <div class="header-info">
+          <h1 class="page-title">API调试</h1>
+          <p class="page-description">测试和调试已发布的API</p>
+        </div>
+      </div>
     </div>
 
-    <div class="page-content">
+    <div class="main-content">
       <!-- API选择 -->
-      <div class="api-selector">
-        <el-select
-            v-model="selectedApiId"
-            placeholder="请选择API"
-            style="width: 300px"
-            @change="loadApiDetail"
-            :loading="apiLoading"
-        >
-          <el-option
-              v-for="api in apiList"
-              :key="api.id"
-              :label="api.name"
-              :value="api.id"
-          />
-        </el-select>
-      </div>
+      <el-card class="api-selector-card" shadow="never">
+        <template #header>
+          <div class="card-header">
+            <div style="display: flex;justify-content: flex-start;align-items: center">
+              <span>选择API：</span>
+              <div class="selector-content">
+                <el-select
+                    v-model="selectedApiId"
+                    placeholder="请选择API"
+                    style="width: 400px"
+                    @change="loadApiDetail"
+                    :loading="apiLoading"
+                >
+                  <el-option
+                      v-for="api in apiList"
+                      :key="api.id"
+                      :label="api.name"
+                      :value="api.id"
+                  >
+                    <div class="api-option">
+                      <span class="api-name">{{ api.name }}</span>
+                      <span class="api-path">{{ api.path }}</span>
+                    </div>
+                  </el-option>
+                </el-select>
+              </div>
+            </div>
+          </div>
+        </template>
+      </el-card>
 
       <!-- API信息 -->
       <div class="api-info" v-if="selectedApi && currentVersion">
-        <el-card>
+        <el-card class="info-card" shadow="never">
           <template #header>
             <div class="card-header">
               <span>API信息</span>
             </div>
           </template>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="label">API名称：</span>
-              <span>{{ selectedApi.name }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">路径：</span>
+          <el-descriptions :column="2" border>
+            <el-descriptions-item label="API名称">
+              {{ selectedApi.name }}
+            </el-descriptions-item>
+            <el-descriptions-item label="路径">
               <el-tag>{{ selectedApi.path }}</el-tag>
-            </div>
-            <div class="info-item">
-              <span class="label">方法：</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="方法">
               <el-tag :type="getMethodTagType(selectedApi.method)">
                 {{ selectedApi.method }}
               </el-tag>
-            </div>
-            <div class="info-item">
-              <span class="label">当前版本：</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="当前版本">
               <el-tag type="success">v{{ currentVersion.version }}</el-tag>
-            </div>
-          </div>
+            </el-descriptions-item>
+          </el-descriptions>
         </el-card>
       </div>
 
       <!-- SQL模板预览 -->
       <div class="sql-preview" v-if="selectedApi && currentVersion">
-        <el-card>
+        <el-card class="template-card" shadow="never">
           <template #header>
             <div class="card-header">
               <span>SQL模板预览</span>
             </div>
           </template>
-          <div class="sql-content">
-            <pre>{{ currentVersion.sqlTemplate }}</pre>
+          <div class="code-block">
+            <pre><code class="sql">{{ currentVersion.sqlTemplate }}</code></pre>
           </div>
         </el-card>
       </div>
 
       <!-- 请求配置 -->
       <div class="request-config" v-if="selectedApi && currentVersion">
-        <el-card>
+        <el-card class="config-card" shadow="never">
           <template #header>
             <div class="card-header">
               <span>请求配置</span>
@@ -86,17 +101,19 @@
                   v-for="(param, index) in requestParams"
                   :key="index"
                   class="param-item"
+                  :class="{ 'param-error': param.error }"
               >
                 <el-input
                     v-model="param.name"
                     placeholder="参数名"
                     style="width: 150px"
-                    :class="{ 'required-param': param.required }"
+                    readonly
                 />
                 <el-select
                     v-model="param.type"
                     placeholder="类型"
                     style="width: 100px"
+                    disabled
                 >
                   <el-option label="字符串" value="string"/>
                   <el-option label="数字" value="number"/>
@@ -106,32 +123,38 @@
                     v-model="param.value"
                     placeholder="参数值"
                     style="flex: 1"
+                    @input="validateParam(param)"
+                    :class="{ 'invalid-param': param.error }"
                 />
-                <el-tooltip
-                    :content="param.required ? '必填参数' : '可选参数'"
-                    placement="top"
-                >
-                  <el-icon :color="param.required ? '#f56c6c' : '#909399'">
-                    <InfoFilled/>
+                <div class="param-info">
+                  <el-tooltip
+                      v-if="param.rules && Object.keys(param.rules).length > 0"
+                      :content="getRuleDisplayText(param.rules)"
+                      placement="top"
+                  >
+                    <el-icon :color="param.required ? '#f56c6c' : '#909399'">
+                      <InfoFilled/>
+                    </el-icon>
+                  </el-tooltip>
+                </div>
+                <div class="param-status">
+                  <el-icon v-if="param.error" color="#f56c6c">
+                    <CircleClose/>
                   </el-icon>
-                </el-tooltip>
-                <el-button
-                    type="danger"
-                    @click="removeParam(index)"
-                    v-if="!param.required"
-                >
-                  <el-icon>
-                    <Delete/>
+                  <el-icon v-else-if="param.value || !param.required" color="#67c23a">
+                    <Success/>
                   </el-icon>
-                </el-button>
+                </div>
               </div>
             </div>
-            <el-button @click="addParam">
-              <el-icon>
-                <Plus/>
-              </el-icon>
-              添加参数
-            </el-button>
+            <div class="validation-info" v-if="hasValidationErrors">
+              <el-alert
+                  title="参数验证失败，请检查标红的参数"
+                  type="error"
+                  show-icon
+                  :closable="false"
+              />
+            </div>
           </div>
 
           <!-- 执行按钮 -->
@@ -141,6 +164,7 @@
                 @click="executeApi"
                 :loading="executing"
                 :disabled="!selectedApi"
+                size="large"
             >
               <el-icon>
                 <Promotion/>
@@ -153,7 +177,7 @@
 
       <!-- 响应结果 -->
       <div class="response-result" v-if="responseData">
-        <el-card>
+        <el-card class="response-card" shadow="never">
           <template #header>
             <div class="card-header">
               <span>响应结果</span>
@@ -164,43 +188,42 @@
           </template>
 
           <div class="response-info">
-            <div class="info-item">
-              <span class="label">状态码：</span>
-              <span>{{ responseData.code }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">执行时间：</span>
-              <span>{{ executionTime }}ms</span>
-            </div>
-            <div class="info-item">
-              <span class="label">消息：</span>
-              <span>{{ responseData.message }}</span>
-            </div>
+            <el-descriptions :column="3" border size="small">
+              <el-descriptions-item label="状态码">
+                {{ responseData.code }}
+              </el-descriptions-item>
+              <el-descriptions-item label="执行时间">
+                {{ executionTime }}ms
+              </el-descriptions-item>
+              <el-descriptions-item label="消息">
+                {{ responseData.message }}
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
 
           <div class="response-data">
             <h4>响应数据：</h4>
-            <pre>{{ formatResponseData(responseData) }}</pre>
+            <div class="code-block">
+              <pre><code class="json">{{ formatResponseData(responseData) }}</code></pre>
+            </div>
           </div>
         </el-card>
       </div>
 
       <!-- 空状态 -->
-      <el-empty
-          v-if="!selectedApiId"
-          description="请选择API"
-      />
+      <div v-if="!selectedApiId" class="no-api-selected">
+        <el-empty description="请选择API" :image-size="200"/>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import {onMounted, ref} from 'vue'
-import {ElMessage} from 'element-plus'
+import {onMounted, ref, computed} from 'vue'
+import {ElMessage, ElNotification} from 'element-plus'
 import {gatewayApi} from '@/api/api-service/gatewayApi.ts'
 import * as apiVersionApi from '@/api/api-service/apiVersionApi.ts'
 import * as apiDefinitionApi from '@/api/api-service/apiDefinitionApi.ts'
-import {Delete, InfoFilled, Plus, Promotion} from '@element-plus/icons-vue'
 
 // 响应式数据
 const apiLoading = ref(false)
@@ -213,9 +236,12 @@ const currentVersion = ref(null)
 const responseData = ref(null)
 const executionTime = ref(0)
 
-const requestParams = ref([
-  {name: '', value: ''}
-])
+const requestParams = ref([])
+
+// 计算属性
+const hasValidationErrors = computed(() => {
+  return requestParams.value.some(param => param.error)
+})
 
 // 生命周期
 onMounted(() => {
@@ -263,19 +289,9 @@ const loadApiDetail = async () => {
   }
 }
 
-const addParam = () => {
-  requestParams.value.push({name: '', value: ''})
-}
-
-const removeParam = (index) => {
-  if (requestParams.value.length > 1) {
-    requestParams.value.splice(index, 1)
-  }
-}
-
 const initRequestParams = (paramDefinition) => {
   if (!paramDefinition) {
-    requestParams.value = [{name: '', value: ''}]
+    requestParams.value = []
     return
   }
 
@@ -284,26 +300,156 @@ const initRequestParams = (paramDefinition) => {
     if (Array.isArray(params)) {
       requestParams.value = params.map(param => ({
         name: param.name || '',
-        value: param.defaultValue || '',
+        value: '',
         type: param.type || 'string',
-        required: param.required || false
+        required: param.required || false,
+        rules: param.rules || {},
+        error: false,
+        errorMessage: ''
       }))
     } else if (typeof params === 'object') {
       requestParams.value = Object.keys(params).map(key => ({
         name: key,
-        value: params[key].defaultValue || '',
+        value: '',
         type: params[key].type || 'string',
-        required: params[key].required || false
+        required: params[key].required || false,
+        rules: params[key].rules || {},
+        error: false,
+        errorMessage: ''
       }))
-    }
-
-    // 确保至少有一个参数项
-    if (requestParams.value.length === 0) {
-      requestParams.value = [{name: '', value: ''}]
     }
   } catch (error) {
     console.error('解析参数定义失败:', error)
-    requestParams.value = [{name: '', value: ''}]
+    requestParams.value = []
+  }
+}
+
+// 验证单个参数
+const validateParam = (param) => {
+  // 重置错误状态
+  param.error = false
+  param.errorMessage = ''
+
+  // 必填验证
+  if (param.required && !param.value) {
+    param.error = true
+    param.errorMessage = '该参数为必填项'
+    return
+  }
+
+  // 如果参数为空且非必填，则跳过其他验证
+  if (!param.value) {
+    return
+  }
+
+  // 类型验证和规则验证
+  switch (param.type) {
+    case 'number':
+      // 数字类型验证
+      if (isNaN(Number(param.value))) {
+        param.error = true
+        param.errorMessage = '请输入有效的数字'
+        return
+      }
+      
+      const numValue = Number(param.value)
+      
+      // 最小值验证
+      if (param.rules.minValue !== undefined && numValue < param.rules.minValue) {
+        param.error = true
+        param.errorMessage = `数值不能小于 ${param.rules.minValue}`
+        return
+      }
+      
+      // 最大值验证
+      if (param.rules.maxValue !== undefined && numValue > param.rules.maxValue) {
+        param.error = true
+        param.errorMessage = `数值不能大于 ${param.rules.maxValue}`
+        return
+      }
+      break
+      
+    case 'string':
+      // 字符串长度验证
+      if (param.rules.minLength !== undefined && param.value.length < param.rules.minLength) {
+        param.error = true
+        param.errorMessage = `字符串长度不能少于 ${param.rules.minLength} 个字符`
+        return
+      }
+      
+      if (param.rules.maxLength !== undefined && param.value.length > param.rules.maxLength) {
+        param.error = true
+        param.errorMessage = `字符串长度不能超过 ${param.rules.maxLength} 个字符`
+        return
+      }
+      
+      // 正则表达式验证
+      if (param.rules.pattern) {
+        try {
+          const regExp = new RegExp(param.rules.pattern)
+          if (!regExp.test(param.value)) {
+            param.error = true
+            param.errorMessage = '输入格式不符合要求'
+            if (param.rules.format) {
+              const formatMessages = {
+                'email': '请输入有效的邮箱地址',
+                'phone': '请输入有效的手机号码',
+                'url': '请输入有效的URL',
+                'date': '请输入有效的日期格式',
+                'time': '请输入有效的时间格式',
+                'ipv4': '请输入有效的IPv4地址',
+                'ipv6': '请输入有效的IPv6地址'
+              }
+              param.errorMessage = formatMessages[param.rules.format] || '输入格式不符合要求'
+            }
+            return
+          }
+        } catch (e) {
+          console.error('正则表达式错误:', e)
+        }
+      }
+      
+      // 枚举值验证
+      if (param.rules.enumValues && Array.isArray(param.rules.enumValues)) {
+        if (!param.rules.enumValues.includes(param.value)) {
+          param.error = true
+          param.errorMessage = `只能输入以下值之一: ${param.rules.enumValues.join(', ')}`
+          return
+        }
+      }
+      break
+      
+    case 'boolean':
+      // 布尔类型验证
+      const validBooleanValues = ['true', 'false', '1', '0']
+      if (!validBooleanValues.includes(param.value.toLowerCase())) {
+        param.error = true
+        param.errorMessage = '布尔值只能是 true/false 或 1/0'
+        return
+      }
+      break
+  }
+}
+
+// 获取规则显示文本
+const getRuleDisplayText = (rulesObj) => {
+  if (!rulesObj || Object.keys(rulesObj).length === 0) return ''
+
+  try {
+    const descriptions = []
+
+    if (rulesObj.required) descriptions.push('必填')
+    if (rulesObj.minLength !== undefined) descriptions.push(`最短${rulesObj.minLength}字符`)
+    if (rulesObj.maxLength !== undefined) descriptions.push(`最长${rulesObj.maxLength}字符`)
+    if (rulesObj.pattern) descriptions.push('正则匹配')
+    if (rulesObj.minValue !== undefined) descriptions.push(`最小值${rulesObj.minValue}`)
+    if (rulesObj.maxValue !== undefined) descriptions.push(`最大值${rulesObj.maxValue}`)
+    if (rulesObj.enumValues) descriptions.push(`枚举值(${rulesObj.enumValues.length}个)`)
+    if (rulesObj.format) descriptions.push(`${rulesObj.format}格式`)
+
+    return descriptions.join(', ') || '已配置'
+  } catch (e) {
+    return '规则格式错误'
   }
 }
 
@@ -313,13 +459,21 @@ const executeApi = async () => {
     return
   }
 
-  // 验证必填参数
-  const missingParams = requestParams.value
-      .filter(param => param.required && (!param.name || !param.value))
-      .map(param => param.name || '未命名参数')
+  // 验证所有参数
+  requestParams.value.forEach(param => validateParam(param))
 
-  if (missingParams.length > 0) {
-    ElMessage.warning(`请填写必填参数: ${missingParams.join(', ')}`)
+  // 检查是否有验证错误
+  const hasErrors = requestParams.value.some(param => param.error)
+  const missingRequiredParams = requestParams.value
+      .filter(param => param.required && !param.value)
+      .map(param => param.name)
+
+  if (hasErrors || missingRequiredParams.length > 0) {
+    if (missingRequiredParams.length > 0) {
+      ElMessage.warning(`请填写必填参数: ${missingRequiredParams.join(', ')}`)
+    } else {
+      ElMessage.warning('参数验证失败，请检查标红的参数')
+    }
     return
   }
 
@@ -338,7 +492,7 @@ const executeApi = async () => {
         if (param.type === 'number') {
           value = Number(value)
         } else if (param.type === 'boolean') {
-          value = value.toLowerCase() === 'true'
+          value = value.toLowerCase() === 'true' || value === '1'
         }
         params[param.name] = value
       }
@@ -360,9 +514,19 @@ const executeApi = async () => {
     responseData.value = response
 
     if (response.code === 0) {
-      ElMessage.success(`API执行成功 (${executionTime.value}ms)`)
+      ElNotification({
+        title: '执行成功',
+        message: `API执行成功 (${executionTime.value}ms)`,
+        type: 'success',
+        duration: 3000
+      })
     } else {
-      ElMessage.error(`API执行失败: ${response.message}`)
+      ElNotification({
+        title: '执行失败',
+        message: `API执行失败: ${response.message}`,
+        type: 'error',
+        duration: 3000
+      })
     }
 
   } catch (error) {
@@ -404,84 +568,135 @@ const getMethodTagType = (method) => {
 
 <style scoped>
 .debug-page {
-  background: #fff;
-  border-radius: 4px;
-  padding: 20px;
+  background: #f5f7fa;
   min-height: calc(100vh - 140px);
+  padding: 0;
 }
 
+/* 页面头部 */
 .page-header {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e6e6e6;
+  background: #fff;
+  padding: 24px;
+  border-bottom: 1px solid #e4e7ed;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-.page-header h2 {
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0 auto;
+}
+
+.header-info {
+  flex: 1;
+}
+
+.page-title {
   margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
   color: #303133;
+  line-height: 1.2;
 }
 
-.page-header p {
+.page-description {
   margin: 0;
   color: #909399;
   font-size: 14px;
+  line-height: 1.5;
 }
 
-.api-selector {
-  margin-bottom: 20px;
+/* 主要内容区域 */
+.main-content {
+  margin: 0 auto;
+  padding: 24px;
 }
 
-.api-info,
-.sql-preview,
-.request-config,
-.response-result {
-  margin-bottom: 20px;
+/* API选择卡片 */
+.api-selector-card {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  border: 1px solid #e4e7ed;
 }
 
-.sql-content pre {
-  background: #f8f9fa;
-  padding: 12px;
-  border-radius: 4px;
-  margin: 0;
-  font-family: 'Courier New', monospace;
+.api-selector-card .card-header {
+  padding: 10px 0px;
+  border-bottom: 1px solid #f0f2f5;
+  font-weight: 600;
+  color: #303133;
+}
+
+.api-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.api-name {
+  font-weight: 500;
+  color: #303133;
+}
+
+.api-path {
   font-size: 12px;
-  white-space: pre-wrap;
-  word-break: break-all;
-  max-height: 200px;
-  overflow-y: auto;
+  color: #909399;
+  background: #f5f7fa;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-.required-param .el-input__inner {
-  border-color: #f56c6c;
-}
-
-.required-param .el-input__inner:focus {
-  border-color: #f56c6c;
+/* 卡片样式 */
+.info-card,
+.template-card,
+.config-card,
+.response-card {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  border: 1px solid #e4e7ed;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 0px;
+  border-bottom: 1px solid #f0f2f5;
+  font-weight: 600;
+  color: #303133;
 }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
+/* 代码块样式 */
+.code-block {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
-.info-item {
-  display: flex;
-  align-items: center;
+.code-block pre {
+  margin: 0;
+  padding: 16px;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #24292e;
+  background: transparent;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
-.info-item .label {
-  font-weight: bold;
-  min-width: 80px;
-  color: #606266;
+.code-block code.sql {
+  color: #d73a49;
 }
 
+.code-block code.json {
+  color: #032f62;
+}
+
+/* 参数配置样式 */
 .params-section {
   margin-bottom: 20px;
 }
@@ -500,12 +715,46 @@ const getMethodTagType = (method) => {
   gap: 8px;
   margin-bottom: 8px;
   align-items: center;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.param-item:hover {
+  background-color: #f5f7fa;
+}
+
+.param-item.param-error {
+  background-color: #fef0f0;
+  border: 1px solid #fde2e2;
+}
+
+.param-info {
+  display: flex;
+  gap: 4px;
+}
+
+.param-status {
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.invalid-param :deep(.el-input__wrapper) {
+  box-shadow: 0 0 0 1px #f56c6c inset !important;
+}
+
+.validation-info {
+  margin-top: 12px;
 }
 
 .execute-section {
   text-align: center;
+  padding: 20px 0;
 }
 
+/* 响应信息样式 */
 .response-info {
   margin-bottom: 16px;
 }
@@ -515,16 +764,25 @@ const getMethodTagType = (method) => {
   color: #303133;
 }
 
-pre {
-  background: #f5f7fa;
-  padding: 12px;
-  border-radius: 4px;
-  margin: 0;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  white-space: pre-wrap;
-  word-break: break-all;
-  max-height: 400px;
-  overflow-y: auto;
+/* 空状态 */
+.no-api-selected {
+  padding: 80px 0;
+  text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 16px;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .param-item {
+    flex-wrap: wrap;
+  }
 }
 </style>

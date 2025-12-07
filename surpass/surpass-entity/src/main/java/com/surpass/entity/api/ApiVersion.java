@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.dromara.mybatis.jpa.annotations.SoftDelete;
 import org.dromara.mybatis.jpa.entity.JpaEntity;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
@@ -50,6 +51,25 @@ public class ApiVersion extends JpaEntity implements Serializable {
 
     @Column(length = 500)
     private String description;
+
+    /**
+     * 是否分页
+     */
+    @Column(length = 1)
+    @NotNull(message = "是否支持分页不能为空")
+    private Integer supportsPaging;
+
+    /**
+     * 允许的页记录最大值
+     */
+    @Column
+    private Integer pageSizeMax;
+
+    /**
+     * 访问限流
+     */
+    @Column
+    private Integer rateLimit;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

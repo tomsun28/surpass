@@ -9,6 +9,7 @@ import com.surpass.persistence.mapper.ApiVersionMapper;
 import com.surpass.persistence.service.ApiPublishService;
 import com.surpass.persistence.service.ApiVersionService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.query.OrderBy;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
@@ -54,7 +55,9 @@ public class ApiPublishServiceImpl extends JpaServiceImpl<ApiPublishMapper, ApiP
             wrapperPublish.eq(ApiPublishRecord::getVersionId, apiVersion.getId());
             wrapperPublish.orderBy(ApiPublishRecord::getPublishTime, OrderBy.DESC.getOrder());
             ApiPublishRecord apiPublishRecord = super.query(wrapperPublish).stream().findFirst().orElse(null);
-
+            if(apiPublishRecord != null){
+                apiPublishRecord.setApiVersion(apiVersion);
+            }
             return Optional.ofNullable(apiPublishRecord);
         }
 
@@ -91,7 +94,7 @@ public class ApiPublishServiceImpl extends JpaServiceImpl<ApiPublishMapper, ApiP
         publishRecord.setApiId(apiId);
         publishRecord.setVersionId(versionId);
         publishRecord.setOperator(operator);
-        publishRecord.setDescription(description);
+        publishRecord.setDescription(StringUtils.isEmpty(description) ? apiVersion.getDescription() : description);
         publishRecord.setPublishTime(LocalDateTime.now());
 
         super.insert(publishRecord);

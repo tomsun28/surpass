@@ -1,9 +1,9 @@
 package com.surpass.persistence.util;
 
-import com.surpass.entity.Message;
 import com.surpass.entity.api.DataSource;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.service.DataSourceService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.mybatis.jpa.datasource.DataSourceSwitch;
@@ -18,6 +18,9 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 分页查询结果封装类
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -26,6 +29,12 @@ public class SqlExecutor {
     private final JdbcTemplate jdbcTemplate;
     private final DynamicRoutingDataSource dynamicRoutingDataSource;
     private final DataSourceService dataSourceService;
+
+    /**
+     * 分页查询结果封装类
+     */
+    public record PaginatedResult(List<Map<String, Object>> data, int pageNum, int pageSize, long total) {
+    }
 
     public List<Map<String, Object>> executeQuery(DataSource dataSource, String sql, List<Object> params) {
         try {
@@ -103,7 +112,7 @@ public class SqlExecutor {
         }
     }
 
-    public List<Map<String, Object>> executeQueryWithPagination(
+    public PaginatedResult executeQueryWithPagination(
             DataSource dataSource,
             String sql,
             List<Object> params,
@@ -121,6 +130,14 @@ public class SqlExecutor {
             log.debug("执行分页查询SQL: {}, 参数: {}, 页码: {}, 页大小: {}",
                     paginationSql, params, pageNum, pageSize);
 
+            // 获取总记录数
+            long total;
+            if (params == null || params.isEmpty()) {
+                total = jdbcTemplate.queryForObject(countSql, Long.class);
+            } else {
+                total = jdbcTemplate.queryForObject(countSql, params.toArray(), Long.class);
+            }
+
             // 执行查询
             List<Map<String, Object>> data;
             if (params == null || params.isEmpty()) {
@@ -129,7 +146,7 @@ public class SqlExecutor {
                 data = jdbcTemplate.queryForList(paginationSql, params.toArray());
             }
 
-            return data;
+            return new PaginatedResult(data, pageNum, pageSize, total);
         } catch (Exception e) {
             log.error("执行分页SQL查询失败: {}", sql, e);
             throw new BusinessException(50001, "SQL执行失败: " + e.getMessage());
