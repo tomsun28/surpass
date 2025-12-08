@@ -102,6 +102,16 @@ public class SurpassMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/open/func/**")
                 .excludePathPatterns("/open/func/list")
                 .excludePathPatterns("/users/register", "/users/register/**")
+
+                // swagger 文档、静态文件、openapi 放行
+                .excludePathPatterns(
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/swagger-resources/**",
+                        "/webjars/**",
+                        "/doc.html"
+                )
         ;
 
         logger.debug("add PermissionAdapter");
