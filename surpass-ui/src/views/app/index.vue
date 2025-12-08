@@ -52,10 +52,10 @@
                          :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="appName" label="应用名称" align="center" min-width="100"
                          :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="clientId" label="Client Id" align="center" min-width="80"
-                         :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="clientSecret" label="Client Secret" align="center" min-width="120"
-                         :show-overflow-tooltip="true"></el-table-column>
+<!--        <el-table-column prop="clientId" label="Client Id" align="center" min-width="80"-->
+<!--                         :show-overflow-tooltip="true"></el-table-column>-->
+<!--        <el-table-column prop="clientSecret" label="Client Secret" align="center" min-width="120"-->
+<!--                         :show-overflow-tooltip="true"></el-table-column>-->
         <el-table-column prop="status" :label="t('org.status')" align="center" min-width="40">
           <template #default="scope">
                 <span v-if="scope.row.status === 1"><el-icon color="green"><SuccessFilled

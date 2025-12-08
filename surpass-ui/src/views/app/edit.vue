@@ -12,12 +12,12 @@
         <el-form-item prop="appName" label="应用名称" :required="true">
           <el-input v-model="form.appName"/>
         </el-form-item>
-        <el-form-item prop="clientId" label="Client Id" v-if="isEdit">
+<!--        <el-form-item prop="clientId" label="Client Id" v-if="isEdit">
           <el-input v-model="form.clientId" disabled/>
         </el-form-item>
         <el-form-item prop="clientSecret" label="Client Secret" v-if="isEdit">
           <el-input v-model="form.clientSecret" disabled/>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item prop="status" :label="$t('jbx.text.status.status')">
           <el-switch
               :width="44"
@@ -75,9 +75,7 @@ const data: any = reactive({
   form: {
     status: 1,
     appName: null,
-    appCode: null,
-    clientId: null,
-    clientSecret: null,
+    appCode: null
   },
   rules: {
     appCode: [
@@ -90,7 +88,8 @@ const data: any = reactive({
 })
 
 const {form, rules} = toRefs(data)
-const dialogStatus: any = ref(false);
+const dialogStatus: any = ref(false)
+
 const isEdit: any = ref(false);
 // 监听 open 变化
 watch(
@@ -129,9 +128,7 @@ function reset(): any {
   form.value = {
     status: 1,
     appName: null,
-    appCode: null,
-    clientId: null,
-    clientSecret: null,
+    appCode: null
   };
   appRef?.value?.resetFields();
 }

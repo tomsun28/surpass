@@ -42,8 +42,8 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
     public Message<String> create(AppChangeDto dto) {
         checkAppCode(dto, false);
         App app = BeanUtil.copyProperties(dto, App.class);
-        app.setClientId(UUID.randomUUID().toString().replace("-", ""));
-        app.setClientSecret(BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt()));
+//        app.setClientId(UUID.randomUUID().toString().replace("-", ""));
+//        app.setClientSecret(BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt()));
 
         boolean result = super.insert(app);
         return result ? Message.ok("创建成功") : Message.failed("创建失败");
@@ -61,7 +61,7 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
     @Override
     public App findByClientId(String clientId) {
         LambdaQuery<App> wrapper = new LambdaQuery<>();
-        wrapper.eq(App::getClientId, clientId);
+//        wrapper.eq(App::getClientId, clientId);
         List<App> query = super.query(wrapper);
         if (query.isEmpty()) {
             throw new BusinessException(50001, "应用不存在");
@@ -80,9 +80,9 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
         // 生成 accessToken
         String token = UUID.fastUUID().toString();
         int ttl = app.getTtlSeconds() == null ? 7200 : app.getTtlSeconds();
-        tokenStore.storeToken(token, app.getClientId(), Duration.ofSeconds(ttl));
-
-        logger.info("Issued app token for clientId={}, ttl={}s", app.getClientId(), ttl);
+//        tokenStore.storeToken(token, app.getClientId(), Duration.ofSeconds(ttl));
+//
+//        logger.info("Issued app token for clientId={}, ttl={}s", app.getClientId(), ttl);
         return token;
     }
 

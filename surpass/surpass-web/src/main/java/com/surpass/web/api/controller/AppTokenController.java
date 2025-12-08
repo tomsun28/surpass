@@ -43,17 +43,17 @@ public class AppTokenController {
     public Message<Map<String, Object>> getToken(@RequestParam String clientId,
                                                         @RequestParam String clientSecret) {
 
-        App app = appService.findByClientId(clientId);
+    /*    App app = appService.findByClientId(clientId);
         if(app == null || !BCrypt.checkpw(clientSecret, app.getClientSecret())){
             return new Message<>(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }
 
-        String token = appService.issueToken(app);
+        String token = appService.issueToken(app);*/
 
         Map<String,Object> result = new HashMap<>();
-        result.put("access_token", token);
+//        result.put("access_token", token);
         result.put("token_type", "Bearer");
-        result.put("expires_in", app.getTtlSeconds());
+//        result.put("expires_in", app.getTtlSeconds());
         return Message.ok(result);
     }
 
