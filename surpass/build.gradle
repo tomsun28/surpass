@@ -185,7 +185,7 @@ subprojects {
         implementation group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: "${springBootVersion}"
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-freemarker', version: "${springBootVersion}"
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json', version: "${springBootVersion}"
-        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2', version:  "${springBootVersion}"
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2', version: "${springBootVersion}"
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${springBootVersion}"
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat', version: "${springBootVersion}"
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: "${springBootVersion}"
@@ -342,10 +342,10 @@ subprojects {
         implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-common', version: "${springdocVersion}"
         implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-api', version: "${springdocVersion}"
         implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: "${springdocVersion}"
+
         //webjars
-//        implementation group: 'org.webjars', name: 'webjars-locator-core', version: "${webjarslocatorcoreVersion}"
-//        implementation group: 'org.webjars', name: 'webjars-locator', version: "${webjarslocatorVersion}"
-//        implementation group: 'org.webjars', name: 'swagger-ui', version: "${swaggeruiVersion}"
+        implementation group: 'org.webjars', name: 'webjars-locator-lite', version: "${webjarslocatorLiteVersion}"
+        implementation group: 'org.webjars', name: 'swagger-ui', version: "${swaggeruiVersion}"
 
         //mybatis-jpa
         implementation group: 'org.dromara.mybatis-jpa-extra', name: 'mybatis-jpa-extra', version: "${mybatisjpaextraVersion}"

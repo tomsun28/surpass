@@ -1,0 +1,743 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MaxKey单点登录认证系统API文档",
+    "description": "MaxKey单点登录认证系统API文档",
+    "contact": {
+      "name": "MaxKey",
+      "email": "MaxKey@MaxKey.com"
+    },
+    "version": "v1.2.0 GA"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:2154/surpass-api",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "apiKey": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Dashboard API",
+      "description": "仪表板相关接口"
+    }
+  ],
+  "paths": {
+    "/versions": {
+      "post": {
+        "tags": [
+          "api-version-controller"
+        ],
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiVersion"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageApiVersion"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/datasources": {
+      "get": {
+        "tags": [
+          "data-source-controller"
+        ],
+        "operationId": "list",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageListDataSource"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "data-source-controller"
+        ],
+        "operationId": "create_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataSource"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apis": {
+      "get": {
+        "tags": [
+          "api-definition-controller"
+        ],
+        "operationId": "list_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiDefinition"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "api-definition-controller"
+        ],
+        "operationId": "create_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "tags": [
+          "logout-endpoint"
+        ],
+        "operationId": "logout",
+        "parameters": [
+          {
+            "name": "currentUser",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UserInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "tags": [
+          "Dashboard API"
+        ],
+        "summary": "获取仪表板数据",
+        "description": "获取系统仪表板统计数据，包括用户数量、在线用户、活跃用户以及各类报表数据",
+        "operationId": "dashboard",
+        "parameters": [
+          {
+            "name": "currentUser",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UserInfo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功返回仪表板数据",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/captcha": {
+      "get": {
+        "tags": [
+          "image-captcha-endpoint"
+        ],
+        "operationId": "captchaHandleRequest",
+        "parameters": [
+          {
+            "name": "captcha",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "text"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "state"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageImageCaptcha"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiVersion": {
+        "required": [
+          "apiId",
+          "sqlTemplate",
+          "status",
+          "supportsPaging",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "apiId": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sqlTemplate": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "paramDefinition": {
+            "type": "string"
+          },
+          "responseTemplate": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string"
+          },
+          "supportsPaging": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSizeMax": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rateLimit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deleted": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedBy": {
+            "type": "string"
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MessageApiVersion": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ApiVersion"
+          }
+        }
+      },
+      "DataSource": {
+        "required": [
+          "driverClassName",
+          "name",
+          "password",
+          "status",
+          "url",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "driverClassName": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "url": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "username": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "password": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "testSql": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedBy": {
+            "type": "string"
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MessageString": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiDefinition": {
+        "required": [
+          "datasourceId",
+          "method",
+          "name",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "path": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "method": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "datasourceId": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedBy": {
+            "type": "string"
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserInfo": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "decipherable": {
+            "type": "string"
+          },
+          "sharedSecret": {
+            "type": "string"
+          },
+          "sharedCounter": {
+            "type": "string"
+          },
+          "userType": {
+            "type": "string"
+          },
+          "userState": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "nickName": {
+            "type": "string"
+          },
+          "sortIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nameZhSpell": {
+            "type": "string",
+            "description": "名字中文拼音"
+          },
+          "nameZhShortSpell": {
+            "type": "string",
+            "description": "名字中文拼音简称"
+          },
+          "pictureId": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "emailVerified": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "mobileVerified": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "passwordQuestion": {
+            "type": "string"
+          },
+          "passwordAnswer": {
+            "type": "string"
+          },
+          "passwordLastSetTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "badPasswordCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "badPasswordTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unLockTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isLocked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastLoginTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastLoginIp": {
+            "type": "string"
+          },
+          "lastLogoffTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "passwordSetType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loginCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "regionHistory": {
+            "type": "string"
+          },
+          "passwordHistory": {
+            "type": "string"
+          },
+          "loginFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "loginFailedTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "preferredLanguage": {
+            "type": "string"
+          },
+          "isOnline": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ldapDn": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deleted": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modifiedBy": {
+            "type": "string"
+          },
+          "modifiedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "instId": {
+            "type": "string"
+          },
+          "syncId": {
+            "type": "string"
+          },
+          "syncName": {
+            "type": "string"
+          },
+          "originId": {
+            "type": "string"
+          },
+          "originId2": {
+            "type": "string"
+          },
+          "gradingUserId": {
+            "type": "string"
+          }
+        }
+      },
+      "MessageListDataSource": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataSource"
+            }
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      },
+      "ImageCaptcha": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          }
+        }
+      },
+      "MessageImageCaptcha": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ImageCaptcha"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "name": "maxkey",
+        "in": "header"
+      }
+    }
+  }
+}
