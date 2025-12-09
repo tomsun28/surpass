@@ -4,21 +4,33 @@
       <div class="queryForm">
         <el-form :model="queryParams" ref="queryRef" :inline="true"
                  @submit.native.prevent>
-          <el-form-item label="应用编码">
+          <el-form-item label="客户端名称">
             <el-input
-                v-model="queryParams.appCode"
+                v-model="queryParams.clientName"
                 clearable
                 style="width: 200px"
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="应用名称">
+          <el-form-item label="客户端ID">
             <el-input
-                v-model="queryParams.appName"
+                v-model="queryParams.clientId"
                 clearable
                 style="width: 200px"
                 @keyup.enter="handleQuery"
             />
+          </el-form-item>
+          <el-form-item label="客户端类型">
+            <el-select
+                v-model="queryParams.clientType"
+                clearable
+                style="width: 200px"
+            >
+              <el-option label="内部员工" :value="1"/>
+              <el-option label="外部合作方" :value="2"/>
+              <el-option label="系统对接" :value="3"/>
+              <el-option label="其他" :value="4"/>
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button @click="handleQuery">{{ t('org.button.query') }}</el-button>
@@ -44,29 +56,44 @@
       <el-table
           border
           v-loading="loading"
-          :data="appList"
+          :data="clientList"
           @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column prop="appCode" label="应用编码" align="center" min-width="80"
+        <el-table-column prop="clientName" label="客户端名称" align="center" min-width="120"
                          :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="appName" label="应用名称" align="center" min-width="100"
+        <el-table-column prop="clientId" label="客户端ID" align="center" min-width="150"
                          :show-overflow-tooltip="true"></el-table-column>
-<!--        <el-table-column prop="clientId" label="Client Id" align="center" min-width="80"-->
-<!--                         :show-overflow-tooltip="true"></el-table-column>-->
-<!--        <el-table-column prop="clientSecret" label="Client Secret" align="center" min-width="120"-->
-<!--                         :show-overflow-tooltip="true"></el-table-column>-->
-        <el-table-column prop="status" :label="t('org.status')" align="center" min-width="40">
+        <el-table-column prop="clientType" label="客户端类型" align="center" min-width="100">
           <template #default="scope">
-                <span v-if="scope.row.status === 1"><el-icon color="green"><SuccessFilled
-                    class="success"/></el-icon></span>
+            <el-tag v-if="scope.row.clientType === 1" type="success">内部员工</el-tag>
+            <el-tag v-if="scope.row.clientType === 2" type="info">外部合作方</el-tag>
+            <el-tag v-if="scope.row.clientType === 3" type="warning">系统对接</el-tag>
+            <el-tag v-if="scope.row.clientType === 4">其他</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="contactName" label="联系人" align="center" min-width="80"
+                         :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="contactPhone" label="联系电话" align="center" min-width="120"
+                         :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="department" label="所属部门" align="center" min-width="100"
+                         :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="lastLoginTime" label="最后登录时间" align="center" min-width="160"
+                         :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="status" :label="t('org.status')" align="center" min-width="80">
+          <template #default="scope">
+            <span v-if="scope.row.status === 1"><el-icon color="green"><SuccessFilled
+                class="success"/></el-icon></span>
             <span v-if="scope.row.status === 0"><el-icon color="#808080"><CircleCloseFilled/></el-icon></span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('jbx.text.action')" align="center" width="120">
+        <el-table-column :label="$t('jbx.text.action')" align="center" width="200" fixed="right">
           <template #default="scope">
             <el-tooltip content="编辑">
               <el-button link icon="Edit" @click="handleUpdate(scope.row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="应用授权">
+              <el-button link icon="SetUp" @click="handleAppAuth(scope.row)"></el-button>
             </el-tooltip>
             <el-tooltip content="移除">
               <el-button link icon="Delete" type="danger" @click="handleDelete(scope.row)"></el-button>
@@ -84,7 +111,9 @@
       />
     </el-card>
     <!--新增或修改对话框-->
-    <appEdit :title="title" :open="open" :formId="id" @dialogOfClosedMethods="dialogOfClosedMethods"></appEdit>
+    <clientEdit :title="title" :open="open" :formId="id" @dialogOfClosedMethods="dialogOfClosedMethods"></clientEdit>
+    <!--应用授权对话框-->
+    <clientAppAuth :open="authOpen" :clientId="authClientId" :clientName="authClientName" @dialogOfClosedMethods="authDialogOfClosedMethods"></clientAppAuth>
   </div>
 </template>
 
@@ -92,17 +121,14 @@
 import {ref, getCurrentInstance, reactive, toRefs} from "vue";
 import modal from "@/plugins/modal";
 import {useI18n} from "vue-i18n";
-import {deleteBatch, list} from "@/api/api-service/apps";
+import {deleteBatch, list} from "@/api/api-service/client";
 import {set2String} from "@/utils"
-import {useRouter} from "vue-router";
-import appEdit from "./edit.vue";
+import clientEdit from "./edit.vue";
+import clientAppAuth from "./appAuth.vue";
 
 const {t} = useI18n()
 
 const {proxy} = getCurrentInstance()!;
-
-const {role_members_type, user_gender_type, group_category_options, group_type}
-    = proxy?.useDict("role_members_type", "user_gender_type", "group_category_options", "group_type");
 
 const data: any = reactive({
   queryParams: {
@@ -113,15 +139,17 @@ const data: any = reactive({
 });
 
 const {queryParams} = toRefs(data);
-const appList: any = ref<any>([]);
+const clientList: any = ref<any>([]);
 const open: any = ref(false);
+const authOpen: any = ref(false);
 const loading: any = ref(true);
 const title: any = ref("");
 const id: any = ref(undefined);
+const authClientId: any = ref(undefined);
+const authClientName: any = ref("");
 const total: any = ref(0);
 const ids: any = ref<any>([]);
 const selectionlist: any = ref<any>([]);
-const router: any = useRouter(); // 获取路由实例
 
 /**
  * 获取列表
@@ -130,7 +158,7 @@ function getList(): any {
   list(queryParams.value).then((res: any) => {
     if (res.code === 0) {
       loading.value = false;
-      appList.value = res.data.rows;
+      clientList.value = res.data.rows;
       total.value = res.data.total;
     }
   })
@@ -148,8 +176,9 @@ function handleQuery(): any {
  * 重置
  */
 function resetQuery(): any {
-  queryParams.value.appName = undefined;
-  queryParams.value.appCode = undefined;
+  queryParams.value.clientName = undefined;
+  queryParams.value.clientId = undefined;
+  queryParams.value.clientType = undefined;
   handleQuery();
 }
 
@@ -159,6 +188,12 @@ function dialogOfClosedMethods(val: any): any {
   if (val) {
     getList();
   }
+}
+
+function authDialogOfClosedMethods(val: any): any {
+  authOpen.value = false;
+  authClientId.value = undefined;
+  authClientName.value = "";
 }
 
 function handleAdd(): any {
@@ -171,6 +206,12 @@ function handleUpdate(row: any): any {
   id.value = row.id;
   title.value = t('jbx.text.edit')
   open.value = true;
+}
+
+function handleAppAuth(row: any): any {
+  authClientId.value = row.id;
+  authClientName.value = row.clientName;
+  authOpen.value = true;
 }
 
 /** 多选操作*/
@@ -197,7 +238,7 @@ function onBatchDelete(): any {
 
 /** 删除按钮操作 */
 function handleDelete(row: any): any {
-  modal.confirm(t('org.deleteTip1') + row.appName + t('org.deleteTip2')).then(function () {
+  modal.confirm(t('org.deleteTip1') + row.clientName + t('org.deleteTip2')).then(function () {
     return deleteBatch(row.id);
   }).then((res: any) => {
     if (res.code === 0) {
@@ -208,16 +249,6 @@ function handleDelete(row: any): any {
     }
   }).catch(() => {
   });
-}
-
-//跳转模块
-function onNavToUrl(groupId: any, roleName: any): any {
-  // 确保 router 实例存在并且是有效的
-  if (router && typeof router.push === 'function') {
-    router.push({path: '/access/access', query: {groupId, roleName}});
-  } else {
-    console.error('Router instance is not available.');
-  }
 }
 
 getList();
@@ -236,5 +267,4 @@ getList();
   padding: 0;
   background-color: #f5f7fa;
 }
-
 </style>

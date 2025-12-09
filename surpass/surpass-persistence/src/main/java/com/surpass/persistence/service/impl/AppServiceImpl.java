@@ -79,7 +79,7 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
 
         // 生成 accessToken
         String token = UUID.fastUUID().toString();
-        int ttl = app.getTtlSeconds() == null ? 7200 : app.getTtlSeconds();
+//        int ttl = app.getTtlSeconds() == null ? 7200 : app.getTtlSeconds();
 //        tokenStore.storeToken(token, app.getClientId(), Duration.ofSeconds(ttl));
 //
 //        logger.info("Issued app token for clientId={}, ttl={}s", app.getClientId(), ttl);

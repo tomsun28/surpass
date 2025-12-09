@@ -12,12 +12,6 @@
         <el-form-item prop="appName" label="应用名称" :required="true">
           <el-input v-model="form.appName"/>
         </el-form-item>
-<!--        <el-form-item prop="clientId" label="Client Id" v-if="isEdit">
-          <el-input v-model="form.clientId" disabled/>
-        </el-form-item>
-        <el-form-item prop="clientSecret" label="Client Secret" v-if="isEdit">
-          <el-input v-model="form.clientSecret" disabled/>
-        </el-form-item>-->
         <el-form-item prop="status" :label="$t('jbx.text.status.status')">
           <el-switch
               :width="44"

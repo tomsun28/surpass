@@ -10,7 +10,6 @@ import org.dromara.mybatis.jpa.entity.JpaEntity;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
