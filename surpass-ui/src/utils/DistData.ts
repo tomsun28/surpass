@@ -2446,6 +2446,24 @@ const distData: DistData = {
             label: "价税合计",
             value: 'TOTAL_WITH_TAX'
         }
+    ],
+    "client_type": [
+        {
+            label: "内部员工",
+            value: 1
+        },
+        {
+            label: "外部合作方",
+            value: 2
+        },
+        {
+            label: "系统对接",
+            value: 3
+        },
+        {
+            label: "其他",
+            value: 4
+        }
     ]
 }
 

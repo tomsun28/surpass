@@ -26,10 +26,11 @@
                 clearable
                 style="width: 200px"
             >
-              <el-option label="内部员工" :value="1"/>
-              <el-option label="外部合作方" :value="2"/>
-              <el-option label="系统对接" :value="3"/>
-              <el-option label="其他" :value="4"/>
+              <el-option v-for="item in client_type"
+                         :key="item.value"
+                         :value="item.value"
+                         :label="item.label"
+              />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -66,10 +67,7 @@
                          :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="clientType" label="客户端类型" align="center" min-width="100">
           <template #default="scope">
-            <el-tag v-if="scope.row.clientType === 1" type="success">内部员工</el-tag>
-            <el-tag v-if="scope.row.clientType === 2" type="info">外部合作方</el-tag>
-            <el-tag v-if="scope.row.clientType === 3" type="warning">系统对接</el-tag>
-            <el-tag v-if="scope.row.clientType === 4">其他</el-tag>
+            <dict-tag-number :options="client_type" :value="scope.row.clientType"/>
           </template>
         </el-table-column>
         <el-table-column prop="contactName" label="联系人" align="center" min-width="80"
@@ -87,7 +85,7 @@
             <span v-if="scope.row.status === 0"><el-icon color="#808080"><CircleCloseFilled/></el-icon></span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('jbx.text.action')" align="center" width="200" fixed="right">
+        <el-table-column :label="$t('jbx.text.action')" align="center" width="170" fixed="right">
           <template #default="scope">
             <el-tooltip content="编辑">
               <el-button link icon="Edit" @click="handleUpdate(scope.row)"></el-button>
@@ -111,7 +109,10 @@
       />
     </el-card>
     <!--新增或修改对话框-->
-    <clientEdit :title="title" :open="open" :formId="id" @dialogOfClosedMethods="dialogOfClosedMethods"></clientEdit>
+    <clientEdit :title="title" :open="open"
+                :formId="id"
+                :client-type="client_type"
+                @dialogOfClosedMethods="dialogOfClosedMethods"></clientEdit>
     <!--应用授权对话框-->
     <clientAppAuth :open="authOpen" :clientId="authClientId" :clientName="authClientName" @dialogOfClosedMethods="authDialogOfClosedMethods"></clientAppAuth>
   </div>
@@ -125,10 +126,14 @@ import {deleteBatch, list} from "@/api/api-service/client";
 import {set2String} from "@/utils"
 import clientEdit from "./edit.vue";
 import clientAppAuth from "./appAuth.vue";
+import DictTagNumber from "@/components/DIctTagNumber/index.vue";
 
 const {t} = useI18n()
 
 const {proxy} = getCurrentInstance()!;
+
+const {client_type}
+    = proxy?.useDict("client_type");
 
 const data: any = reactive({
   queryParams: {

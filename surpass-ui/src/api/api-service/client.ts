@@ -38,7 +38,7 @@ export function updateClient(data: any) {
 // 批量删除
 export function deleteBatch(ids: any) {
     return request({
-        url: '/app/delete?ids=' + ids,
+        url: '/client/delete?ids=' + ids,
         method: 'delete'
     })
 }

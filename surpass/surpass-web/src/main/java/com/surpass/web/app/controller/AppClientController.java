@@ -48,7 +48,7 @@ public class AppClientController {
     }
 
     @DeleteMapping(value = {"/delete"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Message<App> delete(@RequestParam("ids") List<String> ids) {
+    public Message<AppClient> delete(@RequestParam("ids") List<String> ids) {
         if (appClientService.softDelete(ids)) {
             return new Message<>(Message.SUCCESS);
         } else {

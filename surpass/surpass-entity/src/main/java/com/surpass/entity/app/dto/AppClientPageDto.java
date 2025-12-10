@@ -12,4 +12,8 @@ import org.dromara.mybatis.jpa.entity.JpaPage;
 @Data
 public class AppClientPageDto extends JpaPage {
     private String clientName;
+
+    private String clientId;
+
+    private Integer clientType;
 }

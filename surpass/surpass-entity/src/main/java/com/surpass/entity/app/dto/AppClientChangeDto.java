@@ -47,9 +47,5 @@ public class AppClientChangeDto {
 
     private Date expireTime;
 
-    private Date lastLoginTime;
-
-    private String lastLoginIp;
-
     private Integer status;
 }

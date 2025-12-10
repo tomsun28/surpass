@@ -1,11 +1,11 @@
 <template>
-  <el-drawer v-model="dialogStatus" :close-on-click-modal="false" size="50%"
+  <el-drawer v-model="dialogStatus" :close-on-click-modal="false" size="60%"
              @close="dialogOfClosedMethods(false)">
     <template #header>
       <h4>{{ title }}</h4>
     </template>
     <template #default>
-      <el-form :model="form" :rules="rules" ref="clientRef" label-width="130px" inline-message>
+      <el-form :model="form" :rules="rules" ref="clientRef" label-width="160px" inline-message>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item prop="clientName" label="客户端名称" :required="true">
@@ -13,30 +13,30 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item prop="clientId" label="客户端ID" :required="true">
-              <el-input v-model="form.clientId" placeholder="请输入客户端ID" :disabled="isEdit"/>
+            <el-form-item prop="clientType" label="客户端类型" :required="true">
+              <el-select v-model="form.clientType" placeholder="请选择客户端类型" style="width: 100%">
+                <el-option v-for="item in clientType"
+                           :key="item.value"
+                           :value="item.value"
+                           :label="item.label"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-row :gutter="20">
+        <el-row :gutter="20" v-if="isEdit">
           <el-col :span="12">
-            <el-form-item prop="clientSecret" label="客户端密钥" :required="!isEdit">
-              <el-input
-                  v-model="form.clientSecret"
-                  type="password"
-                  show-password
-                  :placeholder="isEdit ? '不修改请留空' : '请输入客户端密钥'"/>
+            <el-form-item prop="clientId" label="客户端ID">
+              <el-input v-model="form.clientId" placeholder="请输入客户端ID" disabled/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item prop="clientType" label="客户端类型" :required="true">
-              <el-select v-model="form.clientType" placeholder="请选择客户端类型" style="width: 100%">
-                <el-option label="内部员工" :value="1"/>
-                <el-option label="外部合作方" :value="2"/>
-                <el-option label="系统对接" :value="3"/>
-                <el-option label="其他" :value="4"/>
-              </el-select>
+            <el-form-item prop="clientSecret" label="客户端密钥">
+              <el-input
+                  disabled
+                  v-model="form.clientSecret"
+                  :placeholder="isEdit ? '不修改请留空' : '请输入客户端密钥'"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -156,6 +156,10 @@ const props: any = defineProps({
   open: Boolean,
   formId: {
     default: undefined
+  },
+  clientType: {
+    type: Array as () => Array<{ value: number; label: string }>,
+    default: () => [],
   }
 });
 
@@ -182,12 +186,6 @@ const data: any = reactive({
     clientName: [
       {required: true, message: "请输入客户端名称", trigger: "blur"},
     ],
-    clientId: [
-      {required: true, message: "请输入客户端ID", trigger: "blur"},
-    ],
-    clientSecret: [
-      {required: true, message: "请输入客户端密钥", trigger: "blur"},
-    ],
     clientType: [
       {required: true, message: "请选择客户端类型", trigger: "change"},
     ],
@@ -209,20 +207,14 @@ watch(
         dialogStatus.value = props.open;
         if (props.formId) {
           isEdit.value = true;
-          // 修改时密钥不是必填
-          rules.value.clientSecret[0].required = false;
           // 查询当前客户端
           getClient(props.formId).then((res: any) => {
             if (res.code === 0) {
               form.value = res.data;
-              // 编辑时清空密钥字段
-              form.value.clientSecret = null;
             }
           })
         } else {
           isEdit.value = false;
-          // 新增时密钥必填
-          rules.value.clientSecret[0].required = true;
           reset();
         }
       } else {
@@ -273,10 +265,6 @@ function submitForm(): any {
 
   clientRef?.value?.validate((valid: any) => {
     if (valid) {
-      // 如果是编辑且密钥为空，则删除该字段
-      if (isEdit.value && !form.value.clientSecret) {
-        delete form.value.clientSecret;
-      }
       const operation: any = props.formId ? updateClient : addClient;
       const successMessage: any = props.formId
           ? t('org.success.update')
@@ -286,6 +274,3 @@ function submitForm(): any {
   });
 }
 </script>
-
-<style lang="scss" scoped>
-</style>

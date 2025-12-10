@@ -62,9 +62,9 @@ public class AppClientServiceImpl extends JpaServiceImpl<AppClientMapper, AppCli
 
     @Override
     public JpaPageResults<AppClient> fetchPageResults(AppClientPageDto dto) {
-        AppClient app = BeanUtil.copyProperties(dto, AppClient.class);
-        app.setDeleted("n");
+        AppClient appClient = BeanUtil.copyProperties(dto, AppClient.class);
+        appClient.setDeleted("n");
         dto.build();
-        return super.fetch(dto, app);
+        return super.fetch(dto, appClient);
     }
 }

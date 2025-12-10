@@ -13,9 +13,10 @@
             :disable-transitions="true"
             :key="item.value + ''"
             :index="index"
-            :type="item.elTagType === 'primary' ? '' : item.elTagType"
+            type="info"
             :class="item.elTagClass"
         >{{ item.label + " " }}</el-tag>
+<!--        :type="item.elTagType === 'primary' ? '' : item.elTagType"-->
       </template>
     </template>
   </div>
