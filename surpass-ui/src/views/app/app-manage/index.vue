@@ -124,7 +124,7 @@ function getList(): any {
     if (res.code === 0) {
       loading.value = false;
       appList.value = res.data.rows;
-      total.value = res.data.total;
+      total.value = res.data.records;
     }
   })
 }

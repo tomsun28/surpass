@@ -3,10 +3,9 @@ package com.surpass.web.app.controller;
 import com.surpass.entity.Message;
 import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppClient;
-import com.surpass.entity.app.dto.AppChangeDto;
-import com.surpass.entity.app.dto.AppClientChangeDto;
-import com.surpass.entity.app.dto.AppClientPageDto;
-import com.surpass.entity.app.dto.AppPageDto;
+import com.surpass.entity.app.AppClientRelation;
+import com.surpass.entity.app.dto.*;
+import com.surpass.persistence.service.AppClientRelationService;
 import com.surpass.persistence.service.AppClientService;
 import com.surpass.validate.AddGroup;
 import com.surpass.validate.EditGroup;
@@ -31,6 +30,8 @@ import java.util.List;
 public class AppClientController {
 
     private final AppClientService appClientService;
+
+    private final AppClientRelationService appClientRelationService;
 
     @PostMapping("/add")
     public Message<String> addApp(@Validated(value = AddGroup.class) @RequestBody AppClientChangeDto dto) {
@@ -59,5 +60,15 @@ public class AppClientController {
     @GetMapping("/list")
     public Message<JpaPageResults<AppClient>> pageList(@ParameterObject AppClientPageDto dto) {
         return Message.ok(appClientService.fetchPageResults(dto));
+    }
+
+    @GetMapping("/relate-app/{clientId}")
+    public Message<List<AppClientRelation>> getClientApps(@PathVariable("clientId") String clientId) {
+        return Message.ok(appClientRelationService.getClientApps(clientId));
+    }
+
+    @PostMapping("/save-relate")
+    public Message<String> saveClientAppRelation(@Validated @RequestBody AppClientRelationDto dto) {
+        return appClientRelationService.saveClientAppRelation(dto);
     }
 }

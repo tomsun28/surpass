@@ -44,7 +44,18 @@ export function deleteBatch(ids: any) {
 }
 
 // 获取客户端已授权的应用
-export function getClientApps(clientId: any) { }
+export function getClientApps(clientId: any) {
+    return request({
+        url: `/client/relate-app/${clientId}`,
+        method: 'get'
+    })
+}
 
 // 保存客户端应用授权
-export function saveClientApps(data: any) { }
+export function saveClientApps(data: any) {
+    return request({
+        url: `/client/save-relate`,
+        method: 'post',
+        data: data
+    })
+}
