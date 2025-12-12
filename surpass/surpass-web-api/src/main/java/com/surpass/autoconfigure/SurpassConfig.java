@@ -22,8 +22,6 @@
 
 package com.surpass.autoconfigure;
 
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,19 +30,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.surpass.authn.realm.jdbc.JdbcAuthenticationRealm;
-import com.surpass.authn.schedule.adapter.SessionScheduleAdapter;
-import com.surpass.authn.session.Session;
-import com.surpass.authn.session.SessionManager;
-import com.surpass.configuration.ApplicationConfig;
 import com.surpass.persistence.service.LoginService;
 import com.surpass.persistence.service.PasswordPolicyValidatorService;
-import com.surpass.schedule.ScheduleAdapterBuilder;
 
 @AutoConfiguration
 public class SurpassConfig {
     private static final  Logger logger = LoggerFactory.getLogger(SurpassConfig.class);
 
-    //authenticationRealm for MaxKeyMgtApplication
+    //authenticationRealm 
     @Bean
     JdbcAuthenticationRealm authenticationRealm(
             @Qualifier("passwordEncoder") PasswordEncoder passwordEncoder,
@@ -58,32 +51,6 @@ public class SurpassConfig {
 
         logger.debug("JdbcAuthenticationRealm inited.");
         return authenticationRealm;
-    }
-
-    /**
-     * 非集群情况下，自动加载本地会话的监测，集群使用Scheduler项目基于Redis任务
-     * @param scheduler
-     * @param sessionManager
-     * @param applicationConfig
-     * @return
-     * @throws SchedulerException
-     */
-    @Bean
-    String sessionScheduleAdapter(
-            Scheduler scheduler,
-            SessionManager sessionManager,
-            ApplicationConfig applicationConfig) throws SchedulerException {
-    	 if (applicationConfig.isJobSessionListener() && applicationConfig.isCachedInMemory()) {
-	        new ScheduleAdapterBuilder()
-	        	.setCron("0 0/10 * * * ?")
-	        	.setJobClass(SessionScheduleAdapter.class)
-	        	.setScheduler(scheduler)
-	        	.setJobData("sessionManager",sessionManager)
-	        	.setJobData("style",Session.STYLE.MGMT)
-	        	.build();
-	        logger.debug("InMemory Session Schedule Adapter inited .");
-    	 }
-    	 return "sessionScheduleAdapter";
     }
 
 }

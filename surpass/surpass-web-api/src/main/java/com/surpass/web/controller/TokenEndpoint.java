@@ -11,6 +11,7 @@ import com.surpass.entity.app.dto.AppChangeDto;
 import com.surpass.entity.app.dto.AppPageDto;
 import com.surpass.entity.idm.Organizations;
 import com.surpass.entity.idm.UserInfo;
+import com.surpass.persistence.service.AppClientService;
 import com.surpass.persistence.service.AppService;
 import com.surpass.security.TokenStore;
 import com.surpass.validate.AddGroup;
@@ -37,7 +38,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TokenEndpoint {
 
-    private final AppService appService;
+    private final AppClientService clientService;
 
     @PostMapping("/token")
     public Message<Map<String, Object>> getToken(@RequestParam String clientId,
