@@ -1,4 +1,4 @@
-package com.surpass.web.api.controller;
+package com.surpass.web.controller;
 
 import cn.hutool.crypto.digest.BCrypt;
 import com.surpass.authn.annotation.CurrentUser;
@@ -35,13 +35,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/app")
 @RequiredArgsConstructor
-public class AppTokenController {
+public class TokenEndpoint {
 
     private final AppService appService;
 
     @PostMapping("/token")
     public Message<Map<String, Object>> getToken(@RequestParam String clientId,
-                                                        @RequestParam String clientSecret) {
+                                                 @RequestParam String clientSecret) {
 
     /*    App app = appService.findByClientId(clientId);
         if(app == null || !BCrypt.checkpw(clientSecret, app.getClientSecret())){
@@ -56,34 +56,4 @@ public class AppTokenController {
 //        result.put("expires_in", app.getTtlSeconds());
         return Message.ok(result);
     }
-
-    @GetMapping("/list")
-    public Message<JpaPageResults<App>> pageList(@ParameterObject AppPageDto dto) {
-        return Message.ok(appService.fetchPageResults(dto));
-    }
-
-    @PostMapping("/add")
-    public Message<String> addApp(@Validated(value = AddGroup.class) @RequestBody AppChangeDto dto) {
-        return appService.create(dto);
-    }
-
-    @PutMapping("/update")
-    public Message<String> updateApp(@Validated(value = EditGroup.class) @RequestBody AppChangeDto dto) {
-        return appService.updateApp(dto);
-    }
-
-    @GetMapping("/get/{id}")
-    public Message<App> get(@PathVariable("id") String id) {
-        return Message.ok(appService.get(id));
-    }
-
-    @DeleteMapping(value = {"/delete"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Message<App> delete(@RequestParam("ids") List<String> ids) {
-        if (appService.softDelete(ids)) {
-            return new Message<>(Message.SUCCESS);
-        } else {
-            return new Message<>(Message.FAIL);
-        }
-    }
-
 }

@@ -1,4 +1,4 @@
-package com.surpass.web.api.controller;
+package com.surpass.web.swagger.controller;
 
 import com.surpass.entity.api.ApiDefinition;
 import com.surpass.entity.api.ApiVersion;

@@ -1,5 +1,6 @@
 #org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration
 com.surpass.autoconfigure.ApplicationAutoConfiguration
+com.surpass.autoconfigure.DataSourceAutoConfiguration
 com.surpass.autoconfigure.MvcAutoConfiguration
 com.surpass.autoconfigure.MvcCorsAutoConfiguration
 com.surpass.autoconfigure.MvcDateTimeAutoConfiguration

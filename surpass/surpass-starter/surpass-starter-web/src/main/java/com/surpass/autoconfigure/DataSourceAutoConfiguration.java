@@ -22,16 +22,16 @@ import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import org.dromara.mybatis.jpa.datasource.DynamicRoutingDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
-public class MybatisJpaDataSourceConfig {
-    private static final Logger _logger = LoggerFactory.getLogger(MybatisJpaDataSourceConfig.class);
+@AutoConfiguration
+public class DataSourceAutoConfiguration {
+    private static final Logger _logger = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
 
     public static final String DS_DEFUALT = "default";
 
@@ -45,10 +45,8 @@ public class MybatisJpaDataSourceConfig {
     @Bean(name="dataSource")
     public DynamicRoutingDataSource dynamicRoutingDataSource(DruidDataSource druidDataSource) {
         DynamicRoutingDataSource dynamicDataSource = new DynamicRoutingDataSource();
-
         // 创建多个测试数据源
         Map<Object, Object> targetDataSources = new HashMap<>();
-
         // 默认数据源
         targetDataSources.put(DS_DEFUALT, druidDataSource);
 
