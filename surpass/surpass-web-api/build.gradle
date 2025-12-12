@@ -53,7 +53,6 @@ dependencies {
    	implementation project(":surpass-starter:surpass-starter-ip2location")
    	implementation project(":surpass-starter:surpass-starter-otp")
    	implementation project(":surpass-starter:surpass-starter-oss")
-   	implementation project(":surpass-starter:surpass-starter-sms")
    	implementation project(":surpass-starter:surpass-starter-web")
    	implementation project(":surpass-starter:surpass-starter-xss")
 

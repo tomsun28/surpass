@@ -20,7 +20,6 @@ include ('surpass-starter:surpass-starter-captcha')
 include ('surpass-starter:surpass-starter-ip2location')
 include ('surpass-starter:surpass-starter-oss')
 include ('surpass-starter:surpass-starter-otp')
-include ('surpass-starter:surpass-starter-sms')
 include ('surpass-starter:surpass-starter-web')
 include ('surpass-starter:surpass-starter-xss')
 

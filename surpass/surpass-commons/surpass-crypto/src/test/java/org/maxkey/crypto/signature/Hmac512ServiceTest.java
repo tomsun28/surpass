@@ -28,6 +28,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.surpass.crypto.Base64Utils;
 import com.surpass.crypto.jwt.Hmac512Service;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -35,8 +36,6 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-
-import me.zhyd.oauth.utils.Base64Utils;
 
 public class Hmac512ServiceTest {
 	private static final  Logger logger = LoggerFactory.getLogger(Hmac512ServiceTest.class);
@@ -47,7 +46,7 @@ public class Hmac512ServiceTest {
 
       System.out.println("key");
 
-      System.out.println( Base64Utils.encode(secret.decode()));
+      System.out.println( Base64Utils.encoder(secret.decode()));
 
       Hmac512Service hmac512Service = new Hmac512Service(key);
       String sign = hmac512Service.sign("{\"aud\":\"admin\",\"sub\":\"admin\",\"exp\":1661802002}");

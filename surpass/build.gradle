@@ -213,9 +213,6 @@ subprojects {
         implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: "${nimbusjosejwtVersion}"
         implementation group: 'net.minidev', name: 'json-smart', version: "${minidevjsonsmartVersion}"
         implementation group: 'net.minidev', name: 'asm', version: "${minidevasmVersion}"
-        //oauth third party JustAuth
-        implementation group: 'com.xkcoding.http', name: 'simple-http', version: "${simplehttpVersion}"
-        implementation group: 'me.zhyd.oauth', name: 'JustAuth', version: "${JustAuthVersion}"
         //cas
         implementation group: 'org.apereo.cas.client', name: 'cas-client-core', version: "${casclientVersion}"
         //common
@@ -331,17 +328,12 @@ subprojects {
         implementation group: 'io.prometheus', name: 'simpleclient_tracer_otel_agent', version: "${prometheusVersion}"
         implementation group: 'io.prometheus', name: 'simpleclient_common', version: "${prometheusVersion}"
         //阿里云
-        implementation group: 'com.aliyun', name: 'aliyun-java-sdk-core', version: "${aliyunjavasdkcoreVersion}"
-        //dingtalk
-        implementation group: 'com.aliyun', name: 'alibaba-dingtalk-service-sdk', version: "${aliyundingtalkVersion}"
-        //opentracing
+		//opentracing
         implementation group: 'io.opentracing', name: 'opentracing-api', version: "${opentracingVersion}"
         implementation group: 'io.opentracing', name: 'opentracing-noop', version: "${opentracingVersion}"
         implementation group: 'io.opentracing', name: 'opentracing-util', version: "${opentracingVersion}"
         //阿里云aliyun-java-sdk-core依赖jakarta.xml.bind
         implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-        //腾讯云
-        implementation group: 'com.tencentcloudapi', name: 'tencentcloud-sdk-java', version: "${tencentcloudsdkjavaVersion}"
         //docs
         implementation group: 'org.mapstruct', name: 'mapstruct', version: "${mapstructVersion}"
         implementation group: 'io.swagger.core.v3', name: 'swagger-annotations-jakarta', version: "${swaggerV3Version}"
