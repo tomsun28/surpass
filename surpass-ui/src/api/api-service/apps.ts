@@ -37,3 +37,20 @@ export function getApp(id : any): any {
         method: 'get'
     })
 }
+
+// 获取应用已绑定的API列表
+export function getAppApis(appId: any) {
+    return request({
+        url: `/apps/${appId}/apis`,
+        method: 'get'
+    })
+}
+
+// 保存应用API绑定
+export function saveAppApis(data: any): any {
+    return request({
+        url: '/apps/bind-apis',
+        method: 'post',
+        data: data
+    })
+}

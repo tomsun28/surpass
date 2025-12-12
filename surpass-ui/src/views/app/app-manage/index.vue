@@ -48,21 +48,24 @@
           @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column prop="appCode" label="应用编码" align="center" min-width="80"
+        <el-table-column prop="appCode" label="应用编码" align="center" min-width="100"
                          :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="appName" label="应用名称" align="center" min-width="100"
+        <el-table-column prop="appName" label="应用名称" align="center" min-width="120"
                          :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="status" :label="t('org.status')" align="center" min-width="40">
+        <el-table-column prop="status" :label="t('org.status')" align="center" width="80">
           <template #default="scope">
-                <span v-if="scope.row.status === 1"><el-icon color="green"><SuccessFilled
-                    class="success"/></el-icon></span>
+            <span v-if="scope.row.status === 1"><el-icon color="green"><SuccessFilled
+                class="success"/></el-icon></span>
             <span v-if="scope.row.status === 0"><el-icon color="#808080"><CircleCloseFilled/></el-icon></span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('jbx.text.action')" align="center" width="120">
+        <el-table-column :label="$t('jbx.text.action')" align="center" width="200" fixed="right">
           <template #default="scope">
             <el-tooltip content="编辑">
               <el-button link icon="Edit" @click="handleUpdate(scope.row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="API绑定">
+              <el-button link icon="Connection" type="primary" @click="handleApiBinding(scope.row)"></el-button>
             </el-tooltip>
             <el-tooltip content="移除">
               <el-button link icon="Delete" type="danger" @click="handleDelete(scope.row)"></el-button>
@@ -81,6 +84,9 @@
     </el-card>
     <!--新增或修改对话框-->
     <appEdit :title="title" :open="open" :formId="id" @dialogOfClosedMethods="dialogOfClosedMethods"></appEdit>
+    <!--API绑定对话框-->
+    <appApiBinding :open="apiBindOpen" :appId="bindAppId" :appName="bindAppName"
+                   @dialogOfClosedMethods="apiBindDialogOfClosedMethods"></appApiBinding>
   </div>
 </template>
 
@@ -90,8 +96,8 @@ import modal from "@/plugins/modal";
 import {useI18n} from "vue-i18n";
 import {deleteBatch, list} from "@/api/api-service/apps";
 import {set2String} from "@/utils"
-import {useRouter} from "vue-router";
 import appEdit from "./edit.vue";
+import appApiBinding from "./apiBinding.vue";
 
 const {t} = useI18n()
 
@@ -108,13 +114,15 @@ const data: any = reactive({
 const {queryParams} = toRefs(data);
 const appList: any = ref<any>([]);
 const open: any = ref(false);
+const apiBindOpen: any = ref(false);
 const loading: any = ref(true);
 const title: any = ref("");
 const id: any = ref(undefined);
+const bindAppId: any = ref(undefined);
+const bindAppName: any = ref("");
 const total: any = ref(0);
 const ids: any = ref<any>([]);
 const selectionlist: any = ref<any>([]);
-const router: any = useRouter(); // 获取路由实例
 
 /**
  * 获取列表
@@ -154,6 +162,12 @@ function dialogOfClosedMethods(val: any): any {
   }
 }
 
+function apiBindDialogOfClosedMethods(val: any): any {
+  apiBindOpen.value = false;
+  bindAppId.value = undefined;
+  bindAppName.value = "";
+}
+
 function handleAdd(): any {
   id.value = undefined;
   title.value = t('jbx.text.add')
@@ -164,6 +178,12 @@ function handleUpdate(row: any): any {
   id.value = row.id;
   title.value = t('jbx.text.edit')
   open.value = true;
+}
+
+function handleApiBinding(row: any): any {
+  bindAppId.value = row.id;
+  bindAppName.value = row.appName;
+  apiBindOpen.value = true;
 }
 
 /** 多选操作*/
@@ -203,16 +223,6 @@ function handleDelete(row: any): any {
   });
 }
 
-//跳转模块
-function onNavToUrl(groupId: any, roleName: any): any {
-  // 确保 router 实例存在并且是有效的
-  if (router && typeof router.push === 'function') {
-    router.push({path: '/access/access', query: {groupId, roleName}});
-  } else {
-    console.error('Router instance is not available.');
-  }
-}
-
 getList();
 </script>
 
@@ -229,5 +239,4 @@ getList();
   padding: 0;
   background-color: #f5f7fa;
 }
-
 </style>

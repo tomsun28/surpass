@@ -275,8 +275,7 @@ function dialogOfClosedMethods(val: any): any {
 function reset(): any {
   queryParams.value = {
     pageNumber: 1,
-    pageSize: 10,
-    pageSizeOptions: [10, 20, 50],
+    pageSize: 10,    pageSizeOptions: [10, 20, 50],
     appName: undefined,
     appCode: undefined,
     authorized: undefined

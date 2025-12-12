@@ -48,6 +48,9 @@ public class ApiDefinition extends JpaEntity implements Serializable {
     @Column(nullable = false)
     private String datasourceId;
 
+    @Column
+    private String appId;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(insertable = false, updatable = false)
