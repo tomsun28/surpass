@@ -30,8 +30,8 @@ export default defineConfig(({mode, command}) => {
             open: false,
             proxy: {
                 '/surpass-api': {
-                    // target: 'http://passport.maxkey.top:2154',
-                    target: 'http://localhost:2154',
+                    // target: 'http://passport.maxkey.top:2155',
+                    target: 'http://localhost:2155',
                     changeOrigin: true,
                     rewrite: (p) => p
                 }

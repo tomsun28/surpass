@@ -26,3 +26,4 @@ include ('surpass-starter:surpass-starter-xss')
 
 //webs
 include ('surpass-web')
+include ('surpass-web-api')
