@@ -8,6 +8,9 @@ target/
 .project
 .settings
 .springBeans
+*.class
+**/bin/main/**
+**/bin/test/**
 
 ### IntelliJ IDEA ###
 .idea
