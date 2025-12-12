@@ -3,14 +3,14 @@ package com.surpass.persistence.service.impl;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.BCrypt;
 import com.surpass.entity.Message;
+import com.surpass.entity.RegisteredClient;
 import com.surpass.entity.app.App;
-import com.surpass.entity.app.AppClient;
-import com.surpass.entity.app.dto.AppClientChangeDto;
-import com.surpass.entity.app.dto.AppClientPageDto;
 import com.surpass.entity.app.dto.AppPageDto;
+import com.surpass.entity.dto.RegisteredClientChangeDto;
+import com.surpass.entity.dto.RegisteredClientPageDto;
 import com.surpass.exception.BusinessException;
-import com.surpass.persistence.mapper.AppClientMapper;
-import com.surpass.persistence.service.AppClientService;
+import com.surpass.persistence.mapper.RegisteredClientMapper;
+import com.surpass.persistence.service.RegisteredClientService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.mybatis.jpa.entity.JpaPageResults;
@@ -27,11 +27,11 @@ import java.util.List;
  */
 
 @Service
-public class AppClientServiceImpl extends JpaServiceImpl<AppClientMapper, AppClient> implements AppClientService {
+public class RegisteredClientServiceImpl extends JpaServiceImpl<RegisteredClientMapper, RegisteredClient> implements RegisteredClientService {
     @Override
-    public Message<String> create(AppClientChangeDto dto) {
+    public Message<String> create(RegisteredClientChangeDto dto) {
         checkClientName(dto, false);
-        AppClient appClient = BeanUtil.copyProperties(dto, AppClient.class);
+        RegisteredClient appClient = BeanUtil.copyProperties(dto, RegisteredClient.class);
         appClient.setClientId(UUID.randomUUID().toString().replace("-", ""));
         appClient.setClientSecret(BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt()));
 
@@ -40,29 +40,29 @@ public class AppClientServiceImpl extends JpaServiceImpl<AppClientMapper, AppCli
     }
 
     @Override
-    public Message<String> updateApp(AppClientChangeDto dto) {
+    public Message<String> updateApp(RegisteredClientChangeDto dto) {
         checkClientName(dto, true);
-        AppClient appClient = BeanUtil.copyProperties(dto, AppClient.class);
+        RegisteredClient appClient = BeanUtil.copyProperties(dto, RegisteredClient.class);
 
         boolean result = super.update(appClient);
         return result ? Message.ok("修改成功") : Message.failed("修改失败");
     }
 
-    private void checkClientName(AppClientChangeDto dto, boolean isEdit) {
-        LambdaQuery<AppClient> wrapper = new LambdaQuery<>();
-        wrapper.eq(AppClient::getClientName, dto.getClientName());
+    private void checkClientName(RegisteredClientChangeDto dto, boolean isEdit) {
+        LambdaQuery<RegisteredClient> wrapper = new LambdaQuery<>();
+        wrapper.eq(RegisteredClient::getClientName, dto.getClientName());
         if (isEdit) {
-            wrapper.notEq(AppClient::getId, dto.getId());
+            wrapper.notEq(RegisteredClient::getId, dto.getId());
         }
-        List<AppClient> query = super.query(wrapper);
+        List<RegisteredClient> query = super.query(wrapper);
         if (ObjectUtils.isNotEmpty(query)) {
             throw new BusinessException(50001, "该客户端名称已被使用，请重新输入");
         }
     }
 
     @Override
-    public JpaPageResults<AppClient> fetchPageResults(AppClientPageDto dto) {
-        AppClient appClient = BeanUtil.copyProperties(dto, AppClient.class);
+    public JpaPageResults<RegisteredClient> fetchPageResults(RegisteredClientPageDto dto) {
+        RegisteredClient appClient = BeanUtil.copyProperties(dto, RegisteredClient.class);
         appClient.setDeleted("n");
         dto.build();
         return super.fetch(dto, appClient);

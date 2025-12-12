@@ -1,8 +1,9 @@
 package com.surpass.persistence.mapper;
 
-import com.surpass.entity.app.AppClientRelation;
 import org.apache.ibatis.annotations.Mapper;
 import org.dromara.mybatis.jpa.IJpaMapper;
+
+import com.surpass.entity.RegisteredClientRelation;
 
 /**
  * @description:
@@ -11,6 +12,6 @@ import org.dromara.mybatis.jpa.IJpaMapper;
  */
 
 @Mapper
-public interface AppClientRelationMapper extends IJpaMapper<AppClientRelation> {
+public interface AppClientRelationMapper extends IJpaMapper<RegisteredClientRelation> {
 
 }

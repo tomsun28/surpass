@@ -1,4 +1,4 @@
-package com.surpass.entity.app.dto;
+package com.surpass.entity.dto;
 
 import com.surpass.validate.AddGroup;
 import com.surpass.validate.EditGroup;
@@ -18,7 +18,7 @@ import java.util.Date;
  */
 
 @Data
-public class AppClientChangeDto {
+public class RegisteredClientChangeDto {
 
     @NotEmpty(message = "ID不能为空", groups = EditGroup.class)
     private String id;

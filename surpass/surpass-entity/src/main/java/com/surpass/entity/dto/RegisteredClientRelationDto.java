@@ -1,4 +1,4 @@
-package com.surpass.entity.app.dto;
+package com.surpass.entity.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Data
-public class AppClientRelationDto {
+public class RegisteredClientRelationDto {
 
     @NotEmpty(message = "客户端ID不能为空")
     private String clientId;

@@ -1,4 +1,4 @@
-package com.surpass.entity.app;
+package com.surpass.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -20,7 +20,7 @@ import java.util.Date;
 @Entity
 @Table(name = "surpass_client")
 @Data
-public class AppClient extends JpaEntity implements Serializable {
+public class RegisteredClient extends JpaEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 6420851079685387078L;

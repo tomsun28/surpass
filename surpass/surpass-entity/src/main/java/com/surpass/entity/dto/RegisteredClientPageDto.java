@@ -1,4 +1,4 @@
-package com.surpass.entity.app.dto;
+package com.surpass.entity.dto;
 
 import lombok.Data;
 import org.dromara.mybatis.jpa.entity.JpaPage;
@@ -10,7 +10,7 @@ import org.dromara.mybatis.jpa.entity.JpaPage;
  */
 
 @Data
-public class AppClientPageDto extends JpaPage {
+public class RegisteredClientPageDto extends JpaPage {
     private String clientName;
 
     private String clientId;

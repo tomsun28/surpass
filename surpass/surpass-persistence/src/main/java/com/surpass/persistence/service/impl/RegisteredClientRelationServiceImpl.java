@@ -1,11 +1,11 @@
 package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
-import com.surpass.entity.app.AppClientRelation;
-import com.surpass.entity.app.dto.AppClientChangeDto;
-import com.surpass.entity.app.dto.AppClientRelationDto;
+import com.surpass.entity.RegisteredClientRelation;
+import com.surpass.entity.dto.RegisteredClientChangeDto;
+import com.surpass.entity.dto.RegisteredClientRelationDto;
 import com.surpass.persistence.mapper.AppClientRelationMapper;
-import com.surpass.persistence.service.AppClientRelationService;
+import com.surpass.persistence.service.RegisteredClientRelationService;
 import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.springframework.stereotype.Service;
@@ -24,18 +24,18 @@ import java.util.stream.Collectors;
  */
 
 @Service
-public class AppClientRelationServiceImpl extends JpaServiceImpl<AppClientRelationMapper, AppClientRelation> implements AppClientRelationService {
+public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClientRelationMapper, RegisteredClientRelation> implements RegisteredClientRelationService {
 
     @Override
-    public List<AppClientRelation> getClientApps(String clientId) {
-        LambdaQuery<AppClientRelation> wrapper = new LambdaQuery<>();
-        wrapper.eq(AppClientRelation::getClientId, clientId);
+    public List<RegisteredClientRelation> getClientApps(String clientId) {
+        LambdaQuery<RegisteredClientRelation> wrapper = new LambdaQuery<>();
+        wrapper.eq(RegisteredClientRelation::getClientId, clientId);
         return super.query(wrapper);
     }
 
     @Override
     @Transactional
-    public Message<String> saveClientAppRelation(AppClientRelationDto dto) {
+    public Message<String> saveClientAppRelation(RegisteredClientRelationDto dto) {
         String clientId = dto.getClientId();
         List<String> appIds = dto.getAppIds();
 
@@ -45,13 +45,13 @@ public class AppClientRelationServiceImpl extends JpaServiceImpl<AppClientRelati
         }
 
         // 查询数据库中已经存在的关联
-        LambdaQuery<AppClientRelation> wrapper = new LambdaQuery<>();
-        wrapper.eq(AppClientRelation::getClientId, clientId);
-        List<AppClientRelation> relationsInDb = super.query(wrapper);
+        LambdaQuery<RegisteredClientRelation> wrapper = new LambdaQuery<>();
+        wrapper.eq(RegisteredClientRelation::getClientId, clientId);
+        List<RegisteredClientRelation> relationsInDb = super.query(wrapper);
 
         // 已存在的 appId 集合（用 Set 提升 contains 性能）
         Set<String> existAppIdSet = relationsInDb.stream()
-                .map(AppClientRelation::getAppId)
+                .map(RegisteredClientRelation::getAppId)
                 .collect(Collectors.toSet());
 
         // 去重并做快速查询
@@ -69,9 +69,9 @@ public class AppClientRelationServiceImpl extends JpaServiceImpl<AppClientRelati
 
         // 执行新增
         if (!toAdd.isEmpty()) {
-            List<AppClientRelation> insertList = toAdd.stream()
+            List<RegisteredClientRelation> insertList = toAdd.stream()
                     .map(id -> {
-                        AppClientRelation r = new AppClientRelation();
+                        RegisteredClientRelation r = new RegisteredClientRelation();
                         r.setClientId(clientId);
                         r.setAppId(id);
                         return r;
@@ -82,9 +82,9 @@ public class AppClientRelationServiceImpl extends JpaServiceImpl<AppClientRelati
 
         // 执行删除
         if (!toDelete.isEmpty()) {
-            LambdaQuery<AppClientRelation> deleteWrapper = new LambdaQuery<>();
-            deleteWrapper.eq(AppClientRelation::getClientId, clientId)
-                    .in(AppClientRelation::getAppId, toDelete);
+            LambdaQuery<RegisteredClientRelation> deleteWrapper = new LambdaQuery<>();
+            deleteWrapper.eq(RegisteredClientRelation::getClientId, clientId)
+                    .in(RegisteredClientRelation::getAppId, toDelete);
             super.delete(deleteWrapper);
         }
 
