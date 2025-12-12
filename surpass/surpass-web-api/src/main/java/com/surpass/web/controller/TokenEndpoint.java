@@ -1,30 +1,11 @@
 package com.surpass.web.controller;
 
-import cn.hutool.crypto.digest.BCrypt;
-import com.surpass.authn.annotation.CurrentUser;
-import com.surpass.constants.ConstsAct;
-import com.surpass.constants.ConstsActResult;
-import com.surpass.constants.ConstsEntryType;
 import com.surpass.entity.Message;
-import com.surpass.entity.app.App;
-import com.surpass.entity.app.dto.AppChangeDto;
-import com.surpass.entity.app.dto.AppPageDto;
-import com.surpass.entity.idm.Organizations;
-import com.surpass.entity.idm.UserInfo;
+import com.surpass.entity.RegisteredClient;
 import com.surpass.persistence.service.RegisteredClientService;
-import com.surpass.persistence.service.AppService;
-import com.surpass.security.TokenStore;
-import com.surpass.validate.AddGroup;
-import com.surpass.validate.EditGroup;
 import lombok.RequiredArgsConstructor;
-import org.dromara.mybatis.jpa.entity.JpaPageResults;
-import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +15,6 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("/app")
 @RequiredArgsConstructor
 public class TokenEndpoint {
 
@@ -50,6 +30,7 @@ public class TokenEndpoint {
         }
 
         String token = appService.issueToken(app);*/
+    	RegisteredClient client = clientService.findByClientId(clientId);
 
         Map<String,Object> result = new HashMap<>();
 //        result.put("access_token", token);

@@ -4,8 +4,6 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.BCrypt;
 import com.surpass.entity.Message;
 import com.surpass.entity.RegisteredClient;
-import com.surpass.entity.app.App;
-import com.surpass.entity.app.dto.AppPageDto;
 import com.surpass.entity.dto.RegisteredClientChangeDto;
 import com.surpass.entity.dto.RegisteredClientPageDto;
 import com.surpass.exception.BusinessException;
@@ -67,4 +65,9 @@ public class RegisteredClientServiceImpl extends JpaServiceImpl<RegisteredClient
         dto.build();
         return super.fetch(dto, appClient);
     }
+
+	@Override
+	public RegisteredClient findByClientId(String clientId) {
+		return this.getMapper().findByClientId(clientId);
+	}
 }

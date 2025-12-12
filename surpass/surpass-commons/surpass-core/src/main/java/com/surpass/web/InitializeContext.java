@@ -145,8 +145,8 @@ public class InitializeContext extends HttpServlet {
      */
     public void showLicense() {
         logger.info(WebConstants.DELIMITER);
-        logger.info("+                      Surpass   Enterprise  Edition   ");
-        logger.info("+                           Accounting   Software       ");
+        logger.info("+                      Surpass   Community  Edition  ");
+        logger.info("+                           OpenAPI   Software       ");
         logger.info("+                           Version {}",
                         WebContext.getProperty("application.formatted-version"));
         logger.info("+");

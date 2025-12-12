@@ -14,5 +14,7 @@ public interface RegisteredClientService extends IJpaService<RegisteredClient> {
     Message<String> updateApp(RegisteredClientChangeDto dto);
 
     JpaPageResults<RegisteredClient> fetchPageResults(RegisteredClientPageDto dto);
+    
+    public RegisteredClient findByClientId(String clientId);
 
 }
