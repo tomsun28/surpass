@@ -3,11 +3,13 @@ package com.surpass.persistence.service.impl;
 import com.surpass.entity.Message;
 import com.surpass.entity.api.ApiDefinition;
 import com.surpass.entity.api.DataSource;
+import com.surpass.entity.api.dto.ApiPageDto;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.ApiDefinitionMapper;
 import com.surpass.persistence.service.ApiDefinitionService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.query.OrderBy;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @description:
@@ -77,6 +80,19 @@ public class ApiDefinitionServiceImpl extends JpaServiceImpl<ApiDefinitionMapper
         wrapper.orderBy(ApiDefinition::getCreatedDate, OrderBy.DESC.getOrder());
 
         return super.query(wrapper).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public Message<JpaPageResults<ApiDefinition>> page(ApiPageDto dto) {
+        if (StringUtils.isBlank(dto.getAppId())) {
+            throw new BusinessException(50001, "未查询到应用");
+        }
+
+        LambdaQuery<ApiDefinition> wrapper = new LambdaQuery<>();
+        wrapper.eq(ApiDefinition::getAppId, dto.getAppId());
+        dto.build();
+        JpaPageResults<ApiDefinition> page = super.fetch(dto, wrapper);
+        return Message.ok(page);
     }
 
     private boolean isExistDuplicate(ApiDefinition apiDefinition) {

@@ -7,6 +7,14 @@ export function list(): any {
     })
 }
 
+export function pageApi(params: any): any {
+    return request({
+        url: '/apis/page',
+        method: 'get',
+        params: params
+    })
+}
+
 export function getById(id : any): any {
     return request({
         url: `/apis/${id}`,

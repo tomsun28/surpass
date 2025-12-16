@@ -64,7 +64,7 @@
             <el-tooltip content="编辑">
               <el-button link icon="Edit" @click="handleUpdate(scope.row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="API绑定">
+            <el-tooltip content="授权">
               <el-button link icon="Connection" type="primary" @click="handleApiBinding(scope.row)"></el-button>
             </el-tooltip>
             <el-tooltip content="移除">
@@ -84,9 +84,6 @@
     </el-card>
     <!--新增或修改对话框-->
     <appEdit :title="title" :open="open" :formId="id" @dialogOfClosedMethods="dialogOfClosedMethods"></appEdit>
-    <!--API绑定对话框-->
-    <appApiBinding :open="apiBindOpen" :appId="bindAppId" :appName="bindAppName"
-                   @dialogOfClosedMethods="apiBindDialogOfClosedMethods"></appApiBinding>
   </div>
 </template>
 
@@ -97,11 +94,13 @@ import {useI18n} from "vue-i18n";
 import {deleteBatch, list} from "@/api/api-service/apps";
 import {set2String} from "@/utils"
 import appEdit from "./edit.vue";
-import appApiBinding from "./apiBinding.vue";
+import {useRouter} from 'vue-router'
 
 const {t} = useI18n()
 
 const {proxy} = getCurrentInstance()!;
+
+const router: any = useRouter(); // 获取路由实例
 
 const data: any = reactive({
   queryParams: {
@@ -118,8 +117,6 @@ const apiBindOpen: any = ref(false);
 const loading: any = ref(true);
 const title: any = ref("");
 const id: any = ref(undefined);
-const bindAppId: any = ref(undefined);
-const bindAppName: any = ref("");
 const total: any = ref(0);
 const ids: any = ref<any>([]);
 const selectionlist: any = ref<any>([]);
@@ -164,8 +161,6 @@ function dialogOfClosedMethods(val: any): any {
 
 function apiBindDialogOfClosedMethods(val: any): any {
   apiBindOpen.value = false;
-  bindAppId.value = undefined;
-  bindAppName.value = "";
 }
 
 function handleAdd(): any {
@@ -180,11 +175,16 @@ function handleUpdate(row: any): any {
   open.value = true;
 }
 
-function handleApiBinding(row: any): any {
-  bindAppId.value = row.id;
-  bindAppName.value = row.appName;
-  apiBindOpen.value = true;
+
+const handleApiBinding = (row: any): any => {
+  // 确保 router 实例存在并且是有效的
+  if (router && typeof router.push === 'function') {
+    router.push(`/app/app-manage/apiBinding?appId=${row.id}&appName=${row.appName}`);
+  } else {
+    console.error('Router instance is not available.');
+  }
 }
+
 
 /** 多选操作*/
 function handleSelectionChange(selection: any): any {
