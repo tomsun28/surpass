@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
-import org.owasp.esapi.Logger;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -28,6 +27,8 @@ public class TokenEndpoint {
 
 	private final TokenManager tokenManager;
 	
+	private final PasswordReciprocal passwordReciprocal;
+	
     private final RegisteredClientService clientService;
     
     @PostMapping("/token")
@@ -41,27 +42,32 @@ public class TokenEndpoint {
     	
     	if(client == null) {
     		message.setMessage("invalid_client_id");
-    	}else if(StringUtils.equalsIgnoreCase("refresh_token", grantType)) {
-    		String refreshTokenDecoder = null;
-    		try{
-    			refreshTokenDecoder = PasswordReciprocal.getInstance().decoder(refreshToken);
-    		}catch(Exception e) {
-    			log.error("decoder refresh_token failed.");
-    		}
-    		message.setMessage("invalid_refresh_token");
-    		if(StringUtils.isNotBlank(refreshTokenDecoder)) {
-    			AccessToken accessToken = tokenManager.refresh(refreshTokenDecoder);
-    			if(accessToken != null) {
-	    			message.setData(accessToken);
-	        		message.setCode(Message.SUCCESS);
-	        		message.setMessage("");
-    			}
-    		}
+    	}else if(passwordReciprocal.matches(clientSecret, client.getClientSecret())){
+    		if(StringUtils.equalsIgnoreCase("refresh_token", grantType)) {
+        		String refreshTokenDecoder = null;
+        		try{
+        			refreshTokenDecoder = passwordReciprocal.decoder(refreshToken);
+        		}catch(Exception e) {
+        			log.error("decoder refresh_token failed.");
+        		}
+        		message.setMessage("invalid_refresh_token");
+        		if(StringUtils.isNotBlank(refreshTokenDecoder)) {
+        			AccessToken accessToken = tokenManager.refresh(refreshTokenDecoder);
+        			if(accessToken != null) {
+    	    			message.setData(accessToken);
+    	        		message.setCode(Message.SUCCESS);
+    	        		message.setMessage("");
+        			}
+        		}
+        	}else {
+        		AccessToken accessToken = tokenManager.generate(clientId);
+        		message.setData(accessToken);
+        		message.setCode(Message.SUCCESS);
+        	}
     	}else {
-    		AccessToken accessToken = tokenManager.generate(clientId);
-    		message.setData(accessToken);
-    		message.setCode(Message.SUCCESS);
+    		message.setMessage("invalid_client_secret");
     	}
+    	log.debug("accessToken {}",message);
         return message;
     }
 }
