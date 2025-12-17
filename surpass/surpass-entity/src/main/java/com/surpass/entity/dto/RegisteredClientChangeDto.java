@@ -41,11 +41,6 @@ public class RegisteredClientChangeDto {
 
     private String ipWhiteList;
 
-    private Integer accessTokenValidity;
-
-    private Integer refreshTokenValidity;
-
-    private Date expireTime;
 
     private Integer status;
 }

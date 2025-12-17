@@ -34,9 +34,13 @@
           <el-col :span="12">
             <el-form-item prop="clientSecret" label="客户端密钥">
               <el-input
-                  disabled
+                  readonly
                   v-model="form.clientSecret"
-                  :placeholder="isEdit ? '不修改请留空' : '请输入客户端密钥'"/>
+                  :placeholder="isEdit ? '不修改请留空' : '请输入客户端密钥'">
+                  <template #append>
+                    <el-button type="primary" @click="generateSecret">生成</el-button>
+                  </template>
+              </el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -68,30 +72,6 @@
         </el-row>
 
         <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item prop="accessTokenValidity" label="Token有效期(秒)">
-              <el-input-number v-model="form.accessTokenValidity" :min="60" :max="86400" style="width: 100%"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="refreshTokenValidity" label="刷新Token有效期(秒)">
-              <el-input-number v-model="form.refreshTokenValidity" :min="3600" :max="604800" style="width: 100%"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item prop="expireTime" label="账号过期时间">
-              <el-date-picker
-                  v-model="form.expireTime"
-                  type="datetime"
-                  placeholder="选择过期时间"
-                  style="width: 100%"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-              />
-            </el-form-item>
-          </el-col>
           <el-col :span="12">
             <el-form-item prop="status" :label="$t('jbx.text.status.status')">
               <el-switch
@@ -140,7 +120,7 @@ import {
   toRefs,
   watch
 } from "vue";
-import {addClient, getClient, updateClient} from "@/api/api-service/client";
+import {addClient, getClient,generate, updateClient} from "@/api/api-service/client";
 import {useI18n} from "vue-i18n";
 import {ElForm} from "element-plus";
 
@@ -230,6 +210,14 @@ function dialogOfClosedMethods(val: any): any {
   emit('dialogOfClosedMethods', val);
 }
 
+function generateSecret(val: any): any {
+  generate(props.formId).then((res: any) => {
+    if (res.code === 0) {
+      form.value = res.data;
+    }
+  })
+}
+
 /** 重置操作表单 */
 function reset(): any {
   form.value = {
@@ -243,9 +231,6 @@ function reset(): any {
     contactEmail: null,
     department: null,
     ipWhitelist: null,
-    accessTokenValidity: 7200,
-    refreshTokenValidity: 86400,
-    expireTime: null,
     description: null
   };
   clientRef?.value?.resetFields();

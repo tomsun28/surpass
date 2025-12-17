@@ -1,10 +1,9 @@
 package com.surpass.web.app.controller;
 
+import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.entity.Message;
 import com.surpass.entity.RegisteredClient;
 import com.surpass.entity.RegisteredClientRelation;
-import com.surpass.entity.app.App;
-import com.surpass.entity.app.dto.*;
 import com.surpass.entity.dto.RegisteredClientChangeDto;
 import com.surpass.entity.dto.RegisteredClientPageDto;
 import com.surpass.entity.dto.RegisteredClientRelationDto;
@@ -32,28 +31,37 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RegisteredClientController {
 
-    private final RegisteredClientService appClientService;
+    private final RegisteredClientService clientService;
 
-    private final RegisteredClientRelationService appClientRelationService;
+    private final RegisteredClientRelationService clientRelationService;
 
     @PostMapping("/add")
     public Message<String> addApp(@Validated(value = AddGroup.class) @RequestBody RegisteredClientChangeDto dto) {
-        return appClientService.create(dto);
+        return clientService.create(dto);
     }
 
     @PutMapping("/update")
     public Message<String> updateApp(@Validated(value = EditGroup.class) @RequestBody RegisteredClientChangeDto dto) {
-        return appClientService.updateApp(dto);
+        return clientService.updateApp(dto);
     }
 
     @GetMapping("/get/{id}")
     public Message<RegisteredClient> get(@PathVariable("id") String id) {
-        return Message.ok(appClientService.get(id));
+    	RegisteredClient client = clientService.get(id);
+    	String clientSecret = PasswordReciprocal.getInstance().decoder(client.getClientSecret());
+    	client.setClientSecret(clientSecret);
+    	return Message.ok(client);
+    }
+    
+    @GetMapping("/generate/{id}")
+    public Message<RegisteredClient> generate(@PathVariable("id") String id) {
+    	RegisteredClient client = clientService.generate(id);
+    	return Message.ok(client);
     }
 
     @DeleteMapping(value = {"/delete"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public Message<RegisteredClient> delete(@RequestParam("ids") List<String> ids) {
-        if (appClientService.softDelete(ids)) {
+        if (clientService.softDelete(ids)) {
             return new Message<>(Message.SUCCESS);
         } else {
             return new Message<>(Message.FAIL);
@@ -62,16 +70,16 @@ public class RegisteredClientController {
 
     @GetMapping("/list")
     public Message<JpaPageResults<RegisteredClient>> pageList(@ParameterObject RegisteredClientPageDto dto) {
-        return Message.ok(appClientService.fetchPageResults(dto));
+        return Message.ok(clientService.fetchPageResults(dto));
     }
 
     @GetMapping("/relate-app/{clientId}")
     public Message<List<RegisteredClientRelation>> getClientApps(@PathVariable("clientId") String clientId) {
-        return Message.ok(appClientRelationService.getClientApps(clientId));
+        return Message.ok(clientRelationService.getClientApps(clientId));
     }
 
     @PostMapping("/save-relate")
     public Message<String> saveClientAppRelation(@Validated @RequestBody RegisteredClientRelationDto dto) {
-        return appClientRelationService.saveClientAppRelation(dto);
+        return clientRelationService.saveClientAppRelation(dto);
     }
 }

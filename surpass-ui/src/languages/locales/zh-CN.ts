@@ -1,5 +1,5 @@
 export default {
-  "appTitle": "Surpass API管理系统",
+  "appTitle": "Surpass API开放平台",
   "login": {
     "title": "Surpass",
     "titleSub": "财务管理产品",

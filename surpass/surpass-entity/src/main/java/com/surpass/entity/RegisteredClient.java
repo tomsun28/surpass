@@ -61,17 +61,7 @@ public class RegisteredClient extends JpaEntity implements Serializable {
     private String ipWhiteList;
 
     @Column
-    private Integer accessTokenValidity;
-
-    @Column
-    private Integer refreshTokenValidity;
-
-    @Column
-    private Date expireTime;
-
-    @Column
     private Date lastLoginTime;
-
 
     @Column
     private String lastLoginIp;

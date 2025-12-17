@@ -17,6 +17,14 @@ export function getClient(id: any) {
     })
 }
 
+//重新生成密钥
+export function generate(id: any) {
+    return request({
+        url: `/client/generate/${id}`,
+        method: 'get'
+    })
+}
+
 // 新增客户端
 export function addClient(data: any) {
     return request({
