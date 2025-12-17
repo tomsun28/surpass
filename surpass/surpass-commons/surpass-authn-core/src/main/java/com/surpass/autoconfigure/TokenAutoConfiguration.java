@@ -33,12 +33,16 @@ import com.surpass.authn.congress.InMemoryCongressService;
 import com.surpass.authn.congress.RedisCongressService;
 import com.surpass.authn.jwt.service.AuthRefreshTokenService;
 import com.surpass.authn.jwt.service.AuthTokenService;
+import com.surpass.authn.token.TokenManager;
+import com.surpass.authn.token.impl.TokenManagerImpl;
 import com.surpass.configuration.ApplicationConfig;
 import com.surpass.configuration.AuthJwkConfig;
 import com.surpass.entity.config.ConfigLoginPolicy;
 import com.surpass.persistence.cache.MemCacheService;
 import com.surpass.persistence.redis.connection.RedisConnectionFactory;
 import com.surpass.persistence.service.ConfigLoginPolicyService;
+import com.surpass.persistence.service.HistoryLoginService;
+import com.surpass.persistence.service.SessionListService;
 import com.nimbusds.jose.JOSEException;
 
 /**
@@ -102,6 +106,18 @@ public class TokenAutoConfiguration{
     	}
     	logger.debug("authJwkConfig {}",authJwkConfig);
     	return new AuthRefreshTokenService(authJwkConfig);
+    }
+    
+    @Bean(name = "tokenManager")
+    TokenManager tokenManager(
+    		ApplicationConfig applicationConfig,
+            ConfigLoginPolicyService configLoginPolicyService,
+            RedisConnectionFactory redisConnFactory,
+            SessionListService sessionListService,
+            HistoryLoginService historyLoginService
+    ) {
+    	logger.debug("AccessToken persistence {} " ,applicationConfig.getCached());
+    	return  new TokenManagerImpl(applicationConfig.getCached(),redisConnFactory);
     }
 
 }

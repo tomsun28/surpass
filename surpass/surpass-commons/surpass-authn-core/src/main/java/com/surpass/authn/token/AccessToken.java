@@ -1,14 +1,14 @@
-package com.surpass.entity;
+package com.surpass.authn.token;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.surpass.constants.ConstsToken;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper=false)
-public class AccessToken extends Message<Object>{
+public class AccessToken {
+	@JsonProperty(ConstsToken.CLIENT_ID)
+	String clientId;
 	@JsonProperty(ConstsToken.ACCESS_TOKEN)
 	String accessToken;
 	@JsonProperty(ConstsToken.EXPIRES_IN)
@@ -16,5 +16,5 @@ public class AccessToken extends Message<Object>{
 	@JsonProperty(ConstsToken.REFRESH_TOKEN)
 	String refreshToken;
 	@JsonProperty(ConstsToken.REFRESH_TOKEN_EXPRISE)
-	int refreshTokenExprise = 3600 * 8;
+	int refreshTokenExprise = 3600 * 12;
 }
