@@ -32,6 +32,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.surpass.authn.provider.AbstractAuthenticationProvider;
 import com.surpass.authn.web.interceptor.PermissionInterceptor;
+import com.surpass.interceptor.OpenApiPermissionAdapter;
 
 @EnableWebMvc
 @AutoConfiguration
@@ -43,6 +44,9 @@ public class SurpassMvcConfig implements WebMvcConfigurer {
 
     @Autowired
     PermissionInterceptor permissionInterceptor;
+    
+    @Autowired
+    OpenApiPermissionAdapter openApiPermissionAdapter;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -114,6 +118,13 @@ public class SurpassMvcConfig implements WebMvcConfigurer {
                 )
         ;
 
+        /*
+         * api
+         * 
+         * */
+        registry.addInterceptor(openApiPermissionAdapter)
+                .addPathPatterns("/api/**")
+                ;
         logger.debug("add PermissionAdapter");
 
     }

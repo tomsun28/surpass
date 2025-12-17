@@ -82,6 +82,10 @@ public class AuthorizationHeader {
 	public boolean isBasic() {
 		return credentialType.equals(Credential.BASIC);
 	}
+	
+	public boolean isBearer() {
+		return credentialType.equals(Credential.BEARER);
+	}
 
 	@Override
 	public String toString() {

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api-v1")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
 public class ApiGatewayController {
@@ -67,11 +67,11 @@ public class ApiGatewayController {
 
     private String extractApiPath(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
-        int indexOf = requestUri.indexOf("/api-v1");
+        int indexOf = requestUri.indexOf("/api");
         if (indexOf < 0) {
-            throw new IllegalArgumentException("Missing /api-v1 prefix in URI: " + requestUri);
+            throw new IllegalArgumentException("Missing /api prefix in URI: " + requestUri);
         }
-        return requestUri.substring(indexOf + "/api-v1".length());
+        return requestUri.substring(indexOf + "/api".length());
     }
 
     private Map<String, Object> extractRequestParams(HttpServletRequest request) {
