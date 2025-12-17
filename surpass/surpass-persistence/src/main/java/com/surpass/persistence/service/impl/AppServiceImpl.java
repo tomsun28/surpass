@@ -42,8 +42,6 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
     public Message<String> create(AppChangeDto dto) {
         checkAppCode(dto, false);
         App app = BeanUtil.copyProperties(dto, App.class);
-//        app.setClientId(UUID.randomUUID().toString().replace("-", ""));
-//        app.setClientSecret(BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt()));
 
         boolean result = super.insert(app);
         return result ? Message.ok("创建成功") : Message.failed("创建失败");

@@ -99,6 +99,7 @@ public class ApiDefinitionServiceImpl extends JpaServiceImpl<ApiDefinitionMapper
         LambdaUpdateWrapper<ApiDefinition> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(ApiDefinition::getPath, apiDefinition.getPath());
         wrapper.eq(ApiDefinition::getMethod, apiDefinition.getMethod());
+        wrapper.eq(ApiDefinition::getAppId, apiDefinition.getAppId());
         if (StringUtils.isNotBlank(apiDefinition.getId())) {
             wrapper.notEq(ApiDefinition::getId, apiDefinition.getId());
         }

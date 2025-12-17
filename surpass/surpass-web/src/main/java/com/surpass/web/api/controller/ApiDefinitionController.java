@@ -3,11 +3,14 @@ import com.surpass.entity.Message;
 import com.surpass.entity.api.ApiDefinition;
 import com.surpass.entity.api.dto.ApiPageDto;
 import com.surpass.persistence.service.ApiDefinitionService;
+import com.surpass.validate.AddGroup;
+import com.surpass.validate.EditGroup;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,12 +48,12 @@ public class ApiDefinitionController {
     }
 
     @PostMapping
-    public Message<String> create(@Valid @RequestBody ApiDefinition apiDefinition) {
+    public Message<String> create(@Validated(value = AddGroup.class) @RequestBody ApiDefinition apiDefinition) {
         return apiDefinitionService.save(apiDefinition);
     }
 
     @PutMapping("/{id}")
-    public Message<String> update(@PathVariable("id") String id, @Valid @RequestBody ApiDefinition apiDefinition) {
+    public Message<String> update(@PathVariable("id") String id, @Validated(value = EditGroup.class) @RequestBody ApiDefinition apiDefinition) {
         apiDefinition.setId(id);
         return apiDefinitionService.edit(apiDefinition);
     }

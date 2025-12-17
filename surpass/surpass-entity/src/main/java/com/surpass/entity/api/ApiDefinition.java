@@ -1,9 +1,11 @@
 package com.surpass.entity.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.surpass.validate.AddGroup;
+import com.surpass.validate.EditGroup;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.dromara.mybatis.jpa.annotations.SoftDelete;
@@ -44,11 +46,12 @@ public class ApiDefinition extends JpaEntity implements Serializable {
     @Column(length = 500)
     private String description;
 
-    @NotNull(message = "数据源ID不能为空")
+    @NotEmpty(message = "数据源ID不能为空")
     @Column(nullable = false)
     private String datasourceId;
 
     @Column
+    @NotEmpty(message = "应用ID不能为空", groups = {AddGroup.class, EditGroup.class})
     private String appId;
 
     @JsonIgnore

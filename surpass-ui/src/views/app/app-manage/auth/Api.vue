@@ -244,6 +244,7 @@ const handleSubmit = async () => {
   try {
     await formRef.value.validate()
     submitting.value = true
+    formData.appId = props.appId;
 
     if (isEdit.value) {
       await apiDefinitionApi.update(formData.id, formData)
