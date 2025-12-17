@@ -1,4 +1,23 @@
 <template>
+  <el-card class="common-card query-box">
+    <div class="queryForm">
+      <el-form :model="queryParams" ref="queryRef" :inline="true"
+               @submit.native.prevent>
+        <el-form-item label="Api名称">
+          <el-input
+              v-model="queryParams.name"
+              clearable
+              style="width: 200px"
+              @keyup.enter="loadApis"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="loadApis">{{ t('org.button.query') }}</el-button>
+          <el-button @click="resetQuery">{{ t('org.button.reset') }}</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+  </el-card>
   <div class="api-page">
     <div class="page-content">
       <!-- 操作栏 -->
@@ -6,13 +25,20 @@
         <el-button type="primary" @click="showCreateDialog">
           新增API
         </el-button>
+        <el-button
+            type="danger"
+            :disabled="ids.length === 0"
+            @click="onBatchDelete"
+        >{{ t('org.button.deleteBatch') }}
+        </el-button>
         <el-button @click="refreshList">
           刷新
         </el-button>
       </div>
 
       <!-- API列表 -->
-      <el-table :data="apiList" border v-loading="loading" style="width: 100%">
+      <el-table :data="apiList" border v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center"/>
         <el-table-column header-align="center" prop="name" label="API名称" />
         <el-table-column header-align="center" prop="path" label="路径" />
         <el-table-column header-align="center" prop="method" label="方法" width="100">
@@ -126,6 +152,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import * as dataSourceApi from '@/api/api-service/dataSource.ts'
 import * as apiDefinitionApi from '@/api/api-service/apiDefinitionApi.ts'
 import {list} from "@/api/api-service/apps.js";
+import modal from "@/plugins/modal.js";
+import {set2String} from "@/utils/index.js";
+import {useI18n} from "vue-i18n";
 
 const router = useRouter()
 
@@ -144,6 +173,8 @@ const submitting = ref(false)
 const isEdit = ref(false)
 const formRef = ref()
 
+const ids = ref([]);
+const selectionlist = ref([]);
 const apiList = ref([])
 const total = ref(0);
 const dataSourceList = ref([])
@@ -151,11 +182,14 @@ const dataSourceList = ref([])
 const data = reactive({
   queryParams: {
     appId: null,
+    name: '',
     pageNumber: 1,
     pageSize: 10,
     pageSizeOptions: [10, 20, 50]
   }
 });
+
+const {t} = useI18n()
 
 const {queryParams} = toRefs(data);
 
@@ -291,6 +325,28 @@ const deleteApi = async (row) => {
   }
 }
 
+/** 多选删除操作*/
+function onBatchDelete() {
+  modal.confirm(t('jbx.confirm.text.delete')).then(function () {
+    let setIds = set2String(ids.value);
+    return apiDefinitionApi.deleteData(setIds);
+  }).then((res) => {
+    if (res.code === 0) {
+      loadApis();
+      modal.msgSuccess(t('jbx.alert.delete.success'));
+    } else {
+      modal.msgError(t('jbx.alert.delete.error'));
+    }
+  }).catch(() => {
+  });
+}
+
+/** 多选操作*/
+function handleSelectionChange(selection) {
+  selectionlist.value = selection;
+  ids.value = selectionlist.value.map((item) => item.id);
+}
+
 const getMethodTagType = (method) => {
   const types = {
     'GET': 'success',
@@ -305,6 +361,15 @@ const getMethodTagType = (method) => {
 const refreshList = () => {
   loadApis()
 }
+
+/**
+ * 重置
+ */
+function resetQuery() {
+  queryParams.value.name = undefined;
+  loadApis();
+}
+
 
 watch(
     () => props.appId,

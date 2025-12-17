@@ -1,5 +1,6 @@
 package com.surpass.web.api.controller;
 import com.surpass.entity.Message;
+import com.surpass.entity.RegisteredClient;
 import com.surpass.entity.api.ApiDefinition;
 import com.surpass.entity.api.dto.ApiPageDto;
 import com.surpass.persistence.service.ApiDefinitionService;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -58,9 +60,12 @@ public class ApiDefinitionController {
         return apiDefinitionService.edit(apiDefinition);
     }
 
-    @DeleteMapping("/{id}")
-    public Message<String> delete(@PathVariable String id) {
-        boolean result = apiDefinitionService.delete(id);
-        return result ? Message.ok("删除成功") : Message.failed("删除失败");
+    @DeleteMapping(value = {"/delete"})
+    public Message<String> delete(@RequestParam("ids") List<String> ids) {
+        if (apiDefinitionService.softDelete(ids)) {
+            return new Message<>("删除成功");
+        } else {
+            return new Message<>("删除失败");
+        }
     }
 }

@@ -90,6 +90,9 @@ public class ApiDefinitionServiceImpl extends JpaServiceImpl<ApiDefinitionMapper
 
         LambdaQuery<ApiDefinition> wrapper = new LambdaQuery<>();
         wrapper.eq(ApiDefinition::getAppId, dto.getAppId());
+        if (StringUtils.isNotBlank(dto.getName())) {
+            wrapper.like(ApiDefinition::getName, dto.getName());
+        }
         dto.build();
         JpaPageResults<ApiDefinition> page = super.fetch(dto, wrapper);
         return Message.ok(page);

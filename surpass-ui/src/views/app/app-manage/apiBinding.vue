@@ -2,15 +2,25 @@
   <div class="layout-container">
     <!-- 左侧菜单 -->
     <div class="side-menu">
-      <h2 class="menu-title">应用 - {{appName}}</h2>
-      <div
-          v-for="item in tabs"
-          :key="item.key"
-          :class="['menu-item', { active: active === item.key }]"
-          @click="active = item.key"
-      >
-        <component :is="item.icon" class="menu-icon" />
-        <span>{{ item.label }}</span>
+      <div class="menu-header">
+        <button class="back-btn" @click="handleBack">
+          <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <h2 class="menu-title">应用 - {{appName}}</h2>
+      </div>
+
+      <div class="menu-list">
+        <div
+            v-for="item in tabs"
+            :key="item.key"
+            :class="['menu-item', { active: active === item.key }]"
+            @click="active = item.key"
+        >
+          <component :is="item.icon" class="menu-icon" />
+          <span>{{ item.label }}</span>
+        </div>
       </div>
     </div>
 
@@ -26,7 +36,7 @@ import { computed, ref, onMounted} from 'vue'
 import Api from './auth/Api.vue'
 import Config from './auth/Config.vue'
 import Role from './auth/Role.vue'
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
 const tabs = [
   { key: 'api', label: 'API', component: Api, icon: 'Link' },
@@ -36,12 +46,18 @@ const tabs = [
 
 const active = ref('api')
 const route = useRoute();
+const router = useRouter();
 const appId: any = ref(undefined);
 const appName: any = ref(undefined);
 
 const activeComponent = computed(() => {
   return tabs.find(t => t.key === active.value)?.component
 })
+
+const handleBack = () => {
+  router.back()
+  // 或者跳转到指定页面: router.push('/app-list')
+}
 
 // 生命周期
 onMounted(() => {
@@ -63,11 +79,62 @@ onMounted(() => {
   width: 200px;
   background: #fff;
   box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-header {
+  padding: 12px 8px;
+  border-bottom: 1px solid #e4e7ed;
+  flex-shrink: 0;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  background: #f5f7fa;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #606266;
+  font-size: 14px;
+  width: 100%;
+
+  &:hover {
+    background: #ecf5ff;
+    border-color: #409eff;
+    color: #409eff;
+  }
+}
+
+.back-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.menu-title {
+  text-align: center;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+  word-wrap: break-word;
+  word-break: break-all;
+  line-height: 1.4;
+}
+
+.menu-list {
+  flex: 1;
+  overflow-y: auto;
   padding: 8px;
 }
 
 .menu-item {
-  height: 70px;
+  height: 65px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -104,18 +171,5 @@ onMounted(() => {
   flex: 1;
   padding: 20px;
   overflow: auto;
-}
-
-.menu-title {
-  text-align: center;
-  padding: 16px 8px;
-  margin: 0 0 12px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  word-wrap: break-word;
-  word-break: break-all;
-  line-height: 1.4;
-  border-bottom: 1px solid #e4e7ed;
 }
 </style>
