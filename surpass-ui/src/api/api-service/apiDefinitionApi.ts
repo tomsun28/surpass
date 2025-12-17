@@ -47,7 +47,7 @@ export function update(id : any, data: any): any {
 
 export function deleteData(id : any): any {
     return request({
-        url: `/apis/${id}`,
+        url: `/apis/delete?ids=` + id,
         method: 'delete'
     })
 }
