@@ -71,7 +71,14 @@
           </template>
         </el-table-column>
       </el-table>
-
+      <pagination
+          v-show="total > 0"
+          :total="total"
+          v-model:page="queryParams.pageNumber"
+          v-model:limit="queryParams.pageSize"
+          :page-sizes="queryParams.pageSizeOptions"
+          @pagination="loadApis"
+      />
       <!-- 空状态 -->
       <el-empty v-if="!loading && apiList.length === 0" description="暂无API定义" />
     </div>

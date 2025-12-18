@@ -34,13 +34,13 @@
 <script setup lang="ts">
 import { computed, ref, onMounted} from 'vue'
 import Api from './auth/Api.vue'
-import Config from './auth/Config.vue'
+import Menu from './auth/Menu.vue'
 import Role from './auth/Role.vue'
 import {useRoute, useRouter} from "vue-router";
 
 const tabs = [
-  { key: 'api', label: 'API', component: Api, icon: 'Link' },
-  { key: 'config', label: '菜单', component: Config, icon: 'setting' },
+  { key: 'api', label: 'Api', component: Api, icon: 'Link' },
+  { key: 'menu', label: '菜单', component: Menu, icon: 'menu' },
   { key: 'role', label: '授权', component: Role, icon: 'role' }
 ]
 
