@@ -185,8 +185,7 @@ subprojects {
         implementation group: 'org.springframework.security', name: 'spring-security-core', version: "${springSecurityVersion}"
         implementation group: 'org.springframework.security', name: 'spring-security-web', version: "${springSecurityVersion}"
         implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: "${springSecurityVersion}"
-//        implementation group: 'org.springframework.security', name: 'spring-security-oauth2-authorization-server', version: "${springSecurityOauth2Version}"
-        //srpingboot
+		//srpingboot
         implementation group: 'org.springframework.boot', name: 'spring-boot', version: "${springBootVersion}"
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: "${springBootVersion}"
         implementation group: 'org.springframework.boot', name: 'spring-boot-actuator', version: "${springBootVersion}"
@@ -211,8 +210,6 @@ subprojects {
         implementation group: 'net.shibboleth.utilities', name: 'java-support', version: "${javasupportVersion}"
         //jose-jwt
         implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: "${nimbusjosejwtVersion}"
-        implementation group: 'net.minidev', name: 'json-smart', version: "${minidevjsonsmartVersion}"
-        implementation group: 'net.minidev', name: 'asm', version: "${minidevasmVersion}"
         //cas
         implementation group: 'org.apereo.cas.client', name: 'cas-client-core', version: "${casclientVersion}"
         //common
@@ -287,8 +284,6 @@ subprojects {
         implementation group: 'org.yaml', name: 'snakeyaml', version: "${snakeyamlVersion}"
         implementation group: 'net.sourceforge.nekohtml', name: 'nekohtml', version: "${nekohtmlVersion}"
         implementation group: 'org.dom4j', name: 'dom4j', version: "${dom4jVersion}"
-        implementation group: 'org.jdom', name: 'jdom2', version: "${jdom2Version}"
-        implementation group: 'com.google.zxing', name: 'core', version: "${zxingcoreVersion}"
         implementation group: 'com.google.guava', name: 'guava', version: "${guavaVersion}"
         implementation group: 'ognl', name: 'ognl', version: "${ognlVersion}"
         implementation group: 'cglib', name: 'cglib', version: "${cglibVersion}"
