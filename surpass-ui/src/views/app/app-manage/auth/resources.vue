@@ -1,0 +1,623 @@
+<template>
+  <el-card class="common-card query-box">
+    <div class="queryForm">
+      <el-form :model="queryParams" ref="queryRef" :inline="true"
+               @submit.native.prevent>
+        <el-form-item label="Api名称">
+          <el-input
+              v-model="queryParams.name"
+              clearable
+              style="width: 200px"
+              @keyup.enter="loadApis"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="loadApis">{{ t('org.button.query') }}</el-button>
+          <el-button @click="resetQuery">{{ t('org.button.reset') }}</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+  </el-card>
+  <div class="api-page">
+    <div class="page-content">
+      <!-- 操作栏 -->
+      <div class="action-bar">
+        <el-button type="primary" @click="showCreateDialog">
+          新增API
+        </el-button>
+        <el-button
+            type="danger"
+            :disabled="ids.length === 0"
+            @click="onBatchDelete"
+        >{{ t('org.button.deleteBatch') }}
+        </el-button>
+        <el-button @click="refreshList">
+          刷新
+        </el-button>
+      </div>
+
+      <!-- API列表 -->
+      <el-table :data="apiList" border v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column header-align="center" prop="name" label="API名称" />
+        <el-table-column header-align="center" prop="path" label="路径" />
+        <el-table-column header-align="center" prop="method" label="方法" width="100">
+          <template #default="{ row }">
+            <el-tag :type="getMethodTagType(row.method)">
+              {{ row.method }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column header-align="center" prop="datasourceId" label="数据源">
+          <template #default="{ row }">
+            <el-tag v-if="row.datasourceId">
+              {{ dataSourceList.find(ds => ds.id === row.datasourceId)?.name }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column header-align="center" prop="description" label="描述" />
+        <el-table-column header-align="center" prop="createdDate" label="创建时间" width="180" />
+        <el-table-column header-align="center" label="操作" width="120" fixed="right">
+          <template #default="{ row }">
+            <el-tooltip content="版本管理" placement="top">
+              <el-button link icon="Document" @click="viewVersions(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="编辑" placement="top">
+              <el-button link icon="Edit" type="primary" @click="editApi(row)"></el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button link icon="Delete" type="danger" @click="deleteApi(row)"></el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+          v-show="total > 0"
+          :total="total"
+          v-model:page="queryParams.pageNumber"
+          v-model:limit="queryParams.pageSize"
+          :page-sizes="queryParams.pageSizeOptions"
+          @pagination="loadApis"
+      />
+      <!-- 空状态 -->
+      <el-empty v-if="!loading && apiList.length === 0" description="暂无API定义" />
+    </div>
+
+    <!-- 新增/编辑对话框 -->
+    <el-dialog
+        :title="dialogTitle"
+        v-model="dialogVisible"
+        width="1000px"
+        :before-close="handleDialogClose"
+        append-to-body
+        destroy-on-close
+    >
+      <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          label-width="100px"
+      >
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="资源名称" prop="name">
+              <el-input v-model="formData.name" placeholder="请输入API名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="资源类型">
+              <el-select v-model="formData.classify" placeholder="" clearable style="width: 100%">
+                <el-option
+                    v-for="dict in resources_type"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12" v-if="formData.classify !== 'button'">
+            <el-form-item label="请求地址" prop="path">
+              <el-input v-model="formData.path" placeholder="请输入资源路径，如：/users" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="数据源" prop="datasourceId" v-if="formData.classify === 'openApi'">
+              <el-select
+                  v-model="formData.datasourceId"
+                  placeholder="请选择数据源"
+                  style="width: 100%"
+                  :loading="dataSourceLoading"
+              >
+                <el-option
+                    v-for="ds in dataSourceList"
+                    :key="ds.id"
+                    :label="ds.name"
+                    :value="ds.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12" v-if="formData.classify === 'api' || formData.classify === 'openApi'">
+            <el-form-item label="请求方式" prop="method">
+              <el-select v-model="formData.method" placeholder="" clearable style="width: 100%">
+                <el-option
+                    v-for="dict in method_type"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="formData.classify === 'api' || formData.classify === 'openApi'">
+            <el-form-item label="请求参数">
+              <el-input v-model="formData.params" placeholder=""/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="权限标识">
+              <el-input v-model="formData.permission" placeholder=""/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="formData.classify === 'button'">
+            <el-form-item label="操作类型">
+              <el-select v-model="formData.actionType" placeholder="" clearable style="width: 100%">
+                <el-option
+                    v-for="dict in action_type"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" v-if="formData.classify === 'menu'">
+          <el-col :span="12">
+            <el-form-item label="资源样式">
+              <el-input readonly v-model="formData.resStyle" placeholder=""/>
+              <icon-select style="padding-left: 0;padding-right: 0" v-model="formData.resStyle" @selected="(name) => {formData.resStyle = name}"></icon-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="父级菜单" prop="parentId">
+              <el-tree-select
+                  v-model="formData.parentId"
+                  :data="dataOptions"
+                  :props="defaultProps"
+                  check-strictly
+                  value-key="key"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12" v-if="formData.classify === 'openApi'">
+            <el-form-item label="是否开放">
+              <el-switch
+                  v-model="formData.isOpen"
+                  active-value="y"
+                  inactive-value="n"
+              ></el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="formData.classify === 'menu'">
+            <el-form-item label="外部链接">
+              <el-switch
+                  v-model="formData.isFrame"
+                  active-value="y"
+                  inactive-value="n"
+              ></el-switch>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12" v-if="formData.classify === 'menu'">
+            <el-form-item label="是否缓存">
+              <el-switch
+                  v-model="formData.isCache"
+                  active-value="y"
+                  inactive-value="n"
+              ></el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="formData.classify === 'menu'">
+            <el-form-item label="是否可见">
+              <el-switch
+                  v-model="formData.isVisible"
+                  active-value="y"
+                  inactive-value="n"
+              ></el-switch>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="状态" prop="status">
+              <el-switch
+                  v-model="formData.status"
+                  active-value="1"
+                  inactive-value="0"
+              ></el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('jbx.text.sortIndex')" prop="sortIndex">
+              <el-input v-model="formData.sortIndex" placeholder=""/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="描述" prop="description">
+              <el-input
+                  v-model="formData.description"
+                  type="textarea"
+                  :rows="3"
+                  placeholder="请输入API描述"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="handleDialogClose">取消</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="submitting">
+            保存
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
+<script setup>
+import {ref, reactive, computed, toRefs, nextTick} from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import * as dataSourceApi from '@/api/api-service/dataSource.ts'
+import * as apiDefinitionApi from '@/api/api-service/apiDefinitionApi.ts'
+import * as appResourcesApi from '@/api/app/resources.js'
+import modal from "@/plugins/modal.js";
+import {set2String} from "@/utils/index.js";
+import {useI18n} from "vue-i18n";
+import * as proxy from "@/utils/Dict.js";
+import IconSelect from "@/components/IconSelect/index.vue";
+import {apiTree} from "@/api/permissions/resources.js";
+import {addClient, updateClient} from "@/api/api-service/client.js";
+
+const {resources_type, action_type, method_type} = proxy.useDict("resources_type", "action_type", "method_type");
+const router = useRouter()
+
+const props = defineProps({
+  appId: {
+    type: String,
+    default: undefined
+  }
+});
+
+// 响应式数据
+const loading = ref(false)
+const dataSourceLoading = ref(false)
+const dialogVisible = ref(false)
+const submitting = ref(false)
+const isEdit = ref(false)
+const formRef = ref()
+const resTreeRef = ref(undefined);
+const ids = ref([]);
+const selectionlist = ref([]);
+const apiList = ref([])
+const total = ref(0);
+const dataSourceList = ref([])
+const dataOptions = ref([]);
+const defaultProps = ref({
+  children: "children",
+  label: "title"
+});
+
+const data = reactive({
+  queryParams: {
+    appId: null,
+    name: '',
+    pageNumber: 1,
+    pageSize: 10,
+    pageSizeOptions: [10, 20, 50]
+  }
+});
+
+const {t} = useI18n()
+
+const {queryParams} = toRefs(data);
+
+const formData = reactive({
+  id: null,
+  name: '',
+  classify: 'menu',
+  path: '',
+  method: 'GET',
+  params: '',
+  datasourceId: null,
+  description: '',
+  actionType: 'r',
+  permission: '',
+  resStyle: '',
+  parentId: '',
+  isVisible: 'y',
+  isCache: 'n',
+  isFrame: 'n',
+  isOpen: 'y',
+  status: '1',
+  sortIndex: '1'
+})
+
+// 表单验证规则
+const formRules = {
+  name: [
+    { required: true, message: '请输入API名称', trigger: 'blur' }
+  ],
+  path: [
+    { required: true, message: '请输入API路径', trigger: 'blur' }
+  ],
+  method: [
+    { required: true, message: '请选择HTTP方法', trigger: 'change' }
+  ],
+  datasourceId: [
+    { required: true, message: '请选择数据源', trigger: 'change' }
+  ]
+}
+
+// 计算属性
+const dialogTitle = computed(() => isEdit.value ? '编辑API' : '新增API')
+
+// 方法
+const loadApis = async () => {
+  apiDefinitionApi.pageApi(queryParams.value).then((res) => {
+    if (res.code === 0) {
+      loading.value = false;
+      apiList.value = res.data.rows;
+      total.value = res.data.records;
+    }
+  })
+}
+
+const loadDataSources = async () => {
+  try {
+    dataSourceLoading.value = true
+    const response = await dataSourceApi.list()
+    dataSourceList.value = response.data || []
+  } catch (error) {
+    ElMessage.error('加载数据源列表失败')
+    console.error('加载数据源列表失败:', error)
+  } finally {
+    dataSourceLoading.value = false
+  }
+}
+
+const showCreateDialog = () => {
+  isEdit.value = false
+  resetForm()
+  dialogVisible.value = true
+}
+
+const editApi = (row) => {
+  isEdit.value = true
+  Object.assign(formData, { ...row })
+  dialogVisible.value = true
+}
+
+const resetForm = () => {
+  Object.assign(formData, {
+    id: null,
+    name: '',
+    classify: 'menu',
+    path: '',
+    method: 'GET',
+    params: '',
+    datasourceId: null,
+    description: '',
+    actionType: 'r',
+    permission: '',
+    resStyle: '',
+    parentId: '',
+    isVisible: 'y',
+    isCache: 'n',
+    isFrame: 'n',
+    isOpen: 'y',
+    status: '1',
+    sortIndex: '1'
+  })
+  formRef.value?.clearValidate()
+}
+
+const handleDialogClose = () => {
+  dialogVisible.value = false
+  resetForm()
+}
+
+const handleSubmit = async () => {
+  const handleResponse = (res, successMessage) => {
+    if (res.code === 0) {
+      dialogVisible.value = false
+      loadApis()
+    } else {
+      modal.msgError(res.message);
+    }
+    submitting.value = false
+  };
+
+  formRef?.value?.validate((valid) => {
+    if (valid) {
+      submitting.value = true
+      formData.appId = props.appId;
+
+      const operation = isEdit.value ? updateClient : appResourcesApi.create;
+      const successMessage = isEdit.value
+          ? t('org.success.update')
+          : t('org.success.add');
+      operation(formData).then((res) => handleResponse(res, successMessage));
+    }
+  });
+}
+
+const viewVersions = (row) => {
+  router.push(`/api/Version?apiId=${row.id}`)
+}
+
+const deleteApi = async (row) => {
+  try {
+    await ElMessageBox.confirm(
+        `确定要删除API "${row.name}" 吗？此操作不可恢复。`,
+        '确认删除',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+    )
+
+    await apiDefinitionApi.deleteData(row.id)
+    ElMessage.success('删除成功')
+    loadApis()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除失败')
+      console.error('删除失败:', error)
+    }
+  }
+}
+
+/** 多选删除操作*/
+function onBatchDelete() {
+  modal.confirm(t('jbx.confirm.text.delete')).then(function () {
+    let setIds = set2String(ids.value);
+    return apiDefinitionApi.deleteData(setIds);
+  }).then((res) => {
+    if (res.code === 0) {
+      loadApis();
+      modal.msgSuccess(t('jbx.alert.delete.success'));
+    } else {
+      modal.msgError(t('jbx.alert.delete.error'));
+    }
+  }).catch(() => {
+  });
+}
+
+/** 多选操作*/
+function handleSelectionChange(selection) {
+  selectionlist.value = selection;
+  ids.value = selectionlist.value.map((item) => item.id);
+}
+
+const getMethodTagType = (method) => {
+  const types = {
+    'GET': 'success',
+    'POST': 'primary',
+    'PUT': 'warning',
+    'DELETE': 'danger',
+    'PATCH': 'info'
+  }
+  return types[method] || 'info'
+}
+
+const refreshList = () => {
+  loadApis()
+}
+
+/**
+ * 重置
+ */
+function resetQuery() {
+  queryParams.value.name = undefined;
+  loadApis();
+}
+
+function loadTree() {
+  let params = {
+    appId: props.appId,
+  }
+  apiTree(params).then((res) => {
+    loading.value = false;
+    if (res.code === 0) {
+      let rootNode = {
+        title: res.data.rootNode.title,
+        key: res.data.rootNode.key
+      };
+      dataOptions.value = bulidTree(rootNode, res.data.nodes)
+    }
+    nextTick(() => {
+      const node = resTreeRef.value?.store?.nodesMap?.[props.appId]
+      if (node) {
+        node.expanded = true
+      }
+    });
+  });
+}
+
+function bulidTree(rootNode, nodes) {
+  let treeNodes = [];
+  for (let node of nodes) {
+    if (node.key != rootNode.key && node.parentKey == rootNode.key) {
+      let nodeType = node.attrs && node.attrs.type ? node.attrs.type : '';
+      let treeNode = {title: node.title, key: node.key, type: nodeType, expanded: false, isLeaf: true};
+      bulidTree(treeNode, nodes);
+      treeNodes.push(treeNode);
+      rootNode.isLeaf = false;
+    }
+  }
+  rootNode.children = treeNodes;
+  return [rootNode];
+}
+
+
+watch(
+    () => props.appId,
+    (val) => {
+      if (val != null) {
+        queryParams.value.appId = val
+        loadApis()
+        loadTree();
+        loadDataSources()
+      }
+    },
+    { immediate: true }
+)
+</script>
+
+<style scoped>
+.api-page {
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  min-height: calc(100vh - 140px);
+}
+
+.page-header h2 {
+  margin: 0 0 8px 0;
+  color: #303133;
+}
+
+.page-header p {
+  margin: 0;
+  color: #909399;
+  font-size: 14px;
+}
+
+.action-bar {
+  margin-bottom: 20px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+</style>

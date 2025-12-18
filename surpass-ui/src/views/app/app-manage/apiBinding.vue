@@ -33,18 +33,16 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted} from 'vue'
-import Api from './auth/Api.vue'
-import Menu from './auth/Menu.vue'
+import Resources from './auth/resources.vue'
 import Role from './auth/Role.vue'
 import {useRoute, useRouter} from "vue-router";
 
 const tabs = [
-  { key: 'api', label: 'Api', component: Api, icon: 'Link' },
-  { key: 'menu', label: '菜单', component: Menu, icon: 'menu' },
+  { key: 'resources', label: '资源', component: Resources, icon: 'menu' },
   { key: 'role', label: '授权', component: Role, icon: 'role' }
 ]
 
-const active = ref('api')
+const active = ref('resources')
 const route = useRoute();
 const router = useRouter();
 const appId: any = ref(undefined);

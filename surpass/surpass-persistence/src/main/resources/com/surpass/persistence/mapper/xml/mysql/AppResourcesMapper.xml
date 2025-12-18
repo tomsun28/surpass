@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.surpass.persistence.mapper.AppMenuMapper">
-    <select id="pageList" parameterType="com.surpass.entity.app.dto.AppMenuPageDto"
-            resultType="com.surpass.entity.app.AppMenu">
+<mapper namespace="com.surpass.persistence.mapper.AppResourcesMapper">
+    <select id="pageList" parameterType="com.surpass.entity.app.dto.AppResourcesPageDto"
+            resultType="com.surpass.entity.app.AppResources">
         SELECT
         m.*
         p.menu_name AS parent_name

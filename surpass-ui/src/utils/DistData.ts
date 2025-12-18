@@ -2464,6 +2464,24 @@ const distData: DistData = {
             label: "其他",
             value: 4
         }
+    ],
+    "resources_type": [
+        {
+            label: t('jbx.resources.resourceType.mENU'),
+            value: 'menu',
+        },
+        {
+            label: 'Api',
+            value: 'api',
+        },
+        {
+            label: '按钮',
+            value: 'button',
+        },
+        {
+            label: 'OpenApi',
+            value: 'openApi',
+        },
     ]
 }
 

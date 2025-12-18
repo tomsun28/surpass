@@ -10,7 +10,7 @@ import org.dromara.mybatis.jpa.entity.JpaPage;
  */
 
 @Data
-public class AppMenuPageDto extends JpaPage {
+public class AppResourcesPageDto extends JpaPage {
     private String menuName;
 
     private String appId;
