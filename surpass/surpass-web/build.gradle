@@ -1,7 +1,4 @@
 buildscript {
-	repositories {
-		maven { url 'https://maven.aliyun.com/nexus/content/groups/public/'}
-	}
 	dependencies {
 		//springboot jar
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -10,21 +7,15 @@ buildscript {
 
 plugins {
 	id 'org.springframework.boot' version "${springBootVersion}"
-	id "io.spring.dependency-management" version "1.0.11.RELEASE"
 }
 
 description = "surpass-web"
 
-//springboot jar
-apply plugin: 'io.spring.dependency-management'
-//add support for Java
-apply plugin: 'java'
-
 bootJar {
 	dependsOn jar
-	archiveBaseName = 'surpass-boot'
+	archiveBaseName = 'surpass-admin-boot'
     version = "${project.version}-ga"
-    mainClass = 'com.surpass.SurpassApplication'
+    mainClass = 'com.surpass.SurpassAdminApplication'
 	manifest {
 	        attributes(
 						"Implementation-Title": project.name,
