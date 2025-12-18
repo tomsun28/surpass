@@ -52,13 +52,13 @@ public class ProductVersionEndpoint {
 			    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 			    <link rel="shortcut icon" type="image/x-icon" href="%s/static/favicon.ico"/>
 			    <base href='%s'/> 
-			    <title>Surpass Accounting Software</title>
+			    <title>Surpass OpenAPI Platform</title>
 			</head>
 			<body>
 			    <center>
 			        <hr>
 			        Surpass Community Edition <br>
-			        Accounting Software <br>
+			        OpenAPI   Platform <br>
 			        Version %s <br>
 			        <br>
 			        &copy; Copyright 2024 - %d https://www.surpass.com/<br>

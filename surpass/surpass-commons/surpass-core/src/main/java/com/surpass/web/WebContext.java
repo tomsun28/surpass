@@ -31,7 +31,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -483,18 +482,4 @@ public final class WebContext {
         return new ModelAndView("forward:" + forwardUrl);
     }
 
-    public static String version() {
-		StringBuffer version = new StringBuffer("");
-		version.append("-----------------------------------------------------------");
-		version.append("+                      Surpass Enterprise Edition  ");
-		version.append("+                      Accounting   Software        ");
-		version.append("+                           Version %s".formatted(
-                        WebContext.getProperty("application.formatted-version")));
-		version.append("+");
-		version.append("+                 %sCopyright 2024 - %s https://www.Surpass.com/".formatted(
-        			    (char)0xA9 , new DateTime().getYear()));
-		version.append("+                 .         All rights reserved         . ");
-		version.append("-----------------------------------------------------------");
-		return version.toString();
-    }
 }
