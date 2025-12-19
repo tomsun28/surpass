@@ -29,70 +29,96 @@
     </div>
   </el-card>
   <div class="api-page">
-    <div class="page-content">
-      <!-- 操作栏 -->
-      <div class="action-bar">
-        <el-button type="primary" @click="showCreateDialog">
-          新增资源
-        </el-button>
-        <el-button
-            type="danger"
-            :disabled="ids.length === 0"
-            @click="onBatchDelete"
-        >{{ t('org.button.deleteBatch') }}
-        </el-button>
-        <el-button @click="refreshList">
-          刷新
-        </el-button>
-      </div>
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-tree
+            style="width: 100%;margin-top: 10px"
+            node-key="id"
+            :data="dataOptions"
+            :props="defaultProps"
+            :expand-on-click-node="false"
+            :filter-node-method="filterNode"
+            ref="tree"
+            :default-expanded-keys="treeData"
+            @node-click="handleNodeClick"
+            highlight-current
+            v-slot="{ node, data }"
+        >
+            <span>
+              <span v-if="node.label.length<=10">{{ node.label }}</span>
+              <span v-else>
+                 <el-tooltip class="item" effect="dark" :content="node.label" placement="right">
+                   <span>{{ node.label.slice(0, 10) + '...' }}</span>
+                </el-tooltip>
+              </span>
+            </span>
+        </el-tree>
+      </el-col>
+      <el-col :span="18">
+        <div class="page-content">
+          <!-- 操作栏 -->
+          <div class="action-bar">
+            <el-button type="primary" @click="showCreateDialog">
+              新增资源
+            </el-button>
+            <el-button
+                type="danger"
+                :disabled="ids.length === 0"
+                @click="onBatchDelete"
+            >{{ t('org.button.deleteBatch') }}
+            </el-button>
+            <el-button @click="refreshList">
+              刷新
+            </el-button>
+          </div>
 
-      <!-- API列表 -->
-      <el-table :data="apiList" border v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column header-align="center" prop="name" label="API名称" />
-        <el-table-column header-align="center" prop="path" label="路径" />
-        <el-table-column header-align="center" prop="method" label="方法" width="100">
-          <template #default="{ row }">
-            <el-tag :type="getMethodTagType(row.method)">
-              {{ row.method }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column header-align="center" prop="datasourceId" label="数据源">
-          <template #default="{ row }">
-            <el-tag v-if="row.datasourceId">
-              {{ dataSourceList.find(ds => ds.id === row.datasourceId)?.name }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column header-align="center" prop="description" label="描述" />
-        <el-table-column header-align="center" prop="createdDate" label="创建时间" width="180" />
-        <el-table-column header-align="center" label="操作" width="120" fixed="right">
-          <template #default="{ row }">
-            <el-tooltip content="版本管理" placement="top">
-              <el-button link icon="Document" @click="viewVersions(row)"></el-button>
-            </el-tooltip>
-            <el-tooltip content="编辑" placement="top">
-              <el-button link icon="Edit" type="primary" @click="editApi(row)"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link icon="Delete" type="danger" @click="deleteApi(row)"></el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-      <pagination
-          v-show="total > 0"
-          :total="total"
-          v-model:page="queryParams.pageNumber"
-          v-model:limit="queryParams.pageSize"
-          :page-sizes="queryParams.pageSizeOptions"
-          @pagination="loadApis"
-      />
-      <!-- 空状态 -->
-      <el-empty v-if="!loading && apiList.length === 0" description="暂无API定义" />
-    </div>
-
+          <!-- API列表 -->
+          <el-table :data="apiList" border v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55" align="center"/>
+            <el-table-column header-align="center" prop="name" label="资源名称" />
+            <el-table-column header-align="center" prop="path" label="请求地址" />
+            <el-table-column header-align="center" prop="method" label="方法" width="100"
+                             v-if="queryParams.classify === 'openApi' || queryParams.classify === 'api'">
+              <template #default="{ row }">
+                <el-tag :type="getMethodTagType(row.method)">
+                  {{ row.method }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column header-align="center" prop="datasourceId" label="数据源" v-if="queryParams.classify === 'openApi'">
+              <template #default="{ row }">
+                <el-tag v-if="row.datasourceId">
+                  {{ dataSourceList.find(ds => ds.id === row.datasourceId)?.name }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column header-align="center" label="操作" width="120" fixed="right">
+              <template #default="{ row }">
+                <el-tooltip content="版本管理" placement="top">
+                  <el-button link icon="Document" @click="viewVersions(row)"></el-button>
+                </el-tooltip>
+                <el-tooltip content="编辑" placement="top">
+                  <el-button link icon="Edit" type="primary" @click="editApi(row)"></el-button>
+                </el-tooltip>
+                <el-tooltip content="删除" placement="top">
+                  <el-button link icon="Delete" type="danger" @click="deleteApi(row)"></el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+          </el-table>
+          <pagination
+              v-show="total > 0"
+              :total="total"
+              v-model:page="queryParams.pageNumber"
+              v-model:limit="queryParams.pageSize"
+              :page-sizes="queryParams.pageSizeOptions"
+              @pagination="loadApis"
+          />
+          <!-- 空状态 -->
+          <el-empty v-if="!loading && apiList.length === 0" description="暂无API定义" />
+        </div>
+      </el-col>
+    </el-row>
     <!-- 新增/编辑对话框 -->
     <el-dialog
         :title="dialogTitle"
@@ -111,7 +137,7 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="资源名称" prop="name">
-              <el-input v-model="formData.name" placeholder="请输入API名称" />
+              <el-input v-model="formData.name" placeholder="请输入资源名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -200,10 +226,11 @@
             <el-form-item label="父级菜单" prop="parentId">
               <el-tree-select
                   v-model="formData.parentId"
-                  :data="dataOptions"
+                  :data="dataOptionsMenu"
                   :props="defaultProps"
                   check-strictly
-                  value-key="key"
+                  value-key="id"
+                  :placeholder="t('org.placeholder.parent')"
               />
             </el-form-item>
           </el-col>
@@ -302,9 +329,6 @@ import {set2String} from "@/utils/index.js";
 import {useI18n} from "vue-i18n";
 import * as proxy from "@/utils/Dict.js";
 import IconSelect from "@/components/IconSelect/index.vue";
-import {apiTree} from "@/api/permissions/resources.js";
-import {addClient, updateClient} from "@/api/api-service/client.js";
-import {pageResources} from "@/api/app/resources.js";
 
 const {resources_type, action_type, method_type} = proxy.useDict("resources_type", "action_type", "method_type");
 const router = useRouter()
@@ -330,9 +354,12 @@ const apiList = ref([])
 const total = ref(0);
 const dataSourceList = ref([])
 const dataOptions = ref([]);
+const dataOptionsMenu = ref([]);
+const treeData = ref([]);//当前选中节点
+const treeDataMenu = ref([]);//当前选中节点菜单
 const defaultProps = ref({
   children: "children",
-  label: "title"
+  label: "name"
 });
 
 const data = reactive({
@@ -419,6 +446,12 @@ const showCreateDialog = () => {
   dialogVisible.value = true
 }
 
+/** 通过条件过滤节点  */
+const filterNode = (value, data) => {
+  if (!value) return true;
+  return data.label.indexOf(value) !== -1;
+};
+
 const editApi = (row) => {
   isEdit.value = true
   Object.assign(formData, { ...row })
@@ -470,7 +503,7 @@ const handleSubmit = async () => {
       submitting.value = true
       formData.appId = props.appId;
 
-      const operation = isEdit.value ? updateClient : appResourcesApi.create;
+      const operation = isEdit.value ? appResourcesApi.update : appResourcesApi.create;
       const successMessage = isEdit.value
           ? t('org.success.update')
           : t('org.success.add');
@@ -486,7 +519,7 @@ const viewVersions = (row) => {
 const deleteApi = async (row) => {
   try {
     await ElMessageBox.confirm(
-        `确定要删除API "${row.name}" 吗？此操作不可恢复。`,
+        `确定要删除资源 "${row.name}" 吗？此操作不可恢复。`,
         '确认删除',
         {
           confirmButtonText: '确定',
@@ -495,7 +528,7 @@ const deleteApi = async (row) => {
         }
     )
 
-    await apiDefinitionApi.deleteData(row.id)
+    await appResourcesApi.deleteData(row.id)
     ElMessage.success('删除成功')
     loadApis()
   } catch (error) {
@@ -549,6 +582,7 @@ const refreshList = () => {
 function resetQuery() {
   queryParams.value.name = undefined;
   queryParams.value.classify = undefined;
+  queryParams.value.parentId = undefined;
   loadApis();
 }
 
@@ -556,23 +590,33 @@ function loadTree() {
   let params = {
     appId: props.appId,
   }
-  apiTree(params).then((res) => {
-    loading.value = false;
-    if (res.code === 0) {
-      let rootNode = {
-        title: res.data.rootNode.title,
-        key: res.data.rootNode.key
-      };
-      dataOptions.value = bulidTree(rootNode, res.data.nodes)
-    }
-    nextTick(() => {
-      const node = resTreeRef.value?.store?.nodesMap?.[props.appId]
-      if (node) {
-        node.expanded = true
-      }
-    });
-  });
+
+  appResourcesApi.getTree(params).then(res => {
+    // 清空，避免多次调用重复 push
+    treeData.value = []
+    treeDataMenu.value = []
+
+    collectExpandIds(res.data.resources || [], treeData, 1)
+    collectExpandIds(res.data.resourcesMenu || [], treeDataMenu, 1)
+
+    dataOptions.value = res.data.resources;
+    dataOptionsMenu.value = res.data.resourcesMenu;
+  })
 }
+
+const collectExpandIds = (nodes, targetRef, maxLevel = 1) => {
+  const traverse = (node, level) => {
+    if (level <= maxLevel) {
+      targetRef.value.push(node.id)
+    }
+    if (Array.isArray(node.children)) {
+      node.children.forEach(child => traverse(child, level + 1))
+    }
+  }
+
+  nodes.forEach(root => traverse(root, 1))
+}
+
 
 function bulidTree(rootNode, nodes) {
   let treeNodes = [];
@@ -589,6 +633,11 @@ function bulidTree(rootNode, nodes) {
   return [rootNode];
 }
 
+/** 节点单击事件 */
+function handleNodeClick(data) {
+  queryParams.value.parentId = data.key;
+  loadApis();
+}
 
 watch(
     () => props.appId,

@@ -22,6 +22,10 @@ public enum ResourceClassify {
         this.code = code;
     }
 
+    public String getCode() {
+        return code;
+    }
+
     public static ResourceClassify from(String code) {
         return Arrays.stream(values())
                 .filter(e -> e.code.equals(code))

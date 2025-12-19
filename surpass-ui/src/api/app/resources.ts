@@ -8,11 +8,34 @@ export function create(data : any): any {
     })
 }
 
+export function update(data : any): any {
+    return request({
+        url: '/app-resources/update',
+        method: 'put',
+        data: data
+    })
+}
+
 export function pageResources(params: any): any {
     return request({
         url: '/app-resources/page',
         method: 'get',
         params: params
+    })
+}
+
+export function deleteData(id : any): any {
+    return request({
+        url: `/app-resources/delete?ids=` + id,
+        method: 'delete'
+    })
+}
+
+export function getTree(query?: any): any {
+    return request({
+        url: '/app-resources/tree',
+        method: 'get',
+        params: query
     })
 }
 
