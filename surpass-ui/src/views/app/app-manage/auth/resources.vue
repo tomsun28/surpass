@@ -142,15 +142,17 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="资源类型">
-              <el-select v-model="formData.classify" placeholder="" clearable style="width: 100%">
-                <el-option
+              <el-radio-group v-model="formData.classify">
+                <el-radio
                     v-for="dict in resources_type"
                     :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                />
-              </el-select>
+                    :label="dict.value"
+                >
+                  {{ dict.label }}
+                </el-radio>
+              </el-radio-group>
             </el-form-item>
+
           </el-col>
         </el-row>
         <el-row :gutter="20">
