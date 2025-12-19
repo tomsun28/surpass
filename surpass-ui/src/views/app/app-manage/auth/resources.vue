@@ -32,7 +32,7 @@
     <el-row :gutter="20">
       <el-col :span="6">
         <el-tree
-            style="width: 100%; margin-top: 10px"
+            style="width: 100%; "
             node-key="id"
             :data="dataOptions"
             :props="defaultProps"
