@@ -7,3 +7,12 @@ export function create(data : any): any {
         data: data
     })
 }
+
+export function pageResources(params: any): any {
+    return request({
+        url: '/app-resources/page',
+        method: 'get',
+        params: params
+    })
+}
+

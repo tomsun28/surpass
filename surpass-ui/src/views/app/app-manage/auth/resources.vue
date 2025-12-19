@@ -3,13 +3,23 @@
     <div class="queryForm">
       <el-form :model="queryParams" ref="queryRef" :inline="true"
                @submit.native.prevent>
-        <el-form-item label="Api名称">
+        <el-form-item label="资源名称">
           <el-input
               v-model="queryParams.name"
               clearable
               style="width: 200px"
               @keyup.enter="loadApis"
           />
+        </el-form-item>
+        <el-form-item label="资源类型">
+          <el-select v-model="queryParams.classify" clearable style="width: 200px" @change="loadApis">
+            <el-option
+                v-for="dict in resources_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button @click="loadApis">{{ t('org.button.query') }}</el-button>
@@ -23,7 +33,7 @@
       <!-- 操作栏 -->
       <div class="action-bar">
         <el-button type="primary" @click="showCreateDialog">
-          新增API
+          新增资源
         </el-button>
         <el-button
             type="danger"
@@ -294,6 +304,7 @@ import * as proxy from "@/utils/Dict.js";
 import IconSelect from "@/components/IconSelect/index.vue";
 import {apiTree} from "@/api/permissions/resources.js";
 import {addClient, updateClient} from "@/api/api-service/client.js";
+import {pageResources} from "@/api/app/resources.js";
 
 const {resources_type, action_type, method_type} = proxy.useDict("resources_type", "action_type", "method_type");
 const router = useRouter()
@@ -376,11 +387,11 @@ const formRules = {
 }
 
 // 计算属性
-const dialogTitle = computed(() => isEdit.value ? '编辑API' : '新增API')
+const dialogTitle = computed(() => isEdit.value ? '编辑资源' : '新增资源')
 
 // 方法
 const loadApis = async () => {
-  apiDefinitionApi.pageApi(queryParams.value).then((res) => {
+  appResourcesApi.pageResources(queryParams.value).then((res) => {
     if (res.code === 0) {
       loading.value = false;
       apiList.value = res.data.rows;
@@ -537,6 +548,7 @@ const refreshList = () => {
  */
 function resetQuery() {
   queryParams.value.name = undefined;
+  queryParams.value.classify = undefined;
   loadApis();
 }
 

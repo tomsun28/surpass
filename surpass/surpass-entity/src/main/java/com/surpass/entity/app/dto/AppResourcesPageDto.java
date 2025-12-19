@@ -11,7 +11,9 @@ import org.dromara.mybatis.jpa.entity.JpaPage;
 
 @Data
 public class AppResourcesPageDto extends JpaPage {
-    private String menuName;
+    private String name;
 
     private String appId;
+
+    private String classify;
 }

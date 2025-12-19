@@ -64,7 +64,7 @@
             <el-tooltip content="编辑">
               <el-button link icon="Edit" @click="handleUpdate(scope.row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="授权">
+            <el-tooltip content="资源授权">
               <el-button link icon="Connection" type="primary" @click="handleApiBinding(scope.row)"></el-button>
             </el-tooltip>
             <el-tooltip content="移除">

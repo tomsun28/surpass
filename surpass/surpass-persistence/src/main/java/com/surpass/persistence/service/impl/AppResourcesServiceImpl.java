@@ -3,12 +3,16 @@ package com.surpass.persistence.service.impl;
 import com.surpass.entity.Message;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
+import com.surpass.entity.app.dto.AppResourcesPageDto;
+import com.surpass.entity.idm.Organizations;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.AppResourcesMapper;
 import com.surpass.persistence.service.AppResourcesService;
 import com.surpass.persistence.util.ResourceClassify;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.hutool.core.bean.BeanUtil;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +23,10 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
+@RequiredArgsConstructor
 public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, AppResources> implements AppResourcesService {
 
+    private final AppResourcesMapper appResourcesMapper;
 
     @Override
     public Message<String> create(AppResourcesChangeDto dto) {
@@ -37,6 +43,13 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
 
         boolean result = super.insert(appResources);
         return result ? Message.ok("新增成功") : Message.failed("新增失败");
+    }
+
+    @Override
+    public Message<JpaPageResults<AppResources>> page(AppResourcesPageDto dto) {
+        dto.build();
+        JpaPageResults<AppResources> jpaPageResults = (JpaPageResults<AppResources>) this.buildPageResults(dto, getMapper().pageList(dto));
+        return Message.ok(jpaPageResults);
     }
 
     private void requireNotBlank(String value, int code, String message) {

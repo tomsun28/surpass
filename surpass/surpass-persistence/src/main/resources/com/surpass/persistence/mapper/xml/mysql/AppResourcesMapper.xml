@@ -4,16 +4,19 @@
     <select id="pageList" parameterType="com.surpass.entity.app.dto.AppResourcesPageDto"
             resultType="com.surpass.entity.app.AppResources">
         SELECT
-        m.*
-        p.menu_name AS parent_name
-        FROM surpass_app_menu m
-        LEFT JOIN surpass_app_menu p ON m.parent_id = p.id AND p.deleted = 'n'
+        m.*,
+        p.name AS parent_name
+        FROM surpass_app_resources m
+        LEFT JOIN surpass_app_resources p ON m.parent_id = p.id AND p.deleted = 'n'
         WHERE m.deleted = 'n'
         <if test="appId != null and appId != ''">
             AND m.app_id = #{appId}
         </if>
-        <if test="menuName != null and menuName != ''">
-            AND m.menu_name LIKE CONCAT('%', #{menuName}, '%')
+        <if test="classify != null and classify != ''">
+            AND m.classify = #{classify}
+        </if>
+        <if test="name != null and name != ''">
+            AND m.name LIKE CONCAT('%', #{name}, '%')
         </if>
         ORDER BY m.sort_index ASC, m.created_date DESC
     </select>

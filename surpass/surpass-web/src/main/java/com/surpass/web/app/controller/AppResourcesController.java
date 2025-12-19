@@ -1,16 +1,17 @@
 package com.surpass.web.app.controller;
 
 import com.surpass.entity.Message;
+import com.surpass.entity.api.ApiDefinition;
+import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
-import com.surpass.entity.dto.RegisteredClientChangeDto;
+import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.persistence.service.AppResourcesService;
 import com.surpass.validate.AddGroup;
 import lombok.RequiredArgsConstructor;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @description:
@@ -29,4 +30,9 @@ public class AppResourcesController {
         return appResourcesService.create(dto);
     }
 
+    @GetMapping("/page")
+    public Message<JpaPageResults<AppResources>> page(@ParameterObject AppResourcesPageDto dto) {
+
+        return appResourcesService.page(dto);
+    }
 }
