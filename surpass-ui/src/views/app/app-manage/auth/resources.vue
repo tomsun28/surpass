@@ -32,7 +32,7 @@
     <el-row :gutter="20">
       <el-col :span="6">
         <el-tree
-            style="width: 100%;margin-top: 10px"
+            style="width: 100%; margin-top: 10px"
             node-key="id"
             :data="dataOptions"
             :props="defaultProps"
@@ -44,15 +44,31 @@
             highlight-current
             v-slot="{ node, data }"
         >
-            <span>
-              <span v-if="node.label.length<=10">{{ node.label }}</span>
-              <span v-else>
-                 <el-tooltip class="item" effect="dark" :content="node.label" placement="right">
-                   <span>{{ node.label.slice(0, 10) + '...' }}</span>
-                </el-tooltip>
-              </span>
-            </span>
+  <span class="tree-node">
+    <!-- 左侧名称 -->
+    <span class="tree-label">
+      <span v-if="node.label.length <= 10">{{ node.label }}</span>
+      <el-tooltip
+          v-else
+          effect="dark"
+          :content="node.label"
+          placement="right"
+      >
+        <span>{{ node.label.slice(0, 10) + '...' }}</span>
+      </el-tooltip>
+    </span>
+
+    <!-- 右侧资源类型 -->
+    <el-tag
+        size="small"
+        :type="resourceTagType(data.classify)"
+        class="tree-tag"
+    >
+      {{ resourceLabel(data.classify) }}
+    </el-tag>
+  </span>
         </el-tree>
+
       </el-col>
       <el-col :span="18">
         <div class="page-content">
@@ -73,10 +89,11 @@
           </div>
 
           <!-- API列表 -->
-          <el-table :data="apiList" border v-loading="loading" style="width: 100%" @selection-change="handleSelectionChange">
+          <el-table :data="apiList" border v-loading="loading" style="width: 100%"
+                    @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center"/>
-            <el-table-column header-align="center" prop="name" label="资源名称" />
-            <el-table-column header-align="center" prop="path" label="请求地址" />
+            <el-table-column header-align="center" prop="name" label="资源名称"/>
+            <el-table-column header-align="center" prop="path" label="请求地址"/>
             <el-table-column header-align="center" prop="method" label="方法" width="100"
                              v-if="queryParams.classify === 'openApi' || queryParams.classify === 'api'">
               <template #default="{ row }">
@@ -85,7 +102,8 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column header-align="center" prop="datasourceId" label="数据源" v-if="queryParams.classify === 'openApi'">
+            <el-table-column header-align="center" prop="datasourceId" label="数据源"
+                             v-if="queryParams.classify === 'openApi'">
               <template #default="{ row }">
                 <el-tag v-if="row.datasourceId">
                   {{ dataSourceList.find(ds => ds.id === row.datasourceId)?.name }}
@@ -115,7 +133,7 @@
               @pagination="loadApis"
           />
           <!-- 空状态 -->
-          <el-empty v-if="!loading && apiList.length === 0" description="暂无API定义" />
+          <el-empty v-if="!loading && apiList.length === 0" description="暂无API定义"/>
         </div>
       </el-col>
     </el-row>
@@ -137,7 +155,7 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="资源名称" prop="name">
-              <el-input v-model="formData.name" placeholder="请输入资源名称" />
+              <el-input v-model="formData.name" placeholder="请输入资源名称"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -158,7 +176,7 @@
         <el-row :gutter="20">
           <el-col :span="12" v-if="formData.classify !== 'button'">
             <el-form-item label="请求地址" prop="path">
-              <el-input v-model="formData.path" placeholder="请输入资源路径，如：/users" />
+              <el-input v-model="formData.path" placeholder="请输入资源路径，如：/users"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -221,7 +239,8 @@
           <el-col :span="12">
             <el-form-item label="资源样式">
               <el-input readonly v-model="formData.resStyle" placeholder=""/>
-              <icon-select style="padding-left: 0;padding-right: 0" v-model="formData.resStyle" @selected="(name) => {formData.resStyle = name}"></icon-select>
+              <icon-select style="padding-left: 0;padding-right: 0" v-model="formData.resStyle"
+                           @selected="(name) => {formData.resStyle = name}"></icon-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -321,8 +340,8 @@
 
 <script setup>
 import {ref, reactive, computed, toRefs, nextTick} from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import {useRouter} from 'vue-router'
+import {ElMessage, ElMessageBox} from 'element-plus'
 import * as dataSourceApi from '@/api/api-service/dataSource.ts'
 import * as apiDefinitionApi from '@/api/api-service/apiDefinitionApi.ts'
 import * as appResourcesApi from '@/api/app/resources.js'
@@ -402,16 +421,16 @@ const formData = reactive({
 // 表单验证规则
 const formRules = {
   name: [
-    { required: true, message: '请输入API名称', trigger: 'blur' }
+    {required: true, message: '请输入API名称', trigger: 'blur'}
   ],
   path: [
-    { required: true, message: '请输入API路径', trigger: 'blur' }
+    {required: true, message: '请输入API路径', trigger: 'blur'}
   ],
   method: [
-    { required: true, message: '请选择HTTP方法', trigger: 'change' }
+    {required: true, message: '请选择HTTP方法', trigger: 'change'}
   ],
   datasourceId: [
-    { required: true, message: '请选择数据源', trigger: 'change' }
+    {required: true, message: '请选择数据源', trigger: 'change'}
   ]
 }
 
@@ -456,7 +475,7 @@ const filterNode = (value, data) => {
 
 const editApi = (row) => {
   isEdit.value = true
-  Object.assign(formData, { ...row })
+  Object.assign(formData, {...row})
   dialogVisible.value = true
 }
 
@@ -641,6 +660,27 @@ function handleNodeClick(data) {
   loadApis();
 }
 
+const resourceLabel = (classify) => {
+  const map = {
+    menu: '菜单',
+    button: '按钮',
+    api: 'API',
+    openApi: 'OpenAPI'
+  }
+  return map[classify] || '未知'
+}
+
+const resourceTagType = (classify) => {
+  const map = {
+    menu: 'success',
+    button: 'info',
+    api: 'warning',
+    openApi: 'danger'
+  }
+  return map[classify] || ''
+}
+
+
 watch(
     () => props.appId,
     (val) => {
@@ -651,7 +691,7 @@ watch(
         loadDataSources()
       }
     },
-    { immediate: true }
+    {immediate: true}
 )
 </script>
 
@@ -683,4 +723,22 @@ watch(
   justify-content: flex-end;
   gap: 10px;
 }
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.tree-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tree-tag {
+  margin-left: 8px;
+}
+
 </style>

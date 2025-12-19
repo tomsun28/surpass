@@ -117,7 +117,9 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
                         String.valueOf(r.getParentId()),
                         r.getName(),
                         r.getSortIndex()
-                ))
+                ).setExtra(Map.of(
+                        "classify", r.getClassify()
+                )))
                 .toList();
 
         return TreeUtil.build(nodes, "null");
