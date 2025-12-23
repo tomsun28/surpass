@@ -39,3 +39,11 @@ export function getTree(query?: any): any {
     })
 }
 
+export function saveClientAuthz(data: any) {
+    return request({
+        url: '/app-resources/clientAuthz',
+        method: 'post',
+        data: data
+    })
+}
+

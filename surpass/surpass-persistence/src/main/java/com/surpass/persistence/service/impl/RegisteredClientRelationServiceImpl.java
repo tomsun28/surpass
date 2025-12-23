@@ -2,6 +2,7 @@ package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
 import com.surpass.entity.RegisteredClientRelation;
+import com.surpass.entity.app.dto.ClientAuthzDto;
 import com.surpass.entity.dto.RegisteredClientChangeDto;
 import com.surpass.entity.dto.RegisteredClientRelationDto;
 import com.surpass.persistence.mapper.AppClientRelationMapper;
@@ -35,27 +36,29 @@ public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClien
 
     @Override
     @Transactional
-    public Message<String> saveClientAppRelation(RegisteredClientRelationDto dto) {
+    public Message<String> saveClientAppRelation(ClientAuthzDto dto) {
         String clientId = dto.getClientId();
-        List<String> appIds = dto.getAppIds();
+        String appId = dto.getAppId();
+        List<String> resourceIds = dto.getResourceIds();
 
         // 保护：传入为 null 时视为空集合
-        if (appIds == null) {
-            appIds = Collections.emptyList();
+        if (resourceIds == null) {
+            resourceIds = Collections.emptyList();
         }
 
         // 查询数据库中已经存在的关联
         LambdaQuery<RegisteredClientRelation> wrapper = new LambdaQuery<>();
         wrapper.eq(RegisteredClientRelation::getClientId, clientId);
+        wrapper.eq(RegisteredClientRelation::getAppId, appId);
         List<RegisteredClientRelation> relationsInDb = super.query(wrapper);
 
         // 已存在的 appId 集合（用 Set 提升 contains 性能）
         Set<String> existAppIdSet = relationsInDb.stream()
-                .map(RegisteredClientRelation::getAppId)
+                .map(RegisteredClientRelation::getResourceId)
                 .collect(Collectors.toSet());
 
         // 去重并做快速查询
-        Set<String> newAppIdSet = new HashSet<>(appIds);
+        Set<String> newAppIdSet = new HashSet<>(resourceIds);
 
         // 需要新增的 appId = 传入的 - 已存在的
         List<String> toAdd = newAppIdSet.stream()
@@ -73,7 +76,8 @@ public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClien
                     .map(id -> {
                         RegisteredClientRelation r = new RegisteredClientRelation();
                         r.setClientId(clientId);
-                        r.setAppId(id);
+                        r.setAppId(appId);
+                        r.setResourceId(id);
                         return r;
                     })
                     .toList();
@@ -84,7 +88,8 @@ public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClien
         if (!toDelete.isEmpty()) {
             LambdaQuery<RegisteredClientRelation> deleteWrapper = new LambdaQuery<>();
             deleteWrapper.eq(RegisteredClientRelation::getClientId, clientId)
-                    .in(RegisteredClientRelation::getAppId, toDelete);
+                    .eq(RegisteredClientRelation::getAppId, appId)
+                    .in(RegisteredClientRelation::getResourceId, toDelete);
             super.delete(deleteWrapper);
         }
 

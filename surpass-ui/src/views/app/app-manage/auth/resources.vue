@@ -513,6 +513,7 @@ const handleSubmit = async () => {
     if (res.code === 0) {
       dialogVisible.value = false
       loadApis()
+      loadTree()
     } else {
       modal.msgError(res.message);
     }
@@ -636,22 +637,6 @@ const collectExpandIds = (nodes, targetRef, maxLevel = 1) => {
   }
 
   nodes.forEach(root => traverse(root, 1))
-}
-
-
-function bulidTree(rootNode, nodes) {
-  let treeNodes = [];
-  for (let node of nodes) {
-    if (node.key != rootNode.key && node.parentKey == rootNode.key) {
-      let nodeType = node.attrs && node.attrs.type ? node.attrs.type : '';
-      let treeNode = {title: node.title, key: node.key, type: nodeType, expanded: false, isLeaf: true};
-      bulidTree(treeNode, nodes);
-      treeNodes.push(treeNode);
-      rootNode.isLeaf = false;
-    }
-  }
-  rootNode.children = treeNodes;
-  return [rootNode];
 }
 
 /** 节点单击事件 */

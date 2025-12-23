@@ -52,7 +52,7 @@ public class RegisteredClientController {
     	client.setClientSecret(clientSecret);
     	return Message.ok(client);
     }
-    
+
     @GetMapping("/generate/{id}")
     public Message<RegisteredClient> generate(@PathVariable("id") String id) {
     	RegisteredClient client = clientService.generate(id);
@@ -76,10 +76,5 @@ public class RegisteredClientController {
     @GetMapping("/relate-app/{clientId}")
     public Message<List<RegisteredClientRelation>> getClientApps(@PathVariable("clientId") String clientId) {
         return Message.ok(clientRelationService.getClientApps(clientId));
-    }
-
-    @PostMapping("/save-relate")
-    public Message<String> saveClientAppRelation(@Validated @RequestBody RegisteredClientRelationDto dto) {
-        return clientRelationService.saveClientAppRelation(dto);
     }
 }

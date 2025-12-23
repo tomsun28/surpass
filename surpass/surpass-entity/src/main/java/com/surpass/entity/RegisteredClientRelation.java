@@ -33,6 +33,9 @@ public class RegisteredClientRelation extends JpaEntity implements Serializable 
     private String clientId;
 
     @Column(nullable = false, length = 45)
+    private String resourceId;
+
+    @Column(nullable = false, length = 45)
     private String appId;
 
     @Column

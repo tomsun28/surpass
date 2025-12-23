@@ -8,9 +8,11 @@ import com.surpass.entity.api.ApiDefinition;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
 import com.surpass.entity.app.dto.AppResourcesPageDto;
+import com.surpass.entity.app.dto.ClientAuthzDto;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.Resources;
 import com.surpass.persistence.service.AppResourcesService;
+import com.surpass.persistence.service.RegisteredClientRelationService;
 import com.surpass.validate.AddGroup;
 import com.surpass.validate.EditGroup;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AppResourcesController {
     private final AppResourcesService appResourcesService;
+
+    private final RegisteredClientRelationService registeredClientRelationService;
 
     @PostMapping("/add")
     public Message<String> addResources(@Validated(value = AddGroup.class) @RequestBody AppResourcesChangeDto dto) {
@@ -71,5 +75,10 @@ public class AppResourcesController {
     @GetMapping(value={"/tree"})
     public Message<Map<String, List<MapTree<String>>>> tree(@ParameterObject AppResourcesPageDto dto) {
        return Message.ok(appResourcesService.tree(dto));
+    }
+
+    @PostMapping("/clientAuthz")
+    public Message<String> clientAuthz(@Validated @RequestBody ClientAuthzDto dto) {
+        return registeredClientRelationService.saveClientAppRelation(dto);
     }
 }

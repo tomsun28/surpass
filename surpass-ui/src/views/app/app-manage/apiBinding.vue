@@ -34,12 +34,12 @@
 <script setup lang="ts">
 import { computed, ref, onMounted} from 'vue'
 import Resources from './auth/resources.vue'
-import Role from './auth/Role.vue'
+import ClientAuth from './auth/ClientAuth.vue'
 import {useRoute, useRouter} from "vue-router";
 
 const tabs = [
   { key: 'resources', label: '资源', component: Resources, icon: 'menu' },
-  { key: 'role', label: '授权', component: Role, icon: 'role' }
+  { key: 'client', label: '授权', component: ClientAuth, icon: 'Connection' }
 ]
 
 const active = ref('resources')

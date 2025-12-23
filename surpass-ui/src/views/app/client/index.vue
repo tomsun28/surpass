@@ -90,9 +90,9 @@
             <el-tooltip content="编辑">
               <el-button link icon="Edit" @click="handleUpdate(scope.row)"></el-button>
             </el-tooltip>
-            <el-tooltip content="应用授权">
+<!--            <el-tooltip content="应用授权">
               <el-button link icon="SetUp" @click="handleAppAuth(scope.row)"></el-button>
-            </el-tooltip>
+            </el-tooltip>-->
             <el-tooltip content="移除">
               <el-button link icon="Delete" type="danger" @click="handleDelete(scope.row)"></el-button>
             </el-tooltip>
