@@ -68,7 +68,7 @@
         </div>
         <el-tree
             ref="resTreeRef"
-            node-key="key"
+            node-key="id"
             :check-strictly="checkStrictly"
             :data="dataOptions"
             :props="defaultProps"
@@ -99,7 +99,7 @@ import {getCurrentInstance, reactive, ref, toRefs, watch} from "vue";
 import DictTagNumber from "@/components/DIctTagNumber/index.vue";
 import * as appResourcesApi from "@/api/app/resources";
 import modal from "@/plugins/modal";
-import {saveClientAuthz} from "@/api/app/resources";
+import {getResourceByClient} from "@/api/app/resources";
 
 const {t} = useI18n()
 
@@ -147,15 +147,18 @@ const resTreeRef: any = ref<any>({});
  * 点击行时同步 radio
  */
 function handleRowClick(row: any) {
+  if (currentRow.value?.id === row.id) {
+    return;
+  }
   selectedClientId.value = row.clientId;
   currentRow.value = row;
   checkStrictly.value = true;
   cheackdData.value = [];
   let param: any = {
     appId: props.appId,
-    roleId: row.id
+    clientId: row.id
   }
-  getResourceByGroup(param).then((res: any) => {
+  appResourcesApi.getResourceByClient(param).then((res: any) => {
     if (res.code === 0) {
       for (let i in res.data) {
         cheackdData.value.push(res.data[i].resourceId)
@@ -179,8 +182,9 @@ function getList(): any {
       // 默认选中第一行
       if (clientList.value.length > 0) {
         const first = clientList.value[0];
-        selectedClientId.value = first.clientId;
-        currentRow.value = first;
+
+        // 触发一次完整的选中逻辑（和点击行完全一致）
+        handleRowClick(first);
       }
     }
   })
@@ -219,7 +223,6 @@ function submitForm() {
   let resourceIds: any = [];
   //获取树选中节点集合
   let treeData: any = resTreeRef.value.getCheckedNodes();
-  console.log(treeData, 111111111)
   for (let i in treeData) {
     //添加到选择集合中
     resourceIds.push(treeData[i].id)

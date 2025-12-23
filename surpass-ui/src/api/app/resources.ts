@@ -47,3 +47,10 @@ export function saveClientAuthz(data: any) {
     })
 }
 
+export function getResourceByClient(query: any): any {
+    return request({
+        url: '/app-resources/getClientAuthz',
+        method: 'get',
+        params: query
+    })
+}

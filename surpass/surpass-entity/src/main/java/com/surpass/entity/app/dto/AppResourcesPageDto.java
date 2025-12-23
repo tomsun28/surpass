@@ -16,4 +16,6 @@ public class AppResourcesPageDto extends JpaPage {
     private String appId;
 
     private String classify;
+
+    private String clientId;
 }

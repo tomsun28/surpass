@@ -2,6 +2,7 @@ package com.surpass.web.app.controller;
 
 import com.surpass.authn.annotation.CurrentUser;
 import com.surpass.entity.Message;
+import com.surpass.entity.RegisteredClientRelation;
 import com.surpass.entity.TreeAttributes;
 import com.surpass.entity.TreeNode;
 import com.surpass.entity.api.ApiDefinition;
@@ -80,5 +81,10 @@ public class AppResourcesController {
     @PostMapping("/clientAuthz")
     public Message<String> clientAuthz(@Validated @RequestBody ClientAuthzDto dto) {
         return registeredClientRelationService.saveClientAppRelation(dto);
+    }
+
+    @GetMapping("/getClientAuthz")
+    public Message<List<RegisteredClientRelation>> getClientAuthz(@ParameterObject AppResourcesPageDto dto) {
+        return registeredClientRelationService.getClientAuthz(dto);
     }
 }

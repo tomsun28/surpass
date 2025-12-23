@@ -2,6 +2,7 @@ package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
 import com.surpass.entity.RegisteredClientRelation;
+import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.entity.app.dto.ClientAuthzDto;
 import com.surpass.entity.dto.RegisteredClientChangeDto;
 import com.surpass.entity.dto.RegisteredClientRelationDto;
@@ -94,6 +95,19 @@ public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClien
         }
 
         return Message.ok("保存成功");
+    }
+
+    @Override
+    public Message<List<RegisteredClientRelation>> getClientAuthz(AppResourcesPageDto dto) {
+        String appId = dto.getAppId();
+        String clientId = dto.getClientId();
+        LambdaQuery<RegisteredClientRelation> wrapper = new LambdaQuery<>();
+        wrapper.eq(RegisteredClientRelation::getAppId, appId);
+        wrapper.eq(RegisteredClientRelation::getClientId, clientId);
+
+        List<RegisteredClientRelation> query = super.query(wrapper);
+
+        return Message.ok(query);
     }
 
 }
