@@ -79,14 +79,29 @@
             show-checkbox
             v-slot="{ node, data }"
         >
-            <span>
-              <span v-if="node.label.length<=10">{{ node.label }}</span>
-              <span v-else>
-                 <el-tooltip class="item" effect="dark" :content="node.label" placement="right">
-                   <span>{{ node.label.slice(0, 10) + '...' }}</span>
-                </el-tooltip>
-              </span>
-            </span>
+            <span class="tree-node">
+    <!-- 左侧名称 -->
+    <span class="tree-label">
+      <span v-if="node.label.length <= 10">{{ node.label }}</span>
+      <el-tooltip
+          v-else
+          effect="dark"
+          :content="node.label"
+          placement="right"
+      >
+        <span>{{ node.label.slice(0, 10) + '...' }}</span>
+      </el-tooltip>
+    </span>
+
+              <!-- 右侧资源类型 -->
+    <el-tag
+        size="small"
+        :type="resourceTagType(data.classify)"
+        class="tree-tag"
+    >
+      {{ resourceLabel(data.classify) }}
+    </el-tag>
+  </span>
         </el-tree>
       </el-col>
     </el-row>
@@ -123,6 +138,26 @@ const data: any = reactive({
     pageSizeOptions: [10, 20, 50]
   }
 });
+
+const resourceLabel = (classify: any) => {
+  const map = {
+    menu: '菜单',
+    button: '按钮',
+    api: 'API',
+    openApi: 'OpenAPI'
+  }
+  return map[classify] || '未知'
+}
+
+const resourceTagType = (classify: any) => {
+  const map = {
+    menu: 'success',
+    button: 'info',
+    api: 'warning',
+    openApi: 'danger'
+  }
+  return map[classify] || ''
+}
 
 const {queryParams} = toRefs(data);
 const clientList: any = ref<any>([]);
@@ -241,11 +276,6 @@ function submitForm() {
   });
 }
 
-function loadClientApis() {
-
-}
-
-
 watch(
     () => props.appId,
     (val) => {
@@ -257,12 +287,6 @@ watch(
     },
     {immediate: true}
 )
-
-watch(selectedClientId, (id) => {
-  if (id) {
-    loadClientApis(id);
-  }
-});
 
 </script>
 
@@ -294,6 +318,23 @@ watch(selectedClientId, (id) => {
   color: #ccc;
   font-size: 12px;
   margin-left: 20px
+}
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.tree-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tree-tag {
+  margin-left: 8px;
 }
 
 </style>

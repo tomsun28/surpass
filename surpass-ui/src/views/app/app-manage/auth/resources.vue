@@ -94,6 +94,11 @@
             <el-table-column type="selection" width="55" align="center"/>
             <el-table-column header-align="center" prop="name" label="资源名称"/>
             <el-table-column header-align="center" prop="path" label="请求地址"/>
+            <el-table-column header-align="center" prop="path" label="资源类型">
+              <template #default="scope">
+                <dict-tag :options="resources_type" :value="scope.row.classify"/>
+              </template>
+            </el-table-column>
             <el-table-column header-align="center" prop="method" label="方法" width="100"
                              v-if="queryParams.classify === 'openApi' || queryParams.classify === 'api'">
               <template #default="{ row }">
@@ -350,6 +355,7 @@ import {set2String} from "@/utils/index.js";
 import {useI18n} from "vue-i18n";
 import * as proxy from "@/utils/Dict.js";
 import IconSelect from "@/components/IconSelect/index.vue";
+import DictTag from "@/components/DictTag/index.vue";
 
 const {resources_type, action_type, method_type} = proxy.useDict("resources_type", "action_type", "method_type");
 const router = useRouter()
