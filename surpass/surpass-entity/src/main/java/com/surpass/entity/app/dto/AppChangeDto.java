@@ -27,4 +27,9 @@ public class AppChangeDto {
     private String appCode;
 
     private Integer status;
+
+    @NotEmpty(message = "应用上下文路径不能为空", groups = {AddGroup.class, EditGroup.class})
+    private String contextPath;
+
+    private String loginUrl;
 }

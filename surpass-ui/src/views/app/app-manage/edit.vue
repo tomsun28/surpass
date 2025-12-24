@@ -12,6 +12,12 @@
         <el-form-item prop="appName" label="应用名称" :required="true">
           <el-input v-model="form.appName"/>
         </el-form-item>
+        <el-form-item prop="contextPath" label="上下文路径" :required="true">
+          <el-input v-model="form.contextPath" placeholder="请输入应用上下文路径，如：/portal"/>
+        </el-form-item>
+        <el-form-item prop="loginUrl" label="登录地址">
+          <el-input v-model="form.loginUrl"/>
+        </el-form-item>
         <el-form-item prop="status" :label="$t('jbx.text.status.status')">
           <el-switch
               :width="44"
@@ -69,7 +75,9 @@ const data: any = reactive({
   form: {
     status: 1,
     appName: null,
-    appCode: null
+    appCode: null,
+    contextPath: null,
+    loginUrl: null
   },
   rules: {
     appCode: [
@@ -77,6 +85,9 @@ const data: any = reactive({
     ],
     appName: [
       {required: true, message: "请输入应用名称", trigger: "blur"},
+    ],
+    contextPath: [
+      {required: true, message: "请输入应用上下文路径", trigger: "blur"},
     ]
   }
 })
@@ -122,7 +133,9 @@ function reset(): any {
   form.value = {
     status: 1,
     appName: null,
-    appCode: null
+    appCode: null,
+    contextPath: null,
+    loginUrl: null
   };
   appRef?.value?.resetFields();
 }

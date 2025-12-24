@@ -41,6 +41,7 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
     @Override
     public Message<String> create(AppChangeDto dto) {
         checkAppCode(dto, false);
+        checkContentPath(dto, false);
         App app = BeanUtil.copyProperties(dto, App.class);
 
         boolean result = super.insert(app);
@@ -50,6 +51,7 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
     @Override
     public Message<String> updateApp(AppChangeDto dto) {
         checkAppCode(dto, true);
+        checkContentPath(dto, true);
         App app = BeanUtil.copyProperties(dto, App.class);
 
         boolean result = super.update(app);
@@ -108,6 +110,18 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
         List<App> query = super.query(wrapper);
         if (ObjectUtils.isNotEmpty(query)) {
             throw new BusinessException(50001, "该应用编码已被使用，请重新输入");
+        }
+    }
+
+    private void checkContentPath(AppChangeDto dto, boolean isEdit) {
+        LambdaQuery<App> wrapper = new LambdaQuery<>();
+        wrapper.eq(App::getContextPath, dto.getContextPath());
+        if (isEdit) {
+            wrapper.notEq(App::getId, dto.getId());
+        }
+        List<App> query = super.query(wrapper);
+        if (ObjectUtils.isNotEmpty(query)) {
+            throw new BusinessException(50001, "该应用上下文路径已被使用，请重新输入");
         }
     }
 }

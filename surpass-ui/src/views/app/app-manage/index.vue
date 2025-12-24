@@ -52,6 +52,10 @@
                          :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="appName" label="应用名称" align="center" min-width="120"
                          :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="contextPath" label="上下文路径" align="center" min-width="100"
+                         :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="loginUrl" label="登录地址" align="center" min-width="100"
+                         :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="status" :label="t('org.status')" align="center" width="80">
           <template #default="scope">
             <span v-if="scope.row.status === 1"><el-icon color="green"><SuccessFilled

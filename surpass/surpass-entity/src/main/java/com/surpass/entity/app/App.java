@@ -37,6 +37,12 @@ public class App extends JpaEntity implements Serializable {
     @Column
     private Integer status;
 
+    @Column
+    private String contextPath;
+
+    @Column
+    private String loginUrl;
+
     @SoftDelete
     @Column
     String deleted;
