@@ -1,11 +1,13 @@
 package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
+import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
 import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.entity.idm.Organizations;
 import com.surpass.exception.BusinessException;
+import com.surpass.persistence.mapper.AppMapper;
 import com.surpass.persistence.mapper.AppResourcesMapper;
 import com.surpass.persistence.service.AppResourcesService;
 import com.surpass.persistence.util.ResourceClassify;
@@ -18,7 +20,9 @@ import org.dromara.hutool.core.tree.TreeNode;
 import org.dromara.hutool.core.tree.TreeUtil;
 import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.dromara.mybatis.jpa.query.LambdaQuery;
+import org.dromara.mybatis.jpa.query.OrderBy;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
+import org.dromara.mybatis.jpa.update.LambdaUpdateWrapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.surpass.persistence.util.ResourceClassify.MENU;
+import static com.surpass.persistence.util.ResourceClassify.OPEN_API;
 
 /**
  * @description:
@@ -40,9 +45,13 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
 
     private final AppResourcesMapper appResourcesMapper;
 
+    private final AppMapper appMapper;
+
     @Override
     public Message<String> create(AppResourcesChangeDto dto) {
         AppResources appResources = BeanUtil.copyProperties(dto, AppResources.class);
+
+        isExistDuplicate(appResources);
 
         ResourceClassify classify = ResourceClassify.from(dto.getClassify());
 
@@ -60,6 +69,8 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
     @Override
     public Message<String> updateResources(AppResourcesChangeDto dto) {
         AppResources appResources = BeanUtil.copyProperties(dto, AppResources.class);
+
+        isExistDuplicate(appResources);
 
         ResourceClassify classify = ResourceClassify.from(dto.getClassify());
 
@@ -106,6 +117,20 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
         return result;
     }
 
+    @Override
+    public AppResources findByPathAndMethod(String path, String method, String contextPath) {
+        App app = appMapper.findByContextPath(contextPath);
+
+        LambdaQuery<AppResources> wrapper = new LambdaQuery<>();
+        wrapper.eq(AppResources::getPath, path);
+        wrapper.eq(AppResources::getMethod, method);
+        wrapper.eq(AppResources::getAppId, app.getId());
+        wrapper.eq(AppResources::getClassify, OPEN_API.getCode());
+        wrapper.orderBy(AppResources::getCreatedDate, OrderBy.DESC.getOrder());
+
+        return super.query(wrapper).stream().findFirst().orElse(null);
+    }
+
     private List<MapTree<String>> buildTree(List<AppResources> resources) {
         if (ObjectUtils.isEmpty(resources)) {
             return List.of();
@@ -149,5 +174,18 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
     private void validateApi(AppResources r) {
         requireNotBlank(r.getPath(), 50001, "请填写请求地址");
         requireNotBlank(r.getMethod(), 50001, "请填写请求方式");
+    }
+
+
+    private boolean isExistDuplicate(AppResources apiDefinition) {
+        LambdaUpdateWrapper<AppResources> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(AppResources::getPath, apiDefinition.getPath());
+        wrapper.eq(AppResources::getMethod, apiDefinition.getMethod());
+        wrapper.eq(AppResources::getAppId, apiDefinition.getAppId());
+        if (StringUtils.isNotBlank(apiDefinition.getId())) {
+            wrapper.notEq(AppResources::getId, apiDefinition.getId());
+        }
+
+        return super.count(wrapper) > 0;
     }
 }

@@ -16,10 +16,9 @@ import java.util.Map;
 @RequestMapping("/api-v1")
 @RequiredArgsConstructor
 @Slf4j
-public class ApiGatewayController {
+public class ApiGatewayController  {
 
     private final DynamicExecutionService dynamicExecutionService;
-
     private final ResponseTemplateRenderer responseTemplateRenderer;
 
     @GetMapping("/**")
@@ -44,15 +43,24 @@ public class ApiGatewayController {
 
     private ResponseEntity<Object> handleRequest(String method, HttpServletRequest request) {
         try {
-            // 1. 获取请求路径
-            String path = extractApiPath(request);
+            // 1. 提取上下文路径和API路径
+            PathInfo pathInfo = extractPathInfo(request);
+
             // 2. 解析请求参数
             Map<String, Object> params = extractRequestParams(request);
-            // 3. 执行API
-            Object result = dynamicExecutionService.executeApi(path, method, params);
+
+            // 3. 执行API（传入contextPath）
+            Object result = dynamicExecutionService.executeApi(
+                    pathInfo.getApiPath(),
+                    method,
+                    pathInfo.getContextPath(),
+                    params
+            );
+
             // 4. 渲染响应
             Object response = responseTemplateRenderer.renderResponse(
                     getDefaultResponseTemplate(), result);
+
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(response);
@@ -65,13 +73,40 @@ public class ApiGatewayController {
         }
     }
 
-    private String extractApiPath(HttpServletRequest request) {
+    /**
+     * 提取路径信息
+     * 请求URI格式: /api-v1/{contextPath}/{apiPath}
+     * 例如: /api-v1/admin/user/list
+     *       contextPath = /admin
+     *       apiPath = /user/list
+     */
+    private PathInfo extractPathInfo(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         int indexOf = requestUri.indexOf("/api-v1");
+
         if (indexOf < 0) {
             throw new IllegalArgumentException("Missing /api-v1 prefix in URI: " + requestUri);
         }
-        return requestUri.substring(indexOf + "/api-v1".length());
+
+        // 去掉 /api-v1 前缀
+        String remainingPath = requestUri.substring(indexOf + "/api-v1".length());
+
+        if (remainingPath.isEmpty() || remainingPath.equals("/")) {
+            throw new IllegalArgumentException("Missing context path and api path");
+        }
+
+        // 分割路径: /contextPath/apiPath
+        // 例如: /admin/user/list -> contextPath=/admin, apiPath=/user/list
+        String[] parts = remainingPath.split("/", 3); // 限制分割为3部分: ["", "admin", "user/list"]
+
+        if (parts.length < 3) {
+            throw new IllegalArgumentException("Invalid URI format, expected: /api-v1/{contextPath}/{apiPath}");
+        }
+
+        String contextPath = "/" + parts[1]; // /admin
+        String apiPath = "/" + parts[2];      // /user/list
+
+        return new PathInfo(contextPath, apiPath);
     }
 
     private Map<String, Object> extractRequestParams(HttpServletRequest request) {
@@ -99,6 +134,27 @@ public class ApiGatewayController {
             return "{\"code\":1,\"data\":null,\"message\":\"" + message + "\"}";
         } catch (Exception e) {
             return "{\"code\":1,\"data\":null,\"message\":\"系统错误\"}";
+        }
+    }
+
+    /**
+     * 路径信息内部类
+     */
+    private static class PathInfo {
+        private final String contextPath;
+        private final String apiPath;
+
+        public PathInfo(String contextPath, String apiPath) {
+            this.contextPath = contextPath;
+            this.apiPath = apiPath;
+        }
+
+        public String getContextPath() {
+            return contextPath;
+        }
+
+        public String getApiPath() {
+            return apiPath;
         }
     }
 }

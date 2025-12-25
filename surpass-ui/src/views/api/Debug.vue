@@ -66,6 +66,12 @@
             <el-descriptions-item label="当前版本">
               <el-tag type="success">v{{ currentVersion.version }}</el-tag>
             </el-descriptions-item>
+            <el-descriptions-item label="所属应用">
+              <el-tag>{{ selectedApi.belongApp }}</el-tag>
+            </el-descriptions-item>
+            <el-descriptions-item label="应用上下文路径">
+              <el-tag>{{ selectedApi.contextPath }}</el-tag>
+            </el-descriptions-item>
           </el-descriptions>
         </el-card>
       </div>
@@ -351,16 +357,16 @@ const validateParam = (param) => {
         param.errorMessage = '请输入有效的数字'
         return
       }
-      
+
       const numValue = Number(param.value)
-      
+
       // 最小值验证
       if (param.rules.minValue !== undefined && numValue < param.rules.minValue) {
         param.error = true
         param.errorMessage = `数值不能小于 ${param.rules.minValue}`
         return
       }
-      
+
       // 最大值验证
       if (param.rules.maxValue !== undefined && numValue > param.rules.maxValue) {
         param.error = true
@@ -368,7 +374,7 @@ const validateParam = (param) => {
         return
       }
       break
-      
+
     case 'string':
       // 字符串长度验证
       if (param.rules.minLength !== undefined && param.value.length < param.rules.minLength) {
@@ -376,13 +382,13 @@ const validateParam = (param) => {
         param.errorMessage = `字符串长度不能少于 ${param.rules.minLength} 个字符`
         return
       }
-      
+
       if (param.rules.maxLength !== undefined && param.value.length > param.rules.maxLength) {
         param.error = true
         param.errorMessage = `字符串长度不能超过 ${param.rules.maxLength} 个字符`
         return
       }
-      
+
       // 正则表达式验证
       if (param.rules.pattern) {
         try {
@@ -408,7 +414,7 @@ const validateParam = (param) => {
           console.error('正则表达式错误:', e)
         }
       }
-      
+
       // 枚举值验证
       if (param.rules.enumValues && Array.isArray(param.rules.enumValues)) {
         if (!param.rules.enumValues.includes(param.value)) {
@@ -418,7 +424,7 @@ const validateParam = (param) => {
         }
       }
       break
-      
+
     case 'boolean':
       // 布尔类型验证
       const validBooleanValues = ['true', 'false', '1', '0']
@@ -505,6 +511,7 @@ const executeApi = async () => {
     const response = await gatewayApi.execute(
         selectedApi.value.path,
         selectedApi.value.method,
+        selectedApi.value.contextPath,
         params
     )
 
@@ -780,7 +787,7 @@ const getMethodTagType = (method) => {
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .param-item {
     flex-wrap: wrap;
   }

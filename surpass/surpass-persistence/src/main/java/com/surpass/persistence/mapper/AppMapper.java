@@ -6,4 +6,5 @@ import org.dromara.mybatis.jpa.IJpaMapper;
 
 @Mapper
 public interface AppMapper extends IJpaMapper<App> {
+    App findByContextPath(String contextPath);
 }

@@ -1,6 +1,7 @@
 package com.surpass.entity.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.surpass.entity.app.AppResources;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -74,7 +75,7 @@ public class ApiVersion extends JpaEntity implements Serializable {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "api_id", insertable = false, updatable = false)
-    private ApiDefinition apiDefinition;
+    private AppResources apiDefinition;
 
     @SoftDelete
     @Column

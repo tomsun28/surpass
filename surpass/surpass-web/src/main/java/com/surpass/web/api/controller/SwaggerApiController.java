@@ -1,10 +1,12 @@
 package com.surpass.web.api.controller;
 
-import com.surpass.entity.api.ApiDefinition;
+
 import com.surpass.entity.api.ApiVersion;
-import com.surpass.persistence.service.ApiDefinitionService;
+import com.surpass.entity.app.App;
+import com.surpass.entity.app.AppResources;
 import com.surpass.persistence.service.ApiVersionService;
 
+import com.surpass.persistence.service.AppResourcesService;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.Paths;
@@ -22,6 +24,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,18 +43,18 @@ import java.util.regex.Pattern;
 @RequestMapping("/v3/api-docs")
 public class SwaggerApiController {
 
-    private final ApiDefinitionService apiDefinitionService;
+    private final AppResourcesService appResourcesService;
     private final ApiVersionService apiVersionService;
-    
+
     @Value("${server.port:2154}")
     private String serverPort;
-    
+
     @Value("${server.servlet.context-path:/surpass-api}")
     private String contextPath;
-    
+
     @Value("${application.title:Surpass}")
     private String applicationTitle;
-    
+
     @Value("${application.formatted-version:v1.2.0 GA}")
     private String applicationVersion;
 
@@ -62,7 +65,7 @@ public class SwaggerApiController {
     @GetMapping(value = "/dynamic-apis")
     public OpenAPI getDynamicApiDocs(HttpServletRequest request) {
         OpenAPI openAPI = new OpenAPI();
-        
+
         // 1. 设置OpenAPI版本 - 与demo文件一致
         openAPI.setOpenapi("3.0.1");
 
@@ -71,12 +74,12 @@ public class SwaggerApiController {
                 .title(applicationTitle)
                 .description(applicationTitle + "API文档")
                 .version(applicationVersion);
-        
+
         Contact contact = new Contact()
                 .name("Surpass")
                 .email("Surpass@Surpass.com");
         info.setContact(contact);
-        
+
         openAPI.setInfo(info);
 
         // 3. 添加服务器信息 - 与demo文件格式一致
@@ -105,22 +108,22 @@ public class SwaggerApiController {
 
         // 7. 设置组件 - 完全按照demo文件的结构
         Components components = new Components();
-        
+
         // 7.1 安全方案
         SecurityScheme apiKey = new SecurityScheme()
                 .type(SecurityScheme.Type.APIKEY)
                 .name("maxkey")
                 .in(SecurityScheme.In.HEADER);
         components.addSecuritySchemes("apiKey", apiKey);
-        
+
         // 7.2 Schema定义 - 完全按照demo文件
         addDemoSchemas(components);
-        
+
         openAPI.setComponents(components);
-        
+
         return openAPI;
     }
-    
+
     /**
      * 添加demo文件中的Schema定义
      */
@@ -132,7 +135,7 @@ public class SwaggerApiController {
         apiVersionSchema.addRequiredItem("status");
         apiVersionSchema.addRequiredItem("supportsPaging");
         apiVersionSchema.addRequiredItem("version");
-        
+
         apiVersionSchema.addProperty("id", new StringSchema());
         apiVersionSchema.addProperty("apiId", new StringSchema());
         apiVersionSchema.addProperty("version", new IntegerSchema().format("int32"));
@@ -150,7 +153,7 @@ public class SwaggerApiController {
         apiVersionSchema.addProperty("modifiedBy", new StringSchema());
         apiVersionSchema.addProperty("modifiedDate", new StringSchema().format("date-time"));
         components.addSchemas("ApiVersion", apiVersionSchema);
-        
+
         // 2. MessageApiVersion Schema
         ObjectSchema messageApiVersionSchema = new ObjectSchema();
         messageApiVersionSchema.addProperty("code", new IntegerSchema().format("int32"));
@@ -158,7 +161,7 @@ public class SwaggerApiController {
         messageApiVersionSchema.addProperty("timestamp", new StringSchema().format("date-time"));
         messageApiVersionSchema.addProperty("data", new Schema<>().$ref("#/components/schemas/ApiVersion"));
         components.addSchemas("MessageApiVersion", messageApiVersionSchema);
-        
+
         // 3. DataSource Schema
         ObjectSchema dataSourceSchema = new ObjectSchema();
         dataSourceSchema.addRequiredItem("driverClassName");
@@ -167,7 +170,7 @@ public class SwaggerApiController {
         dataSourceSchema.addRequiredItem("status");
         dataSourceSchema.addRequiredItem("url");
         dataSourceSchema.addRequiredItem("username");
-        
+
         dataSourceSchema.addProperty("id", new StringSchema());
         dataSourceSchema.addProperty("name", new StringSchema().minLength(1));
         dataSourceSchema.addProperty("driverClassName", new StringSchema().minLength(1));
@@ -182,7 +185,7 @@ public class SwaggerApiController {
         dataSourceSchema.addProperty("modifiedBy", new StringSchema());
         dataSourceSchema.addProperty("modifiedDate", new StringSchema().format("date-time"));
         components.addSchemas("DataSource", dataSourceSchema);
-        
+
         // 4. MessageString Schema
         ObjectSchema messageStringSchema = new ObjectSchema();
         messageStringSchema.addProperty("code", new IntegerSchema().format("int32"));
@@ -190,14 +193,14 @@ public class SwaggerApiController {
         messageStringSchema.addProperty("timestamp", new StringSchema().format("date-time"));
         messageStringSchema.addProperty("data", new StringSchema());
         components.addSchemas("MessageString", messageStringSchema);
-        
+
         // 5. ApiDefinition Schema
         ObjectSchema apiDefinitionSchema = new ObjectSchema();
         apiDefinitionSchema.addRequiredItem("datasourceId");
         apiDefinitionSchema.addRequiredItem("method");
         apiDefinitionSchema.addRequiredItem("name");
         apiDefinitionSchema.addRequiredItem("path");
-        
+
         apiDefinitionSchema.addProperty("id", new StringSchema());
         apiDefinitionSchema.addProperty("name", new StringSchema().minLength(1));
         apiDefinitionSchema.addProperty("path", new StringSchema().minLength(1));
@@ -210,18 +213,18 @@ public class SwaggerApiController {
         apiDefinitionSchema.addProperty("modifiedBy", new StringSchema());
         apiDefinitionSchema.addProperty("modifiedDate", new StringSchema().format("date-time"));
         components.addSchemas("ApiDefinition", apiDefinitionSchema);
-        
+
         // 6. MessageListDataSource Schema
         ObjectSchema messageListDataSourceSchema = new ObjectSchema();
         messageListDataSourceSchema.addProperty("code", new IntegerSchema().format("int32"));
         messageListDataSourceSchema.addProperty("message", new StringSchema());
         messageListDataSourceSchema.addProperty("timestamp", new StringSchema().format("date-time"));
-        
+
         ArraySchema dataSourceArray = new ArraySchema();
         dataSourceArray.setItems(new Schema<>().$ref("#/components/schemas/DataSource"));
         messageListDataSourceSchema.addProperty("data", dataSourceArray);
         components.addSchemas("MessageListDataSource", messageListDataSourceSchema);
-        
+
         // 7. Message Schema (通用响应)
         ObjectSchema messageSchema = new ObjectSchema();
         messageSchema.addProperty("code", new IntegerSchema().format("int32"));
@@ -229,7 +232,7 @@ public class SwaggerApiController {
         messageSchema.addProperty("timestamp", new StringSchema().format("date-time"));
         messageSchema.addProperty("data", new ObjectSchema());
         components.addSchemas("Message", messageSchema);
-        
+
         // 8. UserInfo Schema
         ObjectSchema userInfoSchema = new ObjectSchema();
         userInfoSchema.addProperty("sessionId", new StringSchema());
@@ -286,13 +289,13 @@ public class SwaggerApiController {
         userInfoSchema.addProperty("originId2", new StringSchema());
         userInfoSchema.addProperty("gradingUserId", new StringSchema());
         components.addSchemas("UserInfo", userInfoSchema);
-        
+
         // 9. ImageCaptcha Schema
         ObjectSchema imageCaptchaSchema = new ObjectSchema();
         imageCaptchaSchema.addProperty("state", new StringSchema());
         imageCaptchaSchema.addProperty("image", new StringSchema());
         components.addSchemas("ImageCaptcha", imageCaptchaSchema);
-        
+
         // 10. MessageImageCaptcha Schema
         ObjectSchema messageImageCaptchaSchema = new ObjectSchema();
         messageImageCaptchaSchema.addProperty("code", new IntegerSchema().format("int32"));
@@ -301,66 +304,68 @@ public class SwaggerApiController {
         messageImageCaptchaSchema.addProperty("data", new Schema<>().$ref("#/components/schemas/ImageCaptcha"));
         components.addSchemas("MessageImageCaptcha", messageImageCaptchaSchema);
     }
-    
+
     /**
      * 构建动态API的paths
      */
     private Paths buildDynamicApiPaths() {
         Paths paths = new Paths();
-        
+
         // 获取所有API定义
-        List<ApiDefinition> apiDefinitions = apiDefinitionService.findAll();
-        
-        for (ApiDefinition apiDefinition : apiDefinitions) {
+        LambdaQuery<AppResources> wrapper = new LambdaQuery<>();
+        wrapper.eq(AppResources::getClassify, "openApi");
+        List<AppResources> apiDefinitions = appResourcesService.query(wrapper);
+
+        for (AppResources apiDefinition : apiDefinitions) {
             // 获取已发布的版本
             ApiVersion publishedVersion = apiVersionService.findPublishedVersionByApiId(apiDefinition.getId());
-            
+
             if (publishedVersion != null) {
                 // 构建路径项
                 io.swagger.v3.oas.models.PathItem pathItem = buildPathItem(apiDefinition, publishedVersion);
                 paths.addPathItem("/api-v1" + apiDefinition.getPath(), pathItem);
             }
         }
-        
+
         return paths;
     }
-    
+
     /**
      * 构建单个路径项
      */
-    private io.swagger.v3.oas.models.PathItem buildPathItem(ApiDefinition apiDefinition, ApiVersion apiVersion) {
+    private io.swagger.v3.oas.models.PathItem buildPathItem(AppResources apiDefinition, ApiVersion apiVersion) {
         io.swagger.v3.oas.models.PathItem pathItem = new io.swagger.v3.oas.models.PathItem();
-        
+
         // 构建操作
         io.swagger.v3.oas.models.Operation operation = new io.swagger.v3.oas.models.Operation();
         operation.setOperationId("dynamic_" + apiDefinition.getId() + "_" + apiDefinition.getMethod().toLowerCase());
         operation.setSummary(apiDefinition.getName());
         operation.setDescription(apiDefinition.getDescription());
         operation.addTagsItem("动态API");
-        
+
         // 构建参数
         List<Parameter> parameters = buildParameters(apiDefinition, apiVersion);
         if (!parameters.isEmpty()) {
             operation.setParameters(parameters);
         }
-        
+
         // 构建响应 - 使用Message Schema
         ApiResponses responses = new ApiResponses();
         ApiResponse successResponse = new ApiResponse();
         successResponse.setDescription("OK");
-        
+
         Content content = new Content();
         MediaType mediaType = new MediaType();
-        
+
         // 使用Message Schema
         Schema<?> messageSchema = new Schema<>().$ref("#/components/schemas/Message");
         mediaType.setSchema(messageSchema);
         content.addMediaType("application/json", mediaType);
         successResponse.setContent(content);
-        
+
         responses.addApiResponse("200", successResponse);
         operation.setResponses(responses);
-        
+
         // 设置HTTP方法
         String method = apiDefinition.getMethod().toUpperCase();
         switch (method) {
@@ -381,16 +386,16 @@ public class SwaggerApiController {
                 pathItem.setDelete(operation);
                 break;
         }
-        
+
         return pathItem;
     }
-    
+
     /**
      * 构建参数列表
      */
-    private List<Parameter> buildParameters(ApiDefinition apiDefinition, ApiVersion apiVersion) {
+    private List<Parameter> buildParameters(AppResources apiDefinition, ApiVersion apiVersion) {
         List<Parameter> parameters = new ArrayList<>();
-        
+
         // 提取路径参数
         Pattern pathPattern = Pattern.compile("\\{([^}]+)\\}");
         Matcher pathMatcher = pathPattern.matcher(apiDefinition.getPath());
@@ -402,7 +407,7 @@ public class SwaggerApiController {
             pathParam.setSchema(new StringSchema());
             parameters.add(pathParam);
         }
-        
+
         // 如果是GET请求，添加查询参数
         if ("GET".equalsIgnoreCase(apiDefinition.getMethod())) {
             // 添加分页参数
@@ -411,30 +416,30 @@ public class SwaggerApiController {
                 pageNum.setName("_pageNum");
                 pageNum.setSchema(new IntegerSchema());
                 parameters.add(pageNum);
-                
+
                 QueryParameter pageSize = new QueryParameter();
                 pageSize.setName("_pageSize");
                 pageSize.setSchema(new IntegerSchema());
                 parameters.add(pageSize);
             }
-            
+
             // 从SQL模板提取参数
             extractQueryParametersFromSql(apiVersion.getSqlTemplate(), parameters);
         }
-        
+
         return parameters;
     }
-    
+
     /**
      * 从SQL模板提取查询参数
      */
     private void extractQueryParametersFromSql(String sqlTemplate, List<Parameter> parameters) {
         if (sqlTemplate == null) return;
-        
+
         Pattern pattern = Pattern.compile("#\\{([^}]+)\\}");
         Matcher matcher = pattern.matcher(sqlTemplate);
         Set<String> paramNames = new HashSet<>();
-        
+
         while (matcher.find()) {
             String paramName = matcher.group(1);
             // 跳过已处理的分页参数
@@ -442,7 +447,7 @@ public class SwaggerApiController {
                 paramNames.add(paramName);
             }
         }
-        
+
         for (String paramName : paramNames) {
             QueryParameter param = new QueryParameter();
             param.setName(paramName);
@@ -450,22 +455,22 @@ public class SwaggerApiController {
             parameters.add(param);
         }
     }
-    
+
     /**
      * 构建请求体
      */
     private io.swagger.v3.oas.models.parameters.RequestBody buildRequestBody() {
         io.swagger.v3.oas.models.parameters.RequestBody requestBody = new io.swagger.v3.oas.models.parameters.RequestBody();
         requestBody.setRequired(true);
-        
+
         Content content = new Content();
         MediaType mediaType = new MediaType();
-        
+
         // 使用ObjectSchema作为默认请求体
         mediaType.setSchema(new ObjectSchema());
         content.addMediaType("application/json", mediaType);
         requestBody.setContent(content);
-        
+
         return requestBody;
     }
 }

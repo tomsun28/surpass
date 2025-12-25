@@ -92,14 +92,14 @@
           <el-table :data="apiList" border v-loading="loading" style="width: 100%"
                     @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center"/>
-            <el-table-column header-align="center" prop="name" label="资源名称"/>
-            <el-table-column header-align="center" prop="path" label="请求地址"/>
-            <el-table-column header-align="center" prop="path" label="资源类型">
+            <el-table-column prop="name" label="资源名称"/>
+            <el-table-column prop="path" label="请求地址"/>
+            <el-table-column prop="path" label="资源类型">
               <template #default="scope">
                 <dict-tag :options="resources_type" :value="scope.row.classify"/>
               </template>
             </el-table-column>
-            <el-table-column header-align="center" prop="method" label="方法" width="100"
+            <el-table-column prop="method" label="方法"
                              v-if="queryParams.classify === 'openApi' || queryParams.classify === 'api'">
               <template #default="{ row }">
                 <el-tag :type="getMethodTagType(row.method)">
@@ -107,7 +107,7 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column header-align="center" prop="datasourceId" label="数据源"
+            <el-table-column prop="datasourceId" label="数据源"
                              v-if="queryParams.classify === 'openApi'">
               <template #default="{ row }">
                 <el-tag v-if="row.datasourceId">
@@ -115,9 +115,9 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column header-align="center" label="操作" width="120" fixed="right">
+            <el-table-column label="操作" width="120">
               <template #default="{ row }">
-                <el-tooltip content="版本管理" placement="top">
+                <el-tooltip content="版本管理" placement="top" v-if="row.classify === 'openApi'">
                   <el-button link icon="Document" @click="viewVersions(row)"></el-button>
                 </el-tooltip>
                 <el-tooltip content="编辑" placement="top">
@@ -571,10 +571,11 @@ const deleteApi = async (row) => {
 function onBatchDelete() {
   modal.confirm(t('jbx.confirm.text.delete')).then(function () {
     let setIds = set2String(ids.value);
-    return apiDefinitionApi.deleteData(setIds);
+    return appResourcesApi.deleteData(setIds);
   }).then((res) => {
     if (res.code === 0) {
       loadApis();
+      loadTree();
       modal.msgSuccess(t('jbx.alert.delete.success'));
     } else {
       modal.msgError(t('jbx.alert.delete.error'));

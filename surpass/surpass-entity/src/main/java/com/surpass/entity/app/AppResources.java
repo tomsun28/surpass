@@ -117,4 +117,8 @@ public class AppResources extends JpaEntity implements Serializable {
     private Date modifiedDate;
 
     private String parentName;
+
+    private String contextPath;
+
+    private String belongApp;
 }

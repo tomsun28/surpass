@@ -1,11 +1,11 @@
 package com.surpass.persistence.util;
 
-import com.surpass.entity.api.ApiDefinition;
 import com.surpass.entity.api.ApiVersion;
 import com.surpass.entity.api.DataSource;
+import com.surpass.entity.app.AppResources;
 import com.surpass.exception.BusinessException;
-import com.surpass.persistence.service.ApiDefinitionService;
 import com.surpass.persistence.service.ApiVersionService;
+import com.surpass.persistence.service.AppResourcesService;
 import com.surpass.persistence.service.DataSourceService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,25 +26,25 @@ public class DynamicExecutionService {
 
     private final SqlExecutor sqlExecutor;
 
-    private final ApiDefinitionService apiDefinitionService;
-
     private final ApiVersionService apiVersionService;
+
+    private final AppResourcesService appResourcesService;
 
     private final DataSourceService dataSourceService;
 
     private final String DEFAULT_PAGE_NUM_KEY = "_pageNum";
     private final String DEFAULT_PAGE_SIZE_KEY = "_pageSize";
 
-    public Object executeApi(String path, String method, Map<String, Object> params) {
+    public Object executeApi(String path, String method, String contextPath, Map<String, Object> params) {
         try {
             // 1. 根据路径和方法查找API定义
-            ApiDefinition apiDefinition = apiDefinitionService.findByPathAndMethod(path, method);
-            if (Objects.isNull(apiDefinition)) {
+            AppResources byPathAndMethod = appResourcesService.findByPathAndMethod(path, method, contextPath);
+            if (Objects.isNull(byPathAndMethod)) {
                 throw new BusinessException(50001, "API不存在");
             }
 
             // 2. 查找已发布的版本
-            ApiVersion apiVersion = apiVersionService.findPublishedVersionByApiId(apiDefinition.getId());
+            ApiVersion apiVersion = apiVersionService.findPublishedVersionByApiId(byPathAndMethod.getId());
             if (Objects.isNull(apiVersion)) {
                 throw new BusinessException(50001, "API未发布");
             }
@@ -53,11 +53,11 @@ public class DynamicExecutionService {
             if (apiVersion.getSupportsPaging() != null && apiVersion.getSupportsPaging().equals(1)) {
                 int pageNum = Integer.parseInt(params.getOrDefault(DEFAULT_PAGE_NUM_KEY, "1").toString());
                 int pageSize = Integer.parseInt(params.getOrDefault(DEFAULT_PAGE_SIZE_KEY, "20").toString());
-                return executeApiWithPagination(apiDefinition, apiVersion, params, pageNum, pageSize);
+                return executeApiWithPagination(byPathAndMethod, apiVersion, params, pageNum, pageSize);
             }
 
             // 3. 获取数据源名称
-            DataSource dataSource = dataSourceService.get(apiDefinition.getDatasourceId());
+            DataSource dataSource = dataSourceService.get(byPathAndMethod.getDatasourceId());
             if (Objects.isNull(dataSource)) {
                 throw new BusinessException(50001, "数据源不存在");
             }
@@ -97,13 +97,13 @@ public class DynamicExecutionService {
     }
 
     public SqlExecutor.PaginatedResult executeApiWithPagination(
-            ApiDefinition apiDefinition,
+            AppResources appResources,
             ApiVersion apiVersion,
             Map<String, Object> params,
             int pageNum,
             int pageSize) {
         try {
-            DataSource dataSource = dataSourceService.get(apiDefinition.getDatasourceId());
+            DataSource dataSource = dataSourceService.get(appResources.getDatasourceId());
             if (Objects.isNull(dataSource)) {
                 throw new BusinessException(50001, "数据源不存在");
             }
@@ -125,7 +125,7 @@ public class DynamicExecutionService {
             return sqlExecutor.executeQueryWithPagination(
                     dataSource, parsedSql.getSql(), paramValues, pageNum, pageSize);
         } catch (Exception e) {
-            logger.error("执行分页API失败: {} {}", apiDefinition.getMethod(), apiDefinition.getPath(), e);
+            logger.error("执行分页API失败: {} {}", appResources.getMethod(), appResources.getPath(), e);
             throw new BusinessException(50001, "API执行失败: " + e.getMessage());
         }
     }

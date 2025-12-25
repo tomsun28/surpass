@@ -2,52 +2,14 @@ import request from "../../utils/Request.js";
 
 export function list(): any {
     return request({
-        url: '/apis',
+        url: '/app-resources/list',
         method: 'get'
-    })
-}
-
-export function pageApi(params: any): any {
-    return request({
-        url: '/apis/page',
-        method: 'get',
-        params: params
     })
 }
 
 export function getById(id : any): any {
     return request({
-        url: `/apis/${id}`,
+        url: `/app-resources/get/${id}`,
         method: 'get'
-    })
-}
-
-export function getByDatasourceId(datasourceId : any): any {
-    return request({
-        url: `/apis/datasource/${datasourceId}`,
-        method: 'get'
-    })
-}
-
-export function create(data : any): any {
-    return request({
-        url: '/apis',
-        method: 'post',
-        data: data
-    })
-}
-
-export function update(id : any, data: any): any {
-    return request({
-        url: `/apis/${id}`,
-        method: 'put',
-        data: data
-    })
-}
-
-export function deleteData(id : any): any {
-    return request({
-        url: `/apis/delete?ids=` + id,
-        method: 'delete'
     })
 }
