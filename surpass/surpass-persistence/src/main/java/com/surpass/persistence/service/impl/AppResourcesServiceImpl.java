@@ -25,10 +25,7 @@ import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.dromara.mybatis.jpa.update.LambdaUpdateWrapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.surpass.persistence.util.ResourceClassify.MENU;
 import static com.surpass.persistence.util.ResourceClassify.OPEN_API;
@@ -51,8 +48,6 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
     public Message<String> create(AppResourcesChangeDto dto) {
         AppResources appResources = BeanUtil.copyProperties(dto, AppResources.class);
 
-        isExistDuplicate(appResources);
-
         ResourceClassify classify = ResourceClassify.from(dto.getClassify());
 
         switch (classify) {
@@ -69,8 +64,6 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
     @Override
     public Message<String> updateResources(AppResourcesChangeDto dto) {
         AppResources appResources = BeanUtil.copyProperties(dto, AppResources.class);
-
-        isExistDuplicate(appResources);
 
         ResourceClassify classify = ResourceClassify.from(dto.getClassify());
 
@@ -158,6 +151,8 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
     }
 
     private void validateOpenApi(AppResources r) {
+        isExistDuplicate(r);
+
         requireNotBlank(r.getDatasourceId(), 50001, "请选择OpenApi所属的数据源");
         requireNotBlank(r.getPath(), 50001, "请填写请求地址");
         requireNotBlank(r.getMethod(), 50001, "请填写请求方式");
@@ -169,6 +164,18 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
 
     private void validateMenu(AppResources r) {
         requireNotBlank(r.getPath(), 50001, "请填写请求路径");
+        if (Objects.nonNull(r.getId())) {
+            if (r.getParentId() == null || "0".equals(r.getParentId())) {
+                return;
+            }
+            if (r.getId().equals(r.getParentId())) {
+                throw new BusinessException(50001, "父级资源不能选择自己");
+            }
+            List<String> childIds = appResourcesMapper.selectAllDescendantIds(r.getId());
+            if (childIds.contains(r.getParentId())) {
+                throw new BusinessException(50001, "父级资源不能选择自己的子级");
+            }
+        }
     }
 
     private void validateApi(AppResources r) {

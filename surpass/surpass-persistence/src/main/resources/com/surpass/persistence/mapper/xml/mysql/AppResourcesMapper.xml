@@ -20,4 +20,29 @@
         </if>
         ORDER BY m.sort_index ASC, m.created_date DESC
     </select>
+
+    <select id="selectAllDescendantIds" resultType="string">
+        WITH RECURSIVE resource_tree AS (
+            -- 起点：当前节点的直接子节点
+            SELECT
+                id,
+                parent_id
+            FROM surpass_app_resources
+            WHERE parent_id = #{rootId}
+              AND deleted = 'n'
+
+            UNION ALL
+
+            -- 递归：继续向下找
+            SELECT
+                r.id,
+                r.parent_id
+            FROM surpass_app_resources r
+                     INNER JOIN resource_tree rt
+                                ON r.parent_id = rt.id
+            WHERE r.deleted = 'n'
+        )
+        SELECT id FROM resource_tree
+    </select>
+
 </mapper>

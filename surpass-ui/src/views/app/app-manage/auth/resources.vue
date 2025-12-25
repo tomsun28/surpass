@@ -251,6 +251,7 @@
           <el-col :span="12">
             <el-form-item label="父级菜单" prop="parentId">
               <el-tree-select
+                  clearable
                   v-model="formData.parentId"
                   :data="dataOptionsMenu"
                   :props="defaultProps"
@@ -334,7 +335,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="handleDialogClose">取消</el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="submitting">
+          <el-button type="primary" @click="handleSubmit">
             保存
           </el-button>
         </div>
