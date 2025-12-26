@@ -7,6 +7,8 @@ import com.surpass.entity.app.dto.AppPageDto;
 import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.dromara.mybatis.jpa.service.IJpaService;
 
+import java.util.List;
+
 public interface AppService extends IJpaService<App> {
     Message<String> create(AppChangeDto dto);
 
@@ -19,4 +21,6 @@ public interface AppService extends IJpaService<App> {
     void revokeToken(String token);
 
     JpaPageResults<App> fetchPageResults(AppPageDto dto);
+
+    Message<String> deleteApp(List<String> ids);
 }

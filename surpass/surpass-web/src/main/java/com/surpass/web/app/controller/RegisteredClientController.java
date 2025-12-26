@@ -60,12 +60,8 @@ public class RegisteredClientController {
     }
 
     @DeleteMapping(value = {"/delete"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Message<RegisteredClient> delete(@RequestParam("ids") List<String> ids) {
-        if (clientService.softDelete(ids)) {
-            return new Message<>(Message.SUCCESS);
-        } else {
-            return new Message<>(Message.FAIL);
-        }
+    public Message<String> delete(@RequestParam("ids") List<String> ids) {
+       return clientService.deleteClient(ids);
     }
 
     @GetMapping("/list")

@@ -4,10 +4,12 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.BCrypt;
 import com.surpass.entity.Message;
 import com.surpass.entity.app.App;
+import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppChangeDto;
 import com.surpass.entity.app.dto.AppPageDto;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.AppMapper;
+import com.surpass.persistence.service.AppResourcesService;
 import com.surpass.persistence.service.AppService;
 import com.surpass.security.TokenStore;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
@@ -35,6 +38,8 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
     private static final Logger logger = LoggerFactory.getLogger(AppServiceImpl.class);
 
     private final AppMapper appMapper;
+
+    private final AppResourcesService appResourcesService;
 
     private final TokenStore tokenStore;
 
@@ -99,6 +104,19 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
         app.setDeleted("n");
         dto.build();
         return super.fetch(dto, app);
+    }
+
+    @Override
+    @Transactional
+    public Message<String> deleteApp(List<String> ids) {
+        LambdaQuery<AppResources> wrapper = new LambdaQuery<>();
+        wrapper.in(AppResources::getAppId, ids);
+        if (appResourcesService.count(wrapper) > 0) {
+            throw new BusinessException(50001, "请先删除当前应用下的资源再进行删除操作");
+        }
+
+        boolean result = super.softDelete(ids);
+        return result ? Message.ok("删除成功") : Message.failed("删除失败");
     }
 
     private void checkAppCode(AppChangeDto dto, boolean isEdit) {

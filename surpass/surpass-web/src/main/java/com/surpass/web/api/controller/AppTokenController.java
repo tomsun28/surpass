@@ -78,12 +78,8 @@ public class AppTokenController {
     }
 
     @DeleteMapping(value = {"/delete"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Message<App> delete(@RequestParam("ids") List<String> ids) {
-        if (appService.softDelete(ids)) {
-            return new Message<>(Message.SUCCESS);
-        } else {
-            return new Message<>(Message.FAIL);
-        }
+    public Message<String> delete(@RequestParam("ids") List<String> ids) {
+       return appService.deleteApp(ids);
     }
 
 }
