@@ -78,6 +78,7 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
             case MENU     -> validateMenu(appResources);
             case API      -> validateApi(appResources);
         }
+        validateParent(appResources);
 
         boolean result = super.update(appResources);
         return result ? Message.ok("修改成功") : Message.failed("修改失败");
@@ -101,17 +102,17 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
         // 2. 构建完整资源树
         List<MapTree<String>> resourceTree = buildTree(allResources);
 
-        // 3. 构建菜单资源树（内存中过滤）
+     /*   // 3. 构建菜单资源树（内存中过滤）
         List<MapTree<String>> menuTree = buildTree(
                 allResources.stream()
                         .filter(r -> MENU.getCode().equals(r.getClassify()))
                         .toList()
-        );
+        );*/
 
         // 4. 返回结果
         Map<String, List<MapTree<String>>> result = new HashMap<>(2);
         result.put("resources", resourceTree);
-        result.put("resourcesMenu", menuTree);
+//        result.put("resourcesMenu", menuTree);
         return result;
     }
 
@@ -186,6 +187,10 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
 
     private void validateMenu(AppResources r) {
         requireNotBlank(r.getPath(), 50001, "请填写请求路径");
+
+    }
+
+    private void validateParent(AppResources r) {
         if (Objects.nonNull(r.getId())) {
             if (r.getParentId() == null || "0".equals(r.getParentId())) {
                 return;

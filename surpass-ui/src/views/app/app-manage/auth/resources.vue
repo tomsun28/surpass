@@ -253,7 +253,7 @@
               <el-tree-select
                   clearable
                   v-model="formData.parentId"
-                  :data="dataOptionsMenu"
+                  :data="dataOptions"
                   :props="defaultProps"
                   check-strictly
                   value-key="id"
@@ -627,10 +627,10 @@ function loadTree() {
     treeDataMenu.value = []
 
     collectExpandIds(res.data.resources || [], treeData, 1)
-    collectExpandIds(res.data.resourcesMenu || [], treeDataMenu, 1)
+    // collectExpandIds(res.data.resourcesMenu || [], treeDataMenu, 1)
 
     dataOptions.value = res.data.resources;
-    dataOptionsMenu.value = res.data.resourcesMenu;
+    // dataOptionsMenu.value = res.data.resourcesMenu;
   })
 }
 
