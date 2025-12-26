@@ -88,8 +88,13 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
                 String path = extractApiPath(request);
                 // 2.应用上下文
                 String contextPath =  "/"+path.split("/")[1];
+                // 3.资源上下文
+                String resourcePath = path.substring(contextPath.length());
                 request.setAttribute(ConstsApiAttribute.API_REQUEST_PATH, path);
-                request.setAttribute(ConstsApiAttribute.API_REQUEST_CONTEXTPATH, contextPath);
+                request.setAttribute(ConstsApiAttribute.API_REQUEST_CONTEXT_PATH, contextPath);
+                request.setAttribute(ConstsApiAttribute.API_REQUEST_RESOURCE_PATH, resourcePath);
+                logger.debug("path {} , contextPath {} , resourcePath {} ",path,contextPath,resourcePath);
+               
                 return true;
             }
         }

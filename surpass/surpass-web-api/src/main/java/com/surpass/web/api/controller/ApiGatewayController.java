@@ -78,10 +78,12 @@ public class ApiGatewayController {
             // 1. 获取请求路径
             String path = request.getAttribute(ConstsApiAttribute.API_REQUEST_PATH).toString();
             // 2.应用上下文
-            String contextPath =  request.getAttribute(ConstsApiAttribute.API_REQUEST_CONTEXTPATH).toString();
-            // 2. 执行API
-            Object result = dynamicExecutionService.executeApi(contextPath,path, method.name(), paramMap);
-            // 3. 渲染响应
+            String contextPath =  request.getAttribute(ConstsApiAttribute.API_REQUEST_CONTEXT_PATH).toString();
+            // 3.资源上下文
+            String resourcePath =request.getAttribute(ConstsApiAttribute.API_REQUEST_RESOURCE_PATH).toString();
+            // 4. 执行API
+            Object result = dynamicExecutionService.executeApi(contextPath,path,resourcePath, method.name(), paramMap);
+            // 5. 渲染响应
             Object response = responseTemplateRenderer.renderResponse(
                     getDefaultResponseTemplate(), result);
             return ResponseEntity.ok()
