@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @Data
-public class RegisteredClientRelationDto {
+public class RegisteredClientPermissionDto {
 
     @NotEmpty(message = "客户端ID不能为空")
     private String clientId;

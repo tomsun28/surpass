@@ -1,7 +1,7 @@
 package com.surpass.web.app.controller;
 
 import com.surpass.entity.Message;
-import com.surpass.entity.RegisteredClientRelation;
+import com.surpass.entity.ClientPermission;
 import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
@@ -9,7 +9,7 @@ import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.entity.app.dto.ClientAuthzDto;
 import com.surpass.persistence.service.AppResourcesService;
 import com.surpass.persistence.service.AppService;
-import com.surpass.persistence.service.RegisteredClientRelationService;
+import com.surpass.persistence.service.ClientPermissionService;
 import com.surpass.validate.AddGroup;
 import com.surpass.validate.EditGroup;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class AppResourcesController {
 
     private final AppService appService;
 
-    private final RegisteredClientRelationService registeredClientRelationService;
+    private final ClientPermissionService clientPermissionService;
 
     @PostMapping("/add")
     public Message<String> addResources(@Validated(value = AddGroup.class) @RequestBody AppResourcesChangeDto dto) {
@@ -83,12 +83,12 @@ public class AppResourcesController {
 
     @PostMapping("/clientAuthz")
     public Message<String> clientAuthz(@Validated @RequestBody ClientAuthzDto dto) {
-        return registeredClientRelationService.saveClientAppRelation(dto);
+        return clientPermissionService.saveClientAppRelation(dto);
     }
 
     @GetMapping("/getClientAuthz")
-    public Message<List<RegisteredClientRelation>> getClientAuthz(@ParameterObject AppResourcesPageDto dto) {
-        return registeredClientRelationService.getClientAuthz(dto);
+    public Message<List<ClientPermission>> getClientAuthz(@ParameterObject AppResourcesPageDto dto) {
+        return clientPermissionService.getClientAuthz(dto);
     }
 
     @GetMapping("/list")

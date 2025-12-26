@@ -17,9 +17,9 @@ import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "surpass_client_app_relation")
+@Table(name = "surpass_client_permission")
 @Data
-public class RegisteredClientRelation extends JpaEntity implements Serializable {
+public class ClientPermission extends JpaEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -5956203862521328378L;

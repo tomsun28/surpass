@@ -1,8 +1,8 @@
 package com.surpass.persistence.service.impl;
 
 import cn.hutool.core.lang.UUID;
-import com.surpass.entity.RegisteredClientRelation;
-import com.surpass.persistence.service.RegisteredClientRelationService;
+import com.surpass.entity.ClientPermission;
+import com.surpass.persistence.service.ClientPermissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +37,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RegisteredClientServiceImpl extends JpaServiceImpl<RegisteredClientMapper, RegisteredClient> implements RegisteredClientService {
 
-    private final RegisteredClientRelationService registeredClientRelationService;
+    private final ClientPermissionService registeredClientRelationService;
 
 	static final int SECRET_LENGTH = 32;
 
@@ -104,8 +104,8 @@ public class RegisteredClientServiceImpl extends JpaServiceImpl<RegisteredClient
     @Transactional
     public Message<String> deleteClient(List<String> ids) {
         //删除客户端资源关系
-        LambdaQuery<RegisteredClientRelation> registeredClientRelationLambdaQuery = new LambdaQuery<>();
-        registeredClientRelationLambdaQuery.in(RegisteredClientRelation::getClientId, ids);
+        LambdaQuery<ClientPermission> registeredClientRelationLambdaQuery = new LambdaQuery<>();
+        registeredClientRelationLambdaQuery.in(ClientPermission::getClientId, ids);
         registeredClientRelationService.delete(registeredClientRelationLambdaQuery);
         //删除客户端
         boolean result = super.softDelete(ids);

@@ -1,13 +1,11 @@
 package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
-import com.surpass.entity.RegisteredClientRelation;
+import com.surpass.entity.ClientPermission;
 import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.entity.app.dto.ClientAuthzDto;
-import com.surpass.entity.dto.RegisteredClientChangeDto;
-import com.surpass.entity.dto.RegisteredClientRelationDto;
-import com.surpass.persistence.mapper.AppClientRelationMapper;
-import com.surpass.persistence.service.RegisteredClientRelationService;
+import com.surpass.persistence.mapper.ClientPermissionMapper;
+import com.surpass.persistence.service.ClientPermissionService;
 import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.springframework.stereotype.Service;
@@ -26,12 +24,12 @@ import java.util.stream.Collectors;
  */
 
 @Service
-public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClientRelationMapper, RegisteredClientRelation> implements RegisteredClientRelationService {
+public class ClientPermissionServiceImpl extends JpaServiceImpl<ClientPermissionMapper, ClientPermission> implements ClientPermissionService {
 
     @Override
-    public List<RegisteredClientRelation> getClientApps(String clientId) {
-        LambdaQuery<RegisteredClientRelation> wrapper = new LambdaQuery<>();
-        wrapper.eq(RegisteredClientRelation::getClientId, clientId);
+    public List<ClientPermission> getClientApps(String clientId) {
+        LambdaQuery<ClientPermission> wrapper = new LambdaQuery<>();
+        wrapper.eq(ClientPermission::getClientId, clientId);
         return super.query(wrapper);
     }
 
@@ -48,14 +46,14 @@ public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClien
         }
 
         // 查询数据库中已经存在的关联
-        LambdaQuery<RegisteredClientRelation> wrapper = new LambdaQuery<>();
-        wrapper.eq(RegisteredClientRelation::getClientId, clientId);
-        wrapper.eq(RegisteredClientRelation::getAppId, appId);
-        List<RegisteredClientRelation> relationsInDb = super.query(wrapper);
+        LambdaQuery<ClientPermission> wrapper = new LambdaQuery<>();
+        wrapper.eq(ClientPermission::getClientId, clientId);
+        wrapper.eq(ClientPermission::getAppId, appId);
+        List<ClientPermission> relationsInDb = super.query(wrapper);
 
         // 已存在的 appId 集合（用 Set 提升 contains 性能）
         Set<String> existAppIdSet = relationsInDb.stream()
-                .map(RegisteredClientRelation::getResourceId)
+                .map(ClientPermission::getResourceId)
                 .collect(Collectors.toSet());
 
         // 去重并做快速查询
@@ -73,9 +71,9 @@ public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClien
 
         // 执行新增
         if (!toAdd.isEmpty()) {
-            List<RegisteredClientRelation> insertList = toAdd.stream()
+            List<ClientPermission> insertList = toAdd.stream()
                     .map(id -> {
-                        RegisteredClientRelation r = new RegisteredClientRelation();
+                        ClientPermission r = new ClientPermission();
                         r.setClientId(clientId);
                         r.setAppId(appId);
                         r.setResourceId(id);
@@ -87,10 +85,10 @@ public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClien
 
         // 执行删除
         if (!toDelete.isEmpty()) {
-            LambdaQuery<RegisteredClientRelation> deleteWrapper = new LambdaQuery<>();
-            deleteWrapper.eq(RegisteredClientRelation::getClientId, clientId)
-                    .eq(RegisteredClientRelation::getAppId, appId)
-                    .in(RegisteredClientRelation::getResourceId, toDelete);
+            LambdaQuery<ClientPermission> deleteWrapper = new LambdaQuery<>();
+            deleteWrapper.eq(ClientPermission::getClientId, clientId)
+                    .eq(ClientPermission::getAppId, appId)
+                    .in(ClientPermission::getResourceId, toDelete);
             super.delete(deleteWrapper);
         }
 
@@ -98,14 +96,14 @@ public class RegisteredClientRelationServiceImpl extends JpaServiceImpl<AppClien
     }
 
     @Override
-    public Message<List<RegisteredClientRelation>> getClientAuthz(AppResourcesPageDto dto) {
+    public Message<List<ClientPermission>> getClientAuthz(AppResourcesPageDto dto) {
         String appId = dto.getAppId();
         String clientId = dto.getClientId();
-        LambdaQuery<RegisteredClientRelation> wrapper = new LambdaQuery<>();
-        wrapper.eq(RegisteredClientRelation::getAppId, appId);
-        wrapper.eq(RegisteredClientRelation::getClientId, clientId);
+        LambdaQuery<ClientPermission> wrapper = new LambdaQuery<>();
+        wrapper.eq(ClientPermission::getAppId, appId);
+        wrapper.eq(ClientPermission::getClientId, clientId);
 
-        List<RegisteredClientRelation> query = super.query(wrapper);
+        List<ClientPermission> query = super.query(wrapper);
 
         return Message.ok(query);
     }

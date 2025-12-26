@@ -1,7 +1,7 @@
 package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
-import com.surpass.entity.RegisteredClientRelation;
+import com.surpass.entity.ClientPermission;
 import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
@@ -11,7 +11,7 @@ import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.AppMapper;
 import com.surpass.persistence.mapper.AppResourcesMapper;
 import com.surpass.persistence.service.AppResourcesService;
-import com.surpass.persistence.service.RegisteredClientRelationService;
+import com.surpass.persistence.service.ClientPermissionService;
 import com.surpass.persistence.util.ResourceClassify;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -47,7 +47,7 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
 
     private final AppMapper appMapper;
 
-    private final RegisteredClientRelationService registeredClientRelationService;
+    private final ClientPermissionService registeredClientRelationService;
 
     @Override
     public Message<String> create(AppResourcesChangeDto dto) {
@@ -138,8 +138,8 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
             throw new BusinessException(50001, "请先移除资源的子级菜单再进行删除操作");
         }
         //删除资源客户端关联
-        LambdaQuery<RegisteredClientRelation> registeredClientRelationLambdaQuery = new LambdaQuery<>();
-        registeredClientRelationLambdaQuery.in(RegisteredClientRelation::getResourceId, resourcesIds);
+        LambdaQuery<ClientPermission> registeredClientRelationLambdaQuery = new LambdaQuery<>();
+        registeredClientRelationLambdaQuery.in(ClientPermission::getResourceId, resourcesIds);
         registeredClientRelationService.delete(registeredClientRelationLambdaQuery);
         //删除资源
         boolean result = super.softDelete(resourcesIds);

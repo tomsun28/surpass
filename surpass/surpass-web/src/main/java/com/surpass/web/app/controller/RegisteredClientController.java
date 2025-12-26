@@ -3,11 +3,11 @@ package com.surpass.web.app.controller;
 import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.entity.Message;
 import com.surpass.entity.RegisteredClient;
-import com.surpass.entity.RegisteredClientRelation;
+import com.surpass.entity.ClientPermission;
 import com.surpass.entity.dto.RegisteredClientChangeDto;
 import com.surpass.entity.dto.RegisteredClientPageDto;
-import com.surpass.entity.dto.RegisteredClientRelationDto;
-import com.surpass.persistence.service.RegisteredClientRelationService;
+import com.surpass.entity.dto.RegisteredClientPermissionDto;
+import com.surpass.persistence.service.ClientPermissionService;
 import com.surpass.persistence.service.RegisteredClientService;
 import com.surpass.validate.AddGroup;
 import com.surpass.validate.EditGroup;
@@ -33,7 +33,7 @@ public class RegisteredClientController {
 
     private final RegisteredClientService clientService;
 
-    private final RegisteredClientRelationService clientRelationService;
+    private final ClientPermissionService clientRelationService;
 
     @PostMapping("/add")
     public Message<String> addApp(@Validated(value = AddGroup.class) @RequestBody RegisteredClientChangeDto dto) {
@@ -70,7 +70,7 @@ public class RegisteredClientController {
     }
 
     @GetMapping("/relate-app/{clientId}")
-    public Message<List<RegisteredClientRelation>> getClientApps(@PathVariable("clientId") String clientId) {
+    public Message<List<ClientPermission>> getClientApps(@PathVariable("clientId") String clientId) {
         return Message.ok(clientRelationService.getClientApps(clientId));
     }
 }
