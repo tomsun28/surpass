@@ -240,9 +240,9 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20" v-if="formData.classify === 'menu'">
+        <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="资源样式">
+            <el-form-item label="资源样式" v-if="formData.classify === 'menu'">
               <el-input readonly v-model="formData.resStyle" placeholder=""/>
               <icon-select style="padding-left: 0;padding-right: 0" v-model="formData.resStyle"
                            @selected="(name) => {formData.resStyle = name}"></icon-select>

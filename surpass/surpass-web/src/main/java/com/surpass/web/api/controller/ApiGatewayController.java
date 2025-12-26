@@ -50,13 +50,14 @@ public class ApiGatewayController  {
             Map<String, Object> params = extractRequestParams(request);
 
             // 3. 执行API（传入contextPath）
-            Object result = dynamicExecutionService.executeApi(
-                    pathInfo.getApiPath(),
-                    method,
-                    pathInfo.getContextPath(),
-                    params
-            );
+//            Object result = dynamicExecutionService.executeApi(
+//                    pathInfo.getApiPath(),
+//                    method,
+//                    pathInfo.getContextPath(),
+//                    params
+//            );
 
+            Object result = new Object();
             // 4. 渲染响应
             Object response = responseTemplateRenderer.renderResponse(
                     getDefaultResponseTemplate(), result);
