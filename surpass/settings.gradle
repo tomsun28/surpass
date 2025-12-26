@@ -5,6 +5,7 @@
 rootProject.name = 'surpass'
 
 
+include ('surpass-api')
 //Common
 include ('surpass-commons:surpass-common')
 include ('surpass-commons:surpass-core')

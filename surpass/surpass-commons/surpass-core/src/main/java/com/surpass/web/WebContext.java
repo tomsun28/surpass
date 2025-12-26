@@ -45,6 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import com.surpass.entity.ApiRequestUri;
 import com.surpass.entity.Institutions;
 import com.surpass.util.DateUtils;
 import com.surpass.util.IdGenerator;
@@ -480,6 +481,25 @@ public final class WebContext {
 
     public static ModelAndView forward(String forwardUrl) {
         return new ModelAndView("forward:" + forwardUrl);
+    }
+    
+    public static ApiRequestUri explainRequestUri(HttpServletRequest request) {
+    		String requestUri = request.getRequestURI();
+        int indexOf = requestUri.indexOf("/api/");
+        if (indexOf < 0) {
+            throw new IllegalArgumentException("Missing /api prefix in URI: " + requestUri);
+        }
+        // 1. 获取请求路径
+        String requestPath = requestUri.substring(indexOf + "/api/".length() - 1);
+        // 2.应用上下文
+        String contextPath =  "/"+requestPath.split("/")[1];
+        // 3.资源上下文
+        String resourcePath = requestPath.substring(contextPath.length());
+        return ApiRequestUri.builder()
+        			.requestPath(requestPath)
+        			.contextPath(contextPath)
+        			.resourcePath(resourcePath)
+        			.build();
     }
 
 }

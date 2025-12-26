@@ -5,7 +5,7 @@ export const gatewayApi = {
     execute: (path : any, method = 'GET', contextPath = '/', params = {}) => {
         const config = {
             method,
-            url: `/api-v1${contextPath}${path}`,
+            url: `/api${contextPath}${path}`,
             params: method === 'GET' ? params : {},
             data: method !== 'GET' ? params : {}
         }

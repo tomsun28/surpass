@@ -34,8 +34,10 @@ import com.surpass.authn.token.TokenManager;
 import com.surpass.authn.web.AuthorizationUtils;
 import com.surpass.constants.ConstsApiAttribute;
 import com.surpass.crypto.password.PasswordReciprocal;
+import com.surpass.entity.ApiRequestUri;
 import com.surpass.util.AuthorizationHeader;
 import com.surpass.util.AuthorizationHeaderUtils;
+import com.surpass.web.WebContext;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,8 +73,8 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
         //判断Authorization
         if(headerCredential != null && StringUtils.isNotBlank(headerCredential.getCredential()) && headerCredential.isBearer() ){
             UsernamePasswordAuthenticationToken authenticationToken = null;
-        	String accessToken = passwordReciprocal.decoder(headerCredential.getCredential());
-        	AccessToken token = tokenManager.get(accessToken);
+            String accessToken = passwordReciprocal.decoder(headerCredential.getCredential());
+            AccessToken token = tokenManager.get(accessToken);
             if(token != null ) {
                 ArrayList<SimpleGrantedAuthority> grantedAuthoritys = new ArrayList<>();
                 grantedAuthoritys.add(new SimpleGrantedAuthority("ROLE_USER"));
@@ -84,16 +86,11 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
             
             if(authenticationToken !=null && authenticationToken.isAuthenticated()) {
                 AuthorizationUtils.setAuthentication(authenticationToken);
-                // 1. 获取请求路径
-                String path = extractApiPath(request);
-                // 2.应用上下文
-                String contextPath =  "/"+path.split("/")[1];
-                // 3.资源上下文
-                String resourcePath = path.substring(contextPath.length());
-                request.setAttribute(ConstsApiAttribute.API_REQUEST_PATH, path);
-                request.setAttribute(ConstsApiAttribute.API_REQUEST_CONTEXT_PATH, contextPath);
-                request.setAttribute(ConstsApiAttribute.API_REQUEST_RESOURCE_PATH, resourcePath);
-                logger.debug("path {} , contextPath {} , resourcePath {} ",path,contextPath,resourcePath);
+                ApiRequestUri apiRequestUri =WebContext.explainRequestUri(request);
+                request.setAttribute(ConstsApiAttribute.API_REQUEST_PATH, apiRequestUri.getRequestPath());
+                request.setAttribute(ConstsApiAttribute.API_REQUEST_CONTEXT_PATH, apiRequestUri.getContextPath());
+                request.setAttribute(ConstsApiAttribute.API_REQUEST_RESOURCE_PATH, apiRequestUri.getResourcePath());
+                logger.debug("ApiRequestUri {} ",apiRequestUri);
                
                 return true;
             }
@@ -105,13 +102,5 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
         
         return false;
     }
-    
-    private String extractApiPath(HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        int indexOf = requestUri.indexOf("/api/");
-        if (indexOf < 0) {
-            throw new IllegalArgumentException("Missing /api prefix in URI: " + requestUri);
-        }
-        return requestUri.substring(indexOf + "/api/".length() - 1);
-    }
+
 }

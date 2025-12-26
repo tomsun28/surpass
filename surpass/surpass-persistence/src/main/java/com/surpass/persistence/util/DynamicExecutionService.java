@@ -1,5 +1,6 @@
 package com.surpass.persistence.util;
 
+import com.surpass.entity.ApiRequestUri;
 import com.surpass.entity.api.ApiVersion;
 import com.surpass.entity.api.DataSource;
 import com.surpass.entity.app.AppResources;
@@ -35,10 +36,10 @@ public class DynamicExecutionService {
     private final String DEFAULT_PAGE_NUM_KEY = "_pageNum";
     private final String DEFAULT_PAGE_SIZE_KEY = "_pageSize";
 
-    public Object executeApi(String contextPath,String path,String resourcePath, String method,  Map<String, Object> params) {
+    public Object executeApi(ApiRequestUri apiRequestUri, String method,  Map<String, Object> params) {
         try {
             // 1. 根据路径和方法查找API定义
-            AppResources byPathAndMethod = appResourcesService.findByPathAndMethod(resourcePath, method, contextPath);
+            AppResources byPathAndMethod = appResourcesService.findByPathAndMethod(apiRequestUri.getResourcePath(), method, apiRequestUri.getContextPath());
             if (Objects.isNull(byPathAndMethod)) {
                 throw new BusinessException(50001, "API不存在");
             }
@@ -91,7 +92,7 @@ public class DynamicExecutionService {
             }
 
         } catch (Exception e) {
-            logger.error("执行API失败: {} {}", method, path, e);
+            logger.error("执行API失败: {} {}", method, apiRequestUri.getRequestPath(), e);
             throw new BusinessException(50001, "API执行失败: " + e.getMessage());
         }
     }
