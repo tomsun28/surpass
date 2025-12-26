@@ -1,9 +1,9 @@
 package com.surpass.web.swagger.controller;
 
-import com.surpass.entity.api.ApiDefinition;
 import com.surpass.entity.api.ApiVersion;
-import com.surpass.persistence.service.ApiDefinitionService;
+import com.surpass.entity.app.AppResources;
 import com.surpass.persistence.service.ApiVersionService;
+import com.surpass.persistence.service.AppResourcesService;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Components;
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/v3/api-docs")
 public class SwaggerApiController {
 
-    private final ApiDefinitionService apiDefinitionService;
+    private final AppResourcesService appResourcesService;
     private final ApiVersionService apiVersionService;
     
     @Value("${server.port:2154}")
@@ -309,9 +309,9 @@ public class SwaggerApiController {
         Paths paths = new Paths();
         
         // 获取所有API定义
-        List<ApiDefinition> apiDefinitions = apiDefinitionService.findAll();
+        List<AppResources> apiDefinitions = appResourcesService.findAll();
         
-        for (ApiDefinition apiDefinition : apiDefinitions) {
+        for (AppResources apiDefinition : apiDefinitions) {
             // 获取已发布的版本
             ApiVersion publishedVersion = apiVersionService.findPublishedVersionByApiId(apiDefinition.getId());
             
@@ -328,7 +328,7 @@ public class SwaggerApiController {
     /**
      * 构建单个路径项
      */
-    private io.swagger.v3.oas.models.PathItem buildPathItem(ApiDefinition apiDefinition, ApiVersion apiVersion) {
+    private io.swagger.v3.oas.models.PathItem buildPathItem(AppResources apiDefinition, ApiVersion apiVersion) {
         io.swagger.v3.oas.models.PathItem pathItem = new io.swagger.v3.oas.models.PathItem();
         
         // 构建操作
@@ -388,7 +388,7 @@ public class SwaggerApiController {
     /**
      * 构建参数列表
      */
-    private List<Parameter> buildParameters(ApiDefinition apiDefinition, ApiVersion apiVersion) {
+    private List<Parameter> buildParameters(AppResources apiDefinition, ApiVersion apiVersion) {
         List<Parameter> parameters = new ArrayList<>();
         
         // 提取路径参数

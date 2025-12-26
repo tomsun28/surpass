@@ -35,7 +35,7 @@ public class DynamicExecutionService {
     private final String DEFAULT_PAGE_NUM_KEY = "_pageNum";
     private final String DEFAULT_PAGE_SIZE_KEY = "_pageSize";
 
-    public Object executeApi(String path, String method, String contextPath, Map<String, Object> params) {
+    public Object executeApi(String contextPath,String path, String method,  Map<String, Object> params) {
         try {
             // 1. 根据路径和方法查找API定义
             AppResources byPathAndMethod = appResourcesService.findByPathAndMethod(path, method, contextPath);
