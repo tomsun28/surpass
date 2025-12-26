@@ -112,4 +112,9 @@ public class RegisteredClientServiceImpl extends JpaServiceImpl<RegisteredClient
 
         return result ? Message.ok("删除成功") : Message.failed("删除失败");
     }
+
+	@Override
+	public void updateLastLoginTime(RegisteredClient client) {
+		this.getMapper().updateLastLoginTime(client);
+	}
 }
