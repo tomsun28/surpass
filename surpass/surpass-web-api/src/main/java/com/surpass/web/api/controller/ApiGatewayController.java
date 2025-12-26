@@ -1,5 +1,6 @@
 package com.surpass.web.api.controller;
 
+import com.surpass.constants.ConstsApiAttribute;
 import com.surpass.persistence.util.DynamicExecutionService;
 import com.surpass.persistence.util.ResponseTemplateRenderer;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -25,7 +27,7 @@ public class ApiGatewayController {
     public ResponseEntity<Object> getHandle(
     				HttpServletRequest request,
     				@RequestParam(required = false) Map<String, Object> paramMap) {
-        return handleRequest(RequestMethod.GET, request,paramMap);
+        return handleRequest(RequestMethod.GET, request,combineParam(null,paramMap));
     }
 
     @PostMapping("/**")
@@ -33,9 +35,7 @@ public class ApiGatewayController {
     				HttpServletRequest request,
     				@RequestBody(required = false) Map<String, Object> bodyMap,
 					@RequestParam(required = false) Map<String, Object> paramMap) {
-    	//参数合并
-    	paramMap.putAll(bodyMap);
-        return handleRequest(RequestMethod.POST, request,paramMap);
+        return handleRequest(RequestMethod.POST, request,combineParam(bodyMap,paramMap));
     }
 
     @PutMapping("/**")
@@ -43,16 +43,31 @@ public class ApiGatewayController {
     				HttpServletRequest request,
     				@RequestBody(required = false) Map<String, Object> bodyMap,
 					@RequestParam(required = false) Map<String, Object> paramMap) {
-    	//参数合并
-    	paramMap.putAll(bodyMap);
-        return handleRequest(RequestMethod.PUT, request,paramMap);
+        return handleRequest(RequestMethod.PUT, request,combineParam(bodyMap,paramMap));
     }
 
     @DeleteMapping("/**")
     public ResponseEntity<Object> deleteHandle(
     				HttpServletRequest request,
     				@RequestParam(required = false) Map<String, Object> paramMap) {
-        return handleRequest(RequestMethod.DELETE, request,paramMap);
+        return handleRequest(RequestMethod.DELETE, request,combineParam(null,paramMap));
+    }
+    
+    /**
+     * 请求参数合并
+     * @param bodyMap
+     * @param paramMap
+     * @return
+     */
+    Map<String, Object> combineParam(Map<String, Object> bodyMap,Map<String, Object> paramMap){
+    	Map<String, Object> combinedParamMap = new HashMap<>();
+    	if(paramMap != null) {
+    		combinedParamMap.putAll(paramMap);
+    	}
+    	if(bodyMap != null) {
+    		combinedParamMap.putAll(bodyMap);
+    	}
+    	return combinedParamMap;
     }
 
     private ResponseEntity<Object> handleRequest(
@@ -61,9 +76,9 @@ public class ApiGatewayController {
     				Map<String, Object> paramMap) {
         try {
             // 1. 获取请求路径
-            String path = extractApiPath(request);
+            String path = request.getAttribute(ConstsApiAttribute.API_REQUEST_PATH).toString();
             // 2.应用上下文
-            String contextPath =  path.split("/")[0];
+            String contextPath =  request.getAttribute(ConstsApiAttribute.API_REQUEST_CONTEXTPATH).toString();
             // 2. 执行API
             Object result = dynamicExecutionService.executeApi(contextPath,path, method.name(), paramMap);
             // 3. 渲染响应
@@ -79,15 +94,6 @@ public class ApiGatewayController {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(renderErrorResponse("API执行失败: " + e.getMessage()));
         }
-    }
-
-    private String extractApiPath(HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
-        int indexOf = requestUri.indexOf("/api/");
-        if (indexOf < 0) {
-            throw new IllegalArgumentException("Missing /api prefix in URI: " + requestUri);
-        }
-        return requestUri.substring(indexOf + "/api/".length() - 1);
     }
 
     private String getDefaultResponseTemplate() {

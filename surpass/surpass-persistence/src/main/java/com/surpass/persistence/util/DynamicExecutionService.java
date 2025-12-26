@@ -37,8 +37,9 @@ public class DynamicExecutionService {
 
     public Object executeApi(String contextPath,String path, String method,  Map<String, Object> params) {
         try {
+        	String resourcePath = path.substring(contextPath.length());
             // 1. 根据路径和方法查找API定义
-            AppResources byPathAndMethod = appResourcesService.findByPathAndMethod(path, method, contextPath);
+            AppResources byPathAndMethod = appResourcesService.findByPathAndMethod(resourcePath, method, contextPath);
             if (Objects.isNull(byPathAndMethod)) {
                 throw new BusinessException(50001, "API不存在");
             }

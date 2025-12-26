@@ -35,8 +35,8 @@ public class TokenEndpoint {
     public Message<AccessToken> getToken(
     			@RequestParam(ConstsToken.CLIENT_ID) String clientId,
     			@RequestParam(ConstsToken.CLIENT_SECRET) String clientSecret,
-    			@RequestParam(ConstsToken.GRANT_TYPE) String grantType,
-    			@RequestParam(ConstsToken.REFRESH_TOKEN) String refreshToken) {
+    			@RequestParam(name=ConstsToken.GRANT_TYPE,required=false) String grantType,
+    			@RequestParam(name=ConstsToken.REFRESH_TOKEN,required=false) String refreshToken) {
     	RegisteredClient client = clientService.findByClientId(clientId);
     	Message<AccessToken> message = new Message<>(Message.FAIL);
     	

@@ -32,6 +32,7 @@ import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import com.surpass.authn.token.AccessToken;
 import com.surpass.authn.token.TokenManager;
 import com.surpass.authn.web.AuthorizationUtils;
+import com.surpass.constants.ConstsApiAttribute;
 import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.util.AuthorizationHeader;
 import com.surpass.util.AuthorizationHeaderUtils;
@@ -83,6 +84,12 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
             
             if(authenticationToken !=null && authenticationToken.isAuthenticated()) {
                 AuthorizationUtils.setAuthentication(authenticationToken);
+                // 1. 获取请求路径
+                String path = extractApiPath(request);
+                // 2.应用上下文
+                String contextPath =  "/"+path.split("/")[1];
+                request.setAttribute(ConstsApiAttribute.API_REQUEST_PATH, path);
+                request.setAttribute(ConstsApiAttribute.API_REQUEST_CONTEXTPATH, contextPath);
                 return true;
             }
         }
@@ -92,5 +99,14 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
         dispatcher.forward(request, response);
         
         return false;
+    }
+    
+    private String extractApiPath(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        int indexOf = requestUri.indexOf("/api/");
+        if (indexOf < 0) {
+            throw new IllegalArgumentException("Missing /api prefix in URI: " + requestUri);
+        }
+        return requestUri.substring(indexOf + "/api/".length() - 1);
     }
 }
