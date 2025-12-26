@@ -10,6 +10,8 @@ import com.surpass.persistence.service.RegisteredClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,6 +68,10 @@ public class TokenEndpoint {
         	}
     	}else {
     		message.setMessage("invalid_client_secret");
+    	}
+    	if(message.getCode() == Message.SUCCESS) {
+    		client.setLastLoginTime(new Date());
+    		clientService.updateLastLoginTime(client);
     	}
     	log.debug("accessToken {}",message);
         return message;

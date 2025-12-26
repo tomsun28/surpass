@@ -61,10 +61,11 @@
           @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column prop="clientId" label="客户端ID" align="center" min-width="200"
+                         :show-overflow-tooltip="true"></el-table-column>
         <el-table-column prop="clientName" label="客户端名称" align="center" min-width="120"
                          :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="clientId" label="客户端ID" align="center" min-width="150"
-                         :show-overflow-tooltip="true"></el-table-column>
+        
         <el-table-column prop="clientType" label="客户端类型" align="center" min-width="100">
           <template #default="scope">
             <dict-tag-number :options="client_type" :value="scope.row.clientType"/>

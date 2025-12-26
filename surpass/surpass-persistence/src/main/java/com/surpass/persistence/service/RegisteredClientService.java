@@ -22,5 +22,7 @@ public interface RegisteredClientService extends IJpaService<RegisteredClient> {
     public RegisteredClient generate(String id);
 
     Message<String> deleteClient(List<String> ids);
+    
+    public void updateLastLoginTime(RegisteredClient client);
 
 }
