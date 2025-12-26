@@ -73,11 +73,7 @@ public class AppResourcesController {
 
     @DeleteMapping(value = {"/delete"})
     public Message<String> delete(@RequestParam("ids") List<String> ids) {
-        if (appResourcesService.softDelete(ids)) {
-            return new Message<>("删除成功");
-        } else {
-            return new Message<>("删除失败");
-        }
+        return appResourcesService.deleteResources(ids);
     }
 
     @GetMapping(value={"/tree"})

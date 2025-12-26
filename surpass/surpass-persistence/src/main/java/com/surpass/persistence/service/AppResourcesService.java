@@ -21,4 +21,6 @@ public interface AppResourcesService extends IJpaService<AppResources> {
     Map<String, List<MapTree<String>>> tree(AppResourcesPageDto dto);
 
     AppResources findByPathAndMethod(String path, String method, String contextPath);
+
+    Message<String> deleteResources(List<String> resourcesIds);
 }

@@ -8,15 +8,19 @@ import com.surpass.entity.dto.RegisteredClientPageDto;
 import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.dromara.mybatis.jpa.service.IJpaService;
 
+import java.util.List;
+
 public interface RegisteredClientService extends IJpaService<RegisteredClient> {
     Message<String> create(RegisteredClientChangeDto dto);
 
     Message<String> updateApp(RegisteredClientChangeDto dto);
 
     JpaPageResults<RegisteredClient> fetchPageResults(RegisteredClientPageDto dto);
-    
+
     public RegisteredClient findByClientId(String clientId);
-    
+
     public RegisteredClient generate(String id);
+
+    Message<String> deleteClient(List<String> ids);
 
 }

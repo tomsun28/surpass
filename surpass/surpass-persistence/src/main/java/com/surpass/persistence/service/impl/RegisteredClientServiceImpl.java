@@ -1,6 +1,9 @@
 package com.surpass.persistence.service.impl;
 
 import cn.hutool.core.lang.UUID;
+import com.surpass.entity.RegisteredClientRelation;
+import com.surpass.persistence.service.RegisteredClientRelationService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.surpass.crypto.password.PasswordReciprocal;
@@ -20,6 +23,7 @@ import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.dromara.mybatis.jpa.update.LambdaUpdateWrapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,10 +34,13 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RegisteredClientServiceImpl extends JpaServiceImpl<RegisteredClientMapper, RegisteredClient> implements RegisteredClientService {
-    
+
+    private final RegisteredClientRelationService registeredClientRelationService;
+
 	static final int SECRET_LENGTH = 32;
-    
+
 	@Override
     public Message<String> create(RegisteredClientChangeDto dto) {
         checkClientName(dto, false);
@@ -92,4 +99,17 @@ public class RegisteredClientServiceImpl extends JpaServiceImpl<RegisteredClient
 		}
 		return client;
 	}
+
+    @Override
+    @Transactional
+    public Message<String> deleteClient(List<String> ids) {
+        //删除客户端资源关系
+        LambdaQuery<RegisteredClientRelation> registeredClientRelationLambdaQuery = new LambdaQuery<>();
+        registeredClientRelationLambdaQuery.in(RegisteredClientRelation::getClientId, ids);
+        registeredClientRelationService.delete(registeredClientRelationLambdaQuery);
+        //删除客户端
+        boolean result = super.softDelete(ids);
+
+        return result ? Message.ok("删除成功") : Message.failed("删除失败");
+    }
 }

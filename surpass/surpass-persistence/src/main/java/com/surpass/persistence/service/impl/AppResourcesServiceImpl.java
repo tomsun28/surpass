@@ -1,6 +1,7 @@
 package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
+import com.surpass.entity.RegisteredClientRelation;
 import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
@@ -10,6 +11,7 @@ import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.AppMapper;
 import com.surpass.persistence.mapper.AppResourcesMapper;
 import com.surpass.persistence.service.AppResourcesService;
+import com.surpass.persistence.service.RegisteredClientRelationService;
 import com.surpass.persistence.util.ResourceClassify;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -24,6 +26,7 @@ import org.dromara.mybatis.jpa.query.OrderBy;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.dromara.mybatis.jpa.update.LambdaUpdateWrapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -43,6 +46,8 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
     private final AppResourcesMapper appResourcesMapper;
 
     private final AppMapper appMapper;
+
+    private final RegisteredClientRelationService registeredClientRelationService;
 
     @Override
     public Message<String> create(AppResourcesChangeDto dto) {
@@ -122,6 +127,23 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
         wrapper.orderBy(AppResources::getCreatedDate, OrderBy.DESC.getOrder());
 
         return super.query(wrapper).stream().findFirst().orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public Message<String> deleteResources(List<String> resourcesIds) {
+        LambdaUpdateWrapper<AppResources> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.in(AppResources::getParentId, resourcesIds);
+        if (super.count(wrapper) > 0) {
+            throw new BusinessException(50001, "请先移除资源的子级菜单再进行删除操作");
+        }
+        //删除资源客户端关联
+        LambdaQuery<RegisteredClientRelation> registeredClientRelationLambdaQuery = new LambdaQuery<>();
+        registeredClientRelationLambdaQuery.in(RegisteredClientRelation::getResourceId, resourcesIds);
+        registeredClientRelationService.delete(registeredClientRelationLambdaQuery);
+        //删除资源
+        boolean result = super.softDelete(resourcesIds);
+        return result ? Message.ok("删除成功") : Message.failed("删除失败");
     }
 
     private List<MapTree<String>> buildTree(List<AppResources> resources) {
