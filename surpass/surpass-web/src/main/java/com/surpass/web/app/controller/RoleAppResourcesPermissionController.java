@@ -24,7 +24,8 @@ import java.util.List;
 @RequestMapping("/role-app-resources")
 @RequiredArgsConstructor
 public class RoleAppResourcesPermissionController {
-    private RoleAppResourcesPermissionService roleAppResourcesPermissionService;
+
+    private final RoleAppResourcesPermissionService roleAppResourcesPermissionService;
 
     @PostMapping("/authz")
     public Message<String> saveRoleAppRelation(@Validated @RequestBody RoleAppResourcesAuthzDto dto) {
