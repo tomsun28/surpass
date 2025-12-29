@@ -1,30 +1,18 @@
 package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
-import com.surpass.entity.RegisteredClient;
-import com.surpass.entity.ApiRequestUri;
 import com.surpass.entity.ClientPermission;
-import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.entity.app.dto.ClientAuthzDto;
 import com.surpass.persistence.mapper.ClientPermissionMapper;
-import com.surpass.persistence.service.AppService;
 import com.surpass.persistence.service.ClientPermissionService;
-import com.surpass.persistence.service.RegisteredClientService;
-
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -41,14 +29,6 @@ import java.util.stream.Collectors;
 @Service
 public class ClientPermissionServiceImpl extends JpaServiceImpl<ClientPermissionMapper, ClientPermission> implements ClientPermissionService {
 
-    @Autowired
-    AppService appService ;
-    
-    @Autowired
-    RegisteredClientService clientService;
-    
-    PathMatcher pathMatcher = new AntPathMatcher();
-    
     @Override
     public List<ClientPermission> getClientApps(String clientId) {
         LambdaQuery<ClientPermission> wrapper = new LambdaQuery<>();
@@ -134,36 +114,6 @@ public class ClientPermissionServiceImpl extends JpaServiceImpl<ClientPermission
 	@Override
 	public List<AppResources> queryPermissions(ClientPermission clientPermission) {
 		return this.getMapper().queryPermissions(clientPermission);
-	}
-
-	@Override
-	public boolean enforce(ApiRequestUri apiRequestUri,String clientId) {
-		App app = appService.findByContextPath(apiRequestUri.getContextPath());
-        if(app != null) {
-        	RegisteredClient client = clientService.findByClientId(clientId);
-            ClientPermission clientPermission = new ClientPermission();
-            clientPermission.setClientId(client.getId());
-            clientPermission.setAppId(app.getId());
-            List<AppResources> resourcesList = queryPermissions(clientPermission);
-            if(CollectionUtils.isNotEmpty( resourcesList )) {
-            	log.debug("resourcesList {}",resourcesList);
-            	List<AppResources> permsList = 
-            			resourcesList.stream().filter(item -> {
-            					if(StringUtils.isNotBlank(item.getPath()) 
-            							&& apiRequestUri.getHttpMethod().equalsIgnoreCase(item.getMethod())) {
-	                				String itemResourcePath = item.getPath();
-		                            if (!item.getPath().startsWith("/")) {
-		                            	itemResourcePath = "/" + item.getPath();
-		                            }
-			                        return pathMatcher.match(itemResourcePath, apiRequestUri.getResourcePath());
-            					}
-		                        return false;
-		                    }).collect(Collectors.toList());
-            	log.debug("permsList {}",permsList);
-            	return CollectionUtils.isNotEmpty(permsList);
-            }
-        }
-		return false;
 	}
 
 }

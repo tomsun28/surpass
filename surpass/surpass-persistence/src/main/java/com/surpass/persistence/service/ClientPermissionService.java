@@ -17,8 +17,10 @@ public interface ClientPermissionService extends IJpaService<ClientPermission> {
     Message<String> saveClientAppRelation(ClientAuthzDto dto);
 
     Message<List<ClientPermission>> getClientAuthz(AppResourcesPageDto dto);
-    
+    /**
+     * 读取客户端对应应用资源得权限列表
+     * @param clientPermission
+     * @return
+     */
     public List<AppResources> queryPermissions(ClientPermission clientPermission);
-    
-    public boolean enforce(ApiRequestUri apiRequestUri ,String clientId);
 }

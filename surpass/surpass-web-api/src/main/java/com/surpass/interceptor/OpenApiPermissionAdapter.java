@@ -34,7 +34,7 @@ import com.surpass.authn.web.AuthorizationUtils;
 import com.surpass.constants.ConstsApiAttribute;
 import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.entity.ApiRequestUri;
-import com.surpass.persistence.service.ClientPermissionService;
+import com.surpass.persistence.service.AuthzClientService;
 import com.surpass.util.AuthorizationHeader;
 import com.surpass.util.AuthorizationHeaderUtils;
 import com.surpass.web.WebContext;
@@ -58,7 +58,7 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
     TokenManager tokenManager;
     
     @Autowired
-    ClientPermissionService clientPermissionService;
+    AuthzClientService authzClientService;
     
     @Autowired
     PasswordReciprocal passwordReciprocal;
@@ -95,7 +95,7 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
                 request.setAttribute(ConstsApiAttribute.API_REQUEST_CONTEXT_PATH, apiRequestUri.getContextPath());
                 request.setAttribute(ConstsApiAttribute.API_REQUEST_RESOURCE_PATH, apiRequestUri.getResourcePath());
                 logger.debug("ApiRequestUri {} ",apiRequestUri);
-                return clientPermissionService.enforce(apiRequestUri,token.getClientId());
+                return authzClientService.enforce(apiRequestUri,token.getClientId());
             }
         }
         
