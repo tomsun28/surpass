@@ -37,9 +37,9 @@
                   readonly
                   v-model="form.clientSecret"
                   :placeholder="isEdit ? '不修改请留空' : '请输入客户端密钥'">
-                  <template #append>
-                    <el-button type="primary" @click="generateSecret">生成</el-button>
-                  </template>
+                <template #append>
+                  <el-button type="primary" @click="generateSecret">生成</el-button>
+                </template>
               </el-input>
             </el-form-item>
           </el-col>
@@ -71,21 +71,6 @@
           </el-col>
         </el-row>
 
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item prop="status" :label="$t('jbx.text.status.status')">
-              <el-switch
-                  :width="44"
-                  v-model="form.status"
-                  :active-value="1"
-                  :inactive-value="0"
-                  active-icon-class="el-icon-close"
-                  inactive-icon-class="el-icon-check">
-              </el-switch>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
         <el-form-item prop="ipWhitelist" label="IP白名单">
           <el-input
               v-model="form.ipWhitelist"
@@ -101,6 +86,22 @@
               :rows="3"
               placeholder="请输入描述信息"/>
         </el-form-item>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item prop="status" :label="$t('jbx.text.status.status')">
+              <el-switch
+                  :width="44"
+                  v-model="form.status"
+                  :active-value="1"
+                  :inactive-value="0"
+                  active-icon-class="el-icon-close"
+                  inactive-icon-class="el-icon-check">
+              </el-switch>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
       </el-form>
     </template>
     <template #footer>
@@ -120,7 +121,7 @@ import {
   toRefs,
   watch
 } from "vue";
-import {addClient, getClient,generate, updateClient} from "@/api/api-service/client";
+import {addClient, getClient, generate, updateClient} from "@/api/api-service/client";
 import {useI18n} from "vue-i18n";
 import {ElForm} from "element-plus";
 
@@ -171,6 +172,59 @@ const data: any = reactive({
     ],
     contactEmail: [
       {type: 'email', message: "请输入正确的邮箱地址", trigger: "blur"},
+    ],
+    contactPhone: [
+      {
+        validator: (rule, value, callback) => {
+          if (!value || value.trim() === '') {
+            return callback(); // 允许为空
+          }
+          const phone = value.trim();
+          // 手机号正则：11位，13-19开头
+          const mobileReg = /^1[3-9]\d{9}$/;
+          // 座机正则（允许带区号，含分隔符）
+          // 先清理掉非数字字符（保留数字用于长度判断），但校验时用原始格式
+          const telClean = phone.replace(/[^\d]/g, '');
+          // 座机：总长度 10~12 位（区号3~4位 + 号码7~8位）
+          const isTel = telClean.length >= 10 && telClean.length <= 12 && telClean.startsWith('0');
+          // 严格匹配常见座机格式（可选，增强用户体验）
+          const telPattern = /^(?:\(0\d{2,3}\)|0\d{2,3})[-\s]?\d{7,8}$/;
+          if (mobileReg.test(phone)) {
+            callback(); // 手机号合法
+          } else if (telPattern.test(phone)) {
+            callback(); // 座机格式合法
+          } else if (isTel && telClean.length >= 10) {
+            // 宽松模式：只要是以0开头、10~12位数字，就算合法（如 01012345678）
+            callback();
+          } else {
+            callback(new Error("请输入有效的手机号或座机号码（如：13812345678 或 010-12345678）"));
+          }
+        },
+        trigger: "blur"
+      }
+    ],
+    ipWhitelist: [
+      {
+        validator: (rule, value, callback) => {
+          if (!value || value.trim() === '') {
+            return callback(); // 允许为空
+          }
+          // 支持多个 IP/CIDR，用逗号或分号或换行分隔
+          const items = value
+              .split(/[,;\s\n]+/)
+              .map(item => item.trim())
+              .filter(item => item);
+          // IP + CIDR 正则（IPv4 地址或 CIDR，简单校验）
+          const ipOrCidrReg = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\/(?:3[0-2]|[12]?[0-9]))?$/;
+          for (const item of items) {
+            if (!ipOrCidrReg.test(item)) {
+              return callback(new Error(`"${item}" 不是有效的 IPv4 地址或 CIDR（如 192.168.1.1 或 10.0.0.0/24）`));
+            }
+          }
+          callback();
+        },
+        trigger: "blur"
+      }
     ]
   }
 })

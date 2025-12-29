@@ -1,15 +1,5 @@
 <template>
   <div class="debug-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-info">
-          <h1 class="page-title">API调试</h1>
-          <p class="page-description">测试和调试已发布的API</p>
-        </div>
-      </div>
-    </div>
-
     <div class="main-content">
       <!-- API选择 -->
       <el-card class="api-selector-card" shadow="never">
@@ -41,16 +31,10 @@
             </div>
           </div>
         </template>
-      </el-card>
 
-      <!-- API信息 -->
-      <div class="api-info" v-if="selectedApi && currentVersion">
-        <el-card class="info-card" shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span>API信息</span>
-            </div>
-          </template>
+
+        <!-- API信息 -->
+        <div class="api-info" v-if="selectedApi && currentVersion">
           <el-descriptions :column="2" border>
             <el-descriptions-item label="API名称">
               {{ selectedApi.name }}
@@ -73,153 +57,145 @@
               <el-tag>{{ selectedApi.contextPath }}</el-tag>
             </el-descriptions-item>
           </el-descriptions>
-        </el-card>
-      </div>
+        </div>
 
-      <!-- SQL模板预览 -->
-      <div class="sql-preview" v-if="selectedApi && currentVersion">
-        <el-card class="template-card" shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span>SQL模板预览</span>
-            </div>
-          </template>
+        <!-- SQL模板预览 -->
+        <div class="sql-preview" v-if="selectedApi && currentVersion">
           <div class="code-block">
             <pre><code class="sql">{{ currentVersion.sqlTemplate }}</code></pre>
           </div>
-        </el-card>
-      </div>
+        </div>
 
-      <!-- 请求配置 -->
-      <div class="request-config" v-if="selectedApi && currentVersion">
-        <el-card class="config-card" shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span>请求配置</span>
-            </div>
-          </template>
+        <!-- 请求配置 -->
+        <div class="request-config" v-if="selectedApi && currentVersion">
+          <el-card class="config-card" shadow="never">
+            <template #header>
+              <div class="card-header">
+                <span>请求参数</span>
+              </div>
+            </template>
 
-          <!-- 参数配置 -->
-          <div class="params-section">
-            <h4>请求参数</h4>
-            <div class="params-list">
-              <div
-                  v-for="(param, index) in requestParams"
-                  :key="index"
-                  class="param-item"
-                  :class="{ 'param-error': param.error }"
-              >
-                <el-input
-                    v-model="param.name"
-                    placeholder="参数名"
-                    style="width: 150px"
-                    readonly
-                />
-                <el-select
-                    v-model="param.type"
-                    placeholder="类型"
-                    style="width: 100px"
-                    disabled
+            <!-- 参数配置 -->
+            <div class="params-section">
+              <div class="params-list">
+                <div
+                    v-for="(param, index) in requestParams"
+                    :key="index"
+                    class="param-item"
+                    :class="{ 'param-error': param.error }"
                 >
-                  <el-option label="字符串" value="string"/>
-                  <el-option label="数字" value="number"/>
-                  <el-option label="布尔" value="boolean"/>
-                </el-select>
-                <el-input
-                    v-model="param.value"
-                    placeholder="参数值"
-                    style="flex: 1"
-                    @input="validateParam(param)"
-                    :class="{ 'invalid-param': param.error }"
-                />
-                <div class="param-info">
-                  <el-tooltip
-                      v-if="param.rules && Object.keys(param.rules).length > 0"
-                      :content="getRuleDisplayText(param.rules)"
-                      placement="top"
+                  <el-input
+                      v-model="param.name"
+                      placeholder="参数名"
+                      style="width: 150px"
+                      readonly
+                  />
+                  <el-select
+                      v-model="param.type"
+                      placeholder="类型"
+                      style="width: 100px"
+                      disabled
                   >
-                    <el-icon :color="param.required ? '#f56c6c' : '#909399'">
-                      <InfoFilled/>
+                    <el-option label="字符串" value="string"/>
+                    <el-option label="数字" value="number"/>
+                    <el-option label="布尔" value="boolean"/>
+                  </el-select>
+                  <el-input
+                      v-model="param.value"
+                      placeholder="参数值"
+                      style="flex: 1"
+                      @input="validateParam(param)"
+                      :class="{ 'invalid-param': param.error }"
+                  />
+                  <div class="param-info">
+                    <el-tooltip
+                        v-if="param.rules && Object.keys(param.rules).length > 0"
+                        :content="getRuleDisplayText(param.rules)"
+                        placement="top"
+                    >
+                      <el-icon :color="param.required ? '#f56c6c' : '#909399'">
+                        <InfoFilled/>
+                      </el-icon>
+                    </el-tooltip>
+                  </div>
+                  <div class="param-status">
+                    <el-icon v-if="param.error" color="#f56c6c">
+                      <CircleClose/>
                     </el-icon>
-                  </el-tooltip>
-                </div>
-                <div class="param-status">
-                  <el-icon v-if="param.error" color="#f56c6c">
-                    <CircleClose/>
-                  </el-icon>
-                  <el-icon v-else-if="param.value || !param.required" color="#67c23a">
-                    <Success/>
-                  </el-icon>
+                    <el-icon v-else-if="param.value || !param.required" color="#67c23a">
+                      <Success/>
+                    </el-icon>
+                  </div>
                 </div>
               </div>
+              <div class="validation-info" v-if="hasValidationErrors">
+                <el-alert
+                    title="参数验证失败，请检查标红的参数"
+                    type="error"
+                    show-icon
+                    :closable="false"
+                />
+              </div>
             </div>
-            <div class="validation-info" v-if="hasValidationErrors">
-              <el-alert
-                  title="参数验证失败，请检查标红的参数"
-                  type="error"
-                  show-icon
-                  :closable="false"
-              />
+
+            <!-- 执行按钮 -->
+            <div class="execute-section">
+              <el-button
+                  type="primary"
+                  @click="executeApi"
+                  :loading="executing"
+                  :disabled="!selectedApi"
+                  size="large"
+              >
+                <el-icon>
+                  <Promotion/>
+                </el-icon>
+                执行API
+              </el-button>
             </div>
-          </div>
+          </el-card>
+        </div>
 
-          <!-- 执行按钮 -->
-          <div class="execute-section">
-            <el-button
-                type="primary"
-                @click="executeApi"
-                :loading="executing"
-                :disabled="!selectedApi"
-                size="large"
-            >
-              <el-icon>
-                <Promotion/>
-              </el-icon>
-              执行API
-            </el-button>
-          </div>
-        </el-card>
-      </div>
+        <!-- 响应结果 -->
+        <div class="response-result" v-if="responseData">
+          <el-card class="response-card" shadow="never">
+            <template #header>
+              <div class="card-header">
+                <span>响应结果</span>
+                <el-tag :type="responseData.code === 0 ? 'success' : 'danger'">
+                  {{ responseData.code === 0 ? '成功' : '失败' }}
+                </el-tag>
+              </div>
+            </template>
 
-      <!-- 响应结果 -->
-      <div class="response-result" v-if="responseData">
-        <el-card class="response-card" shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span>响应结果</span>
-              <el-tag :type="responseData.code === 0 ? 'success' : 'danger'">
-                {{ responseData.code === 0 ? '成功' : '失败' }}
-              </el-tag>
+            <div class="response-info">
+              <el-descriptions :column="3" border size="small">
+                <el-descriptions-item label="状态码">
+                  {{ responseData.code }}
+                </el-descriptions-item>
+                <el-descriptions-item label="执行时间">
+                  {{ executionTime }}ms
+                </el-descriptions-item>
+                <el-descriptions-item label="消息">
+                  {{ responseData.message }}
+                </el-descriptions-item>
+              </el-descriptions>
             </div>
-          </template>
 
-          <div class="response-info">
-            <el-descriptions :column="3" border size="small">
-              <el-descriptions-item label="状态码">
-                {{ responseData.code }}
-              </el-descriptions-item>
-              <el-descriptions-item label="执行时间">
-                {{ executionTime }}ms
-              </el-descriptions-item>
-              <el-descriptions-item label="消息">
-                {{ responseData.message }}
-              </el-descriptions-item>
-            </el-descriptions>
-          </div>
-
-          <div class="response-data">
-            <h4>响应数据：</h4>
-            <div class="code-block">
-              <pre><code class="json">{{ formatResponseData(responseData) }}</code></pre>
+            <div class="response-data">
+              <h4>响应数据：</h4>
+              <div class="code-block">
+                <pre><code class="json">{{ formatResponseData(responseData) }}</code></pre>
+              </div>
             </div>
-          </div>
-        </el-card>
-      </div>
+          </el-card>
+        </div>
 
-      <!-- 空状态 -->
-      <div v-if="!selectedApiId" class="no-api-selected">
-        <el-empty description="请选择API" :image-size="200"/>
-      </div>
+        <!-- 空状态 -->
+        <div v-if="!selectedApiId" class="no-api-selected">
+          <el-empty description="请选择API" :image-size="200"/>
+        </div>
+      </el-card>
     </div>
   </div>
 </template>
@@ -574,50 +550,20 @@ const getMethodTagType = (method) => {
 </script>
 
 <style scoped>
-.debug-page {
-  background: #f5f7fa;
-  min-height: calc(100vh - 140px);
-  padding: 0;
-}
-
-/* 页面头部 */
-.page-header {
-  background: #fff;
-  padding: 24px;
-  border-bottom: 1px solid #e4e7ed;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin: 0 auto;
-}
-
-.header-info {
-  flex: 1;
-}
-
-.page-title {
-  margin: 0 0 8px 0;
-  font-size: 24px;
-  font-weight: 600;
-  color: #303133;
-  line-height: 1.2;
-}
-
-.page-description {
-  margin: 0;
-  color: #909399;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
 /* 主要内容区域 */
 .main-content {
   margin: 0 auto;
-  padding: 24px;
+}
+
+.api-info, .sql-preview {
+  margin-bottom: 16px;
+}
+
+.sql-preview {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 /* API选择卡片 */
@@ -628,8 +574,6 @@ const getMethodTagType = (method) => {
 }
 
 .api-selector-card .card-header {
-  padding: 10px 0px;
-  border-bottom: 1px solid #f0f2f5;
   font-weight: 600;
   color: #303133;
 }
@@ -668,18 +612,13 @@ const getMethodTagType = (method) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0px;
-  border-bottom: 1px solid #f0f2f5;
   font-weight: 600;
   color: #303133;
 }
 
 /* 代码块样式 */
 .code-block {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 6px;
-  overflow: hidden;
+
 }
 
 .code-block pre {
@@ -777,19 +716,4 @@ const getMethodTagType = (method) => {
   text-align: center;
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .main-content {
-    padding: 16px;
-  }
-
-  .header-content {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .param-item {
-    flex-wrap: wrap;
-  }
-}
 </style>

@@ -28,120 +28,186 @@
       </el-form>
     </div>
   </el-card>
-  <div class="api-page">
-    <el-row :gutter="20">
-      <el-col :span="6">
-        <el-tree
-            style="width: 100%; "
-            node-key="id"
-            :data="dataOptions"
-            :props="defaultProps"
-            :expand-on-click-node="false"
-            :filter-node-method="filterNode"
-            ref="tree"
-            :default-expanded-keys="treeData"
-            @node-click="handleNodeClick"
-            highlight-current
-            v-slot="{ node, data }"
-        >
-  <span class="tree-node">
-    <!-- 左侧名称 -->
-    <span class="tree-label">
-      <span v-if="node.label.length <= 10">{{ node.label }}</span>
-      <el-tooltip
-          v-else
-          effect="dark"
-          :content="node.label"
-          placement="right"
-      >
-        <span>{{ node.label.slice(0, 10) + '...' }}</span>
-      </el-tooltip>
-    </span>
-
-    <!-- 右侧资源类型 -->
-    <el-tag
-        size="small"
-        :type="resourceTagType(data.classify)"
-        class="tree-tag"
-    >
-      {{ resourceLabel(data.classify) }}
-    </el-tag>
-  </span>
-        </el-tree>
-
-      </el-col>
-      <el-col :span="18">
-        <div class="page-content">
-          <!-- 操作栏 -->
-          <div class="action-bar">
-            <el-button type="primary" @click="showCreateDialog">
-              新增资源
-            </el-button>
-            <el-button
-                type="danger"
-                :disabled="ids.length === 0"
-                @click="onBatchDelete"
-            >{{ t('org.button.deleteBatch') }}
-            </el-button>
-            <el-button @click="refreshList">
-              刷新
-            </el-button>
+  <div class="resource-management">
+    <!-- 主内容区域 -->
+    <div class="main-content">
+      <!-- 左侧资源树 -->
+      <el-card class="tree-card">
+        <template #header>
+          <div class="tree-header">
+            <span class="tree-title">资源结构</span>
+            <el-tooltip content="刷新树结构" placement="top">
+              <el-button class="refresh-btn" type="text" @click="loadTree">
+                <svg-icon icon-class="refresh"/>
+              </el-button>
+            </el-tooltip>
           </div>
+        </template>
 
-          <!-- API列表 -->
-          <el-table :data="apiList" border v-loading="loading" style="width: 100%"
-                    @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55" align="center"/>
-            <el-table-column prop="name" label="资源名称"/>
-            <el-table-column prop="path" label="请求地址"/>
-            <el-table-column prop="path" label="资源类型">
-              <template #default="scope">
-                <dict-tag :options="resources_type" :value="scope.row.classify"/>
+        <div class="tree-container">
+          <el-tree
+              node-key="id"
+              :data="dataOptions"
+              :props="defaultProps"
+              :expand-on-click-node="false"
+              :filter-node-method="filterNode"
+              ref="tree"
+              :default-expanded-keys="treeData"
+              @node-click="handleNodeClick"
+              highlight-current
+              class="modern-tree"
+              v-slot="{ node, data }"
+          >
+                <span class="tree-node">
+                  <!-- 资源图标 -->
+                  <svg-icon :icon-class="getResourceIcon(data.classify)" class="resource-icon"/>
+
+                  <!-- 资源名称 -->
+                  <span class="tree-label">
+                    <el-tooltip
+                        :content="node.label"
+                        placement="top"
+                        :disabled="node.label.length <= 15"
+                    >
+                      <span>{{ node.label.length > 15 ? node.label.slice(0, 15) + '...' : node.label }}</span>
+                    </el-tooltip>
+                  </span>
+
+                  <!-- 资源类型标签 -->
+                  <el-tag
+                      size="small"
+                      :type="resourceTagType(data.classify)"
+                      class="tree-tag"
+                      effect="light"
+                  >
+                    {{ resourceLabel(data.classify) }}
+                  </el-tag>
+                </span>
+          </el-tree>
+
+          <!-- 空状态 -->
+          <div v-if="!dataOptions || dataOptions.length === 0" class="tree-empty">
+            <svg-icon icon-class="empty" class="empty-icon"/>
+            <p>暂无资源数据</p>
+          </div>
+        </div>
+      </el-card>
+      <!-- 右侧资源列表 -->
+      <el-card class="list-card">
+        <template #header>
+          <div class="list-header">
+            <div class="header-left">
+              <span class="list-title">资源列表</span>
+              <el-tag v-if="queryParams.parentId" type="info" size="small">
+                当前选中: {{ getSelectedNodeName() }}
+              </el-tag>
+            </div>
+            <div class="header-right">
+              <el-button type="primary" icon="plus" @click="showCreateDialog">
+                新增资源
+              </el-button>
+              <el-button
+                  type="danger"
+                  :disabled="ids.length === 0"
+                  @click="onBatchDelete"
+                  icon="delete"
+              >
+                批量删除
+              </el-button>
+              <el-button @click="refreshList" icon="refresh">
+                刷新
+              </el-button>
+            </div>
+          </div>
+        </template>
+
+        <!-- 资源列表 -->
+        <div class="resource-list">
+          <el-table
+              :data="apiList"
+              v-loading="loading"
+              style="width: 100%"
+              @selection-change="handleSelectionChange"
+              class="modern-table"
+          >
+            <el-table-column type="selection" width="55" align="center" fixed="left"/>
+            <el-table-column prop="name" label="资源名称" min-width="180"></el-table-column>
+            <el-table-column prop="path" label="请求地址" min-width="200" show-overflow-tooltip/>
+            <el-table-column prop="classify" label="资源类型" width="120">
+              <template #default="{ row }">
+                <dict-tag :options="resources_type" :value="row.classify"/>
               </template>
             </el-table-column>
-            <el-table-column prop="method" label="方法"
+            <el-table-column prop="method" label="方法" width="100"
                              v-if="queryParams.classify === 'openApi' || queryParams.classify === 'api'">
               <template #default="{ row }">
-                <el-tag :type="getMethodTagType(row.method)">
+                <el-tag :type="getMethodTagType(row.method)" effect="light" class="method-tag">
                   {{ row.method }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="datasourceId" label="数据源"
+            <el-table-column prop="datasourceId" label="数据源" width="150"
                              v-if="queryParams.classify === 'openApi'">
               <template #default="{ row }">
-                <el-tag v-if="row.datasourceId">
-                  {{ dataSourceList.find(ds => ds.id === row.datasourceId)?.name }}
+                <el-tag v-if="row.datasourceId" type="info" effect="light">
+                  {{ dataSourceList.find(ds => ds.id === row.datasourceId)?.name || '未知' }}
+                </el-tag>
+                <span v-else class="empty-text">-</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="status" label="状态" width="80">
+              <template #default="{ row }">
+                <el-tag :type="row.status === '1' ? 'success' : 'danger'" size="small" effect="light">
+                  {{ row.status === '1' ? '启用' : '禁用' }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="120">
+            <el-table-column label="操作" width="120" fixed="right">
               <template #default="{ row }">
-                <el-tooltip content="版本管理" placement="top" v-if="row.classify === 'openApi'">
-                  <el-button link icon="Document" @click="viewVersions(row)"></el-button>
-                </el-tooltip>
-                <el-tooltip content="编辑" placement="top">
-                  <el-button link icon="Edit" type="primary" @click="editApi(row)"></el-button>
-                </el-tooltip>
-                <el-tooltip content="删除" placement="top">
-                  <el-button link icon="Delete" type="danger" @click="deleteApi(row)"></el-button>
-                </el-tooltip>
+                <div class="action-buttons">
+                  <el-tooltip content="版本管理" placement="top" v-if="row.classify === 'openApi'">
+                    <el-button size="small" link @click="viewVersions(row)">
+                      <svg-icon icon-class="delivered-procedure"/>
+                    </el-button>
+                  </el-tooltip>
+                  <el-tooltip content="编辑" placement="top">
+                    <el-button size="small" link type="primary" @click="editApi(row)">
+                      <svg-icon icon-class="edit"/>
+                    </el-button>
+                  </el-tooltip>
+                  <el-tooltip content="删除" placement="top">
+                    <el-button size="small" link type="danger" @click="deleteApi(row)">
+                      <svg-icon icon-class="delete"/>
+                    </el-button>
+                  </el-tooltip>
+                </div>
               </template>
             </el-table-column>
           </el-table>
-          <pagination
-              v-show="total > 0"
-              :total="total"
-              v-model:page="queryParams.pageNumber"
-              v-model:limit="queryParams.pageSize"
-              :page-sizes="queryParams.pageSizeOptions"
-              @pagination="loadApis"
-          />
+
+          <!-- 分页 -->
+          <div class="pagination-wrapper">
+            <pagination
+                v-show="total > 0"
+                :total="total"
+                v-model:page="queryParams.pageNumber"
+                v-model:limit="queryParams.pageSize"
+                :page-sizes="queryParams.pageSizeOptions"
+                @pagination="loadApis"
+            />
+          </div>
+
           <!-- 空状态 -->
-          <el-empty v-if="!loading && apiList.length === 0" description="暂无API定义"/>
+          <div v-if="!loading && apiList.length === 0" class="list-empty">
+            <svg-icon icon-class="empty-data" class="empty-data-icon"/>
+            <p>暂无资源数据</p>
+            <el-button type="primary" plain @click="showCreateDialog">
+              创建第一个资源
+            </el-button>
+          </div>
         </div>
-      </el-col>
-    </el-row>
+      </el-card>
+    </div>
     <!-- 新增/编辑对话框 -->
     <el-dialog
         :title="dialogTitle"
@@ -345,11 +411,10 @@
 </template>
 
 <script setup>
-import {ref, reactive, computed, toRefs, nextTick} from 'vue'
+import {ref, reactive, computed, toRefs} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import * as dataSourceApi from '@/api/api-service/dataSource.ts'
-import * as apiDefinitionApi from '@/api/api-service/apiDefinitionApi.ts'
 import * as appResourcesApi from '@/api/app/resources.js'
 import modal from "@/plugins/modal.js";
 import {set2String} from "@/utils/index.js";
@@ -673,6 +738,31 @@ const resourceTagType = (classify) => {
   return map[classify] || ''
 }
 
+const getResourceIcon = (classify) => {
+  const map = {
+    menu: 'menu',
+    button: 'button',
+    api: 'api',
+    openApi: 'openapi'
+  }
+  return map[classify] || 'resource'
+}
+
+const getSelectedNodeName = () => {
+  if (!queryParams.value.parentId) return '全部'
+  const findNode = (nodes, id) => {
+    for (const node of nodes) {
+      if (node.id === id) return node.name
+      if (node.children) {
+        const found = findNode(node.children, id)
+        if (found) return found
+      }
+    }
+    return null
+  }
+  return findNode(dataOptions.value, queryParams.value.parentId) || '未知节点'
+}
+
 
 watch(
     () => props.appId,
@@ -688,50 +778,277 @@ watch(
 )
 </script>
 
-<style scoped>
-.api-page {
-  background: #fff;
-  border-radius: 4px;
-  padding: 20px;
-  min-height: calc(100vh - 140px);
-}
-
-.page-header h2 {
-  margin: 0 0 8px 0;
-  color: #303133;
-}
-
-.page-header p {
-  margin: 0;
-  color: #909399;
-  font-size: 14px;
-}
-
-.action-bar {
-  margin-bottom: 20px;
-}
-
-.dialog-footer {
+<style scoped lang="scss">
+.resource-management {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  flex-direction: column;
+
+  .main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    flex: 1;
+    min-height: 0;
+
+    .el-row {
+      height: 100%;
+
+      .el-col {
+        height: 100%;
+      }
+    }
+
+    .tree-card {
+      width: 320px;
+      margin-right: 20px;
+      height: 100%;
+      border-radius: 12px;
+      border: 1px solid #e4e7ed;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+
+      :deep(.el-card__body) {
+        padding: 0 !important;
+      }
+
+      :deep(.el-card__header) {
+        padding: 8px 20px;
+        border-bottom: 1px solid #f0f2f5;
+        background: linear-gradient(135deg, #fafbfc 0%, #f5f7fa 100%);
+
+        .tree-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          .tree-icon {
+            width: 18px;
+            height: 18px;
+            color: #409eff;
+            margin-right: 8px;
+          }
+
+          .tree-title {
+            font-weight: 600;
+            flex: 1;
+          }
+
+          .refresh-btn {
+            padding: 4px;
+            border-radius: 4px;
+
+            &:hover {
+              background: rgba(64, 158, 255, 0.1);
+
+              .svg-icon {
+                color: #409eff;
+              }
+            }
+
+            .svg-icon {
+              width: 16px;
+              height: 16px;
+              color: #909399;
+              transition: color 0.3s;
+            }
+          }
+        }
+      }
+
+      .tree-container {
+        height: 100%;
+        overflow: auto;
+
+        :deep(.el-tree-node__content){
+          padding: 20px 12px;
+        }
+
+        .modern-tree {
+          .tree-node {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 8px;
+
+            .resource-icon {
+              width: 16px;
+              height: 16px;
+              color: #909399;
+              flex-shrink: 0;
+              transition: all 0.3s;
+            }
+
+            .tree-label {
+              flex: 1;
+              font-size: 14px;
+              color: #606266;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .tree-tag {
+              flex-shrink: 0;
+              font-size: 12px;
+              padding: 0 6px;
+              height: 20px;
+              line-height: 18px;
+            }
+          }
+        }
+
+        .tree-empty {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 200px;
+          color: #909399;
+
+          .empty-icon {
+            width: 60px;
+            height: 60px;
+            color: #dcdfe6;
+            margin-bottom: 12px;
+          }
+
+          p {
+            margin: 0;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+
+    .list-card {
+      flex: 1;
+      height: 100%;
+      border-radius: 12px;
+      border: 1px solid #e4e7ed;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+
+      :deep(.el-card__header) {
+        padding: 8px 20px;
+        border-bottom: 1px solid #f0f2f5;
+        background: linear-gradient(135deg, #fafbfc 0%, #f5f7fa 100%);
+
+        .list-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .list-icon {
+              width: 18px;
+              height: 18px;
+              color: #409eff;
+            }
+
+            .list-title {
+              font-weight: 600;
+            }
+
+            .el-tag {
+              height: 24px;
+              line-height: 22px;
+            }
+          }
+
+          .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .el-button {
+              padding: 8px 16px;
+              border-radius: 6px;
+              font-weight: 500;
+
+              .svg-icon {
+                width: 14px;
+                height: 14px;
+                margin-right: 6px;
+              }
+
+              &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(64, 158, 255, 0.2);
+              }
+            }
+          }
+        }
+      }
+
+      .resource-list {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .list-empty {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 300px;
+          color: #909399;
+
+          .empty-data-icon {
+            width: 80px;
+            height: 80px;
+            color: #dcdfe6;
+            margin-bottom: 16px;
+          }
+
+          p {
+            margin: 0 0 16px;
+            font-size: 14px;
+          }
+
+          .el-button {
+            padding: 8px 24px;
+            border-radius: 6px;
+          }
+        }
+      }
+    }
+  }
 }
 
-.tree-node {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.tree-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.query-card,
+.tree-card,
+.list-card {
+  animation: fadeInUp 0.5s ease-out;
 }
 
-.tree-tag {
-  margin-left: 8px;
+.query-card {
+  animation-delay: 0.1s;
 }
 
+.tree-card {
+  animation-delay: 0.2s;
+}
+
+.list-card {
+  animation-delay: 0.3s;
+}
 </style>

@@ -69,6 +69,7 @@
         <el-form-item label="驱动类型" prop="driverClassName">
           <el-select v-model="formData.driverClassName" placeholder="请选择驱动类型" style="width: 100%">
             <el-option label="MySQL" value="com.mysql.cj.jdbc.Driver"/>
+            <el-option label="MariaDB" value="org.mariadb.jdbc.Driver"/>
             <el-option label="PostgreSQL" value="org.postgresql.Driver"/>
             <el-option label="Oracle" value="oracle.jdbc.OracleDriver"/>
             <el-option label="SQL Server" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
@@ -125,6 +126,15 @@ import {ref, reactive, onMounted, computed} from 'vue'
 import {ElLoading, ElMessage, ElMessageBox} from 'element-plus'
 import * as dataSourceApi from '@/api/api-service/dataSource.ts'
 
+const URL_PATTERNS = {
+  'com.mysql.cj.jdbc.Driver': /^jdbc:mysql:\/\/(?:[a-zA-Z0-9._-]+|\[[0-9a-fA-F:]+\])(?::\d{1,5})?\/[a-zA-Z0-9_\-]+.*$/i,
+  'org.mariadb.jdbc.Driver': /^jdbc:mariadb:\/\/(?:[a-zA-Z0-9._-]+|\[[0-9a-fA-F:]+\])(?::\d{1,5})?\/[a-zA-Z0-9_\-]+.*$/i,
+  'org.postgresql.Driver': /^jdbc:postgresql:\/\/(?:[a-zA-Z0-9._-]+|\[[0-9a-fA-F:]+\])(?::\d{1,5})?\/[a-zA-Z0-9_\-]+.*$/i,
+  'oracle.jdbc.OracleDriver': /^jdbc:oracle:thin:@(?:\/\/)?[a-zA-Z0-9._-]+:\d{1,5}:[a-zA-Z0-9_\-.$]+.*$/i,
+  'com.microsoft.sqlserver.jdbc.SQLServerDriver': /^jdbc:sqlserver:\/\/(?:[a-zA-Z0-9._-]+|\[[0-9a-fA-F:]+\])(?::\d{1,5})?(?:;[^;]*)*;databaseName=[a-zA-Z0-9_\-]+.*$/i,
+  'org.h2.Driver': /^jdbc:h2:(?:file|mem|tcp):\/\/?[a-zA-Z0-9._/-]+.*$/i
+}
+
 // 响应式数据
 const loading = ref(false)
 const dialogVisible = ref(false)
@@ -147,6 +157,75 @@ const formData = reactive({
 })
 
 // 表单验证规则
+
+// 自定义校验函数
+const validateUrl = (rule, value, callback) => {
+  const {driverClassName} = formData // 从表单数据中获取驱动类型
+  if (!value) {
+    return callback(new Error('请输入连接URL'))
+  }
+  if (!driverClassName) {
+    return callback(new Error('请先选择驱动类型'))
+  }
+  const pattern = URL_PATTERNS[driverClassName]
+  if (!pattern) {
+    return callback(new Error('不支持的驱动类型'))
+  }
+  if (pattern.test(value)) {
+    callback() // 校验通过
+  } else {
+    // 根据驱动类型给出具体提示
+    let example = ''
+    switch (driverClassName) {
+      case 'com.mysql.cj.jdbc.Driver':
+        example = 'jdbc:mysql://localhost:3306/mydb'
+        break
+      case 'org.mariadb.jdbc.Driver':
+        example = 'jdbc:mariadb://localhost:3306/mydb'
+        break
+      case 'org.postgresql.Driver':
+        example = 'jdbc:postgresql://localhost:5432/mydb'
+        break
+      case 'oracle.jdbc.OracleDriver':
+        example = 'jdbc:oracle:thin:@localhost:1521:orcl 或 jdbc:oracle:thin:@//localhost:1521/ORCL'
+        break
+      case 'com.microsoft.sqlserver.jdbc.SQLServerDriver':
+        example = 'jdbc:sqlserver://localhost:1433;databaseName=mydb'
+        break
+      case 'org.h2.Driver':
+        example = 'jdbc:h2:file:~/test 或 jdbc:h2:mem:test'
+        break
+      default:
+        example = '有效的 JDBC URL'
+    }
+    callback(new Error(`URL 格式错误。示例：${example}`))
+  }
+}
+const validateTestSql = (rule, value, callback) => {
+  if (!value) {
+    return true
+  }
+
+  const sql = value.trim().toLowerCase()
+
+  // 1. 必须以 SELECT 开头（避免用户误填 UPDATE/DELETE）
+  if (!sql.startsWith('select')) {
+    return callback(new Error('测试SQL必须是以 SELECT 开头的查询语句'))
+  }
+
+  // 2. 禁止包含危险关键字（可选，增强安全）
+  const dangerousKeywords = ['drop', 'delete', 'update', 'insert', 'truncate', 'alter', 'create', 'exec', 'execute']
+  if (dangerousKeywords.some(kw => new RegExp(`\\b${kw}\\b`).test(sql))) {
+    return callback(new Error('测试SQL不能包含修改数据的操作（如 DELETE、UPDATE 等）'))
+  }
+
+  // 3. 至少包含一个空格（防止只写 "select"）
+  if (!/\s/.test(sql)) {
+    return callback(new Error('SQL 语句不完整，例如：SELECT 1'))
+  }
+
+  callback() // 通过
+}
 const formRules = {
   name: [
     {required: true, message: '请输入数据源名称', trigger: 'blur'}
@@ -155,13 +234,17 @@ const formRules = {
     {required: true, message: '请选择驱动类型', trigger: 'change'}
   ],
   url: [
-    {required: true, message: '请输入连接URL', trigger: 'blur'}
+    {required: true, message: '请输入连接URL', trigger: 'blur'},
+    {validator: validateUrl, trigger: 'blur'}
   ],
   username: [
     {required: true, message: '请输入用户名', trigger: 'blur'}
   ],
   password: [
     {required: true, message: '请输入密码', trigger: 'blur'}
+  ],
+  testSql: [
+    {validator: validateTestSql, trigger: 'blur'}
   ]
 }
 

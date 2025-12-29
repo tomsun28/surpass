@@ -1,15 +1,5 @@
 <template>
   <div class="publish-page">
-    <!-- 页面头部 -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-info">
-          <h1 class="page-title">发布管理</h1>
-          <p class="page-description">查看API发布历史和发布状态</p>
-        </div>
-      </div>
-    </div>
-
     <!-- 主要内容区域 -->
     <div class="main-content">
       <!-- API选择卡片 -->
@@ -29,7 +19,7 @@
                   <el-option
                       v-for="api in apiList"
                       :key="api.id"
-                      :label="api.name + '(' + api.path + ', '+ api.description +')'"
+                      :label="api.name + '(' + api.path + ', '+ (api.description || '') +')'"
                       :value="api.id"
                   >
                     <div class="api-option">
@@ -47,99 +37,101 @@
             </div>
           </div>
         </template>
-      </el-card>
 
-      <!-- 发布状态区域 -->
-      <div v-if="selectedApiId" class="publish-management">
-        <!-- 当前发布状态 -->
-        <div class="current-publish" v-if="latestPublish">
-          <el-card class="publish-status-card" shadow="never">
+
+        <!-- 发布状态区域 -->
+        <div v-if="selectedApiId" class="publish-management">
+          <!-- 当前发布状态 -->
+          <div class="current-publish" v-if="latestPublish">
+            <el-card class="publish-status-card" shadow="never">
+              <template #header>
+                <div class="card-header">
+                  <span>当前发布状态</span>
+                  <div>
+                    <el-button
+                        link
+                        type="primary"
+                        icon="View"
+                        @click="viewApiDefinition"
+                        title="查看接口定义详情"
+                    >
+                    </el-button>
+                  </div>
+                </div>
+              </template>
+              <div class="publish-info">
+                <el-descriptions :column="2" border>
+                  <el-descriptions-item label="当前版本">
+                    <el-tag type="success">v{{ latestPublish.apiVersion?.version }}</el-tag>
+                  </el-descriptions-item>
+                  <el-descriptions-item label="发布时间">
+                    {{ latestPublish.publishTime }}
+                  </el-descriptions-item>
+                  <el-descriptions-item label="操作人">
+                    {{ latestPublish.operator || '系统' }}
+                  </el-descriptions-item>
+                  <el-descriptions-item label="描述">
+                    {{ latestPublish.description || '无' }}
+                  </el-descriptions-item>
+                </el-descriptions>
+              </div>
+            </el-card>
+          </div>
+
+          <!-- 发布历史 -->
+          <el-card class="publish-history-card" shadow="never">
             <template #header>
               <div class="card-header">
-                <span>当前发布状态</span>
-                <div>
-                  <el-button
-                      link
-                      type="primary"
-                      icon="View"
-                      @click="viewApiDefinition"
-                      title="查看接口定义详情"
-                  >
-                  </el-button>
+                <span>发布历史</span>
+                <div class="list-info">
+                  <span class="total-count">共 {{ publishHistory.length }} 条记录</span>
                 </div>
               </div>
             </template>
-            <div class="publish-info">
-              <el-descriptions :column="2" border>
-                <el-descriptions-item label="当前版本">
-                  <el-tag type="success">v{{ latestPublish.apiVersion?.version }}</el-tag>
-                </el-descriptions-item>
-                <el-descriptions-item label="发布时间">
-                  {{ latestPublish.publishTime }}
-                </el-descriptions-item>
-                <el-descriptions-item label="操作人">
-                  {{ latestPublish.operator || '系统' }}
-                </el-descriptions-item>
-                <el-descriptions-item label="描述">
-                  {{ latestPublish.description || '无' }}
-                </el-descriptions-item>
-              </el-descriptions>
+
+            <el-table
+                :data="publishHistory"
+                v-loading="loading"
+                border
+            >
+              <el-table-column header-align="center" align="center" prop="id" label="ID" width="200"/>
+              <el-table-column header-align="center" align="center" label="版本" width="100">
+                <template #default="{ row }">
+                  <span class="version-number">v{{ row.apiVersion?.version }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column header-align="center" prop="publishTime" label="发布时间" width="180"/>
+              <el-table-column header-align="center" prop="operator" label="操作人" width="120"/>
+              <el-table-column header-align="center" prop="description" label="描述">
+                <template #default="{ row }">
+                  <span v-if="row.description">{{ row.description }}</span>
+                  <span v-else>{{ row.apiVersion?.description }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column header-align="center" align="center" label="操作" width="80" fixed="right">
+                <template #default="{ row }">
+                  <div class="action-buttons-group">
+                    <el-tooltip content="查看" placement="top">
+                      <el-button link type="primary" icon="View" @click="viewVersionDetail(row)"></el-button>
+                    </el-tooltip>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <!-- 空状态 -->
+            <div v-if="!loading && publishHistory.length === 0" class="empty-state">
+              <el-empty description="暂无发布历史" :image-size="200"/>
             </div>
           </el-card>
         </div>
 
-        <!-- 发布历史 -->
-        <el-card class="publish-history-card" shadow="never">
-          <template #header>
-            <div class="card-header">
-              <span>发布历史</span>
-              <div class="list-info">
-                <span class="total-count">共 {{ publishHistory.length }} 条记录</span>
-              </div>
-            </div>
-          </template>
+        <!-- 未选择API的提示 -->
+        <div v-else class="no-api-selected">
+          <el-empty description="请选择API开始查看发布记录" :image-size="200"/>
+        </div>
+      </el-card>
 
-          <el-table
-              :data="publishHistory"
-              v-loading="loading"
-              border
-          >
-            <el-table-column header-align="center" align="center" prop="id" label="ID" width="200"/>
-            <el-table-column header-align="center" align="center" label="版本" width="100">
-              <template #default="{ row }">
-                <span class="version-number">v{{ row.apiVersion?.version }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column header-align="center" prop="publishTime" label="发布时间" width="180"/>
-            <el-table-column header-align="center" prop="operator" label="操作人" width="120"/>
-            <el-table-column header-align="center" prop="description" label="描述">
-              <template #default="{ row }">
-                <span v-if="row.description">{{ row.description }}</span>
-                <span v-else>{{ row.apiVersion?.description }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column header-align="center" align="center" label="操作" width="80" fixed="right">
-              <template #default="{ row }">
-                <div class="action-buttons-group">
-                  <el-tooltip content="查看" placement="top">
-                    <el-button link type="primary" icon="View" @click="viewVersionDetail(row)"></el-button>
-                  </el-tooltip>
-                </div>
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <!-- 空状态 -->
-          <div v-if="!loading && publishHistory.length === 0" class="empty-state">
-            <el-empty description="暂无发布历史" :image-size="200"/>
-          </div>
-        </el-card>
-      </div>
-
-      <!-- 未选择API的提示 -->
-      <div v-else class="no-api-selected">
-        <el-empty description="请选择API开始查看发布记录" :image-size="200"/>
-      </div>
     </div>
 
     <!-- 版本详情对话框 -->
@@ -449,49 +441,13 @@ loadApis()
 
 <style scoped>
 .publish-page {
-  background: #f5f7fa;
   min-height: calc(100vh - 140px);
   padding: 0;
-}
-
-/* 页面头部 */
-.page-header {
-  background: #fff;
-  padding: 24px;
-  border-bottom: 1px solid #e4e7ed;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin: 0 auto;
-}
-
-.header-info {
-  flex: 1;
-}
-
-.page-title {
-  margin: 0 0 8px 0;
-  font-size: 24px;
-  font-weight: 600;
-  color: #303133;
-  line-height: 1.2;
-}
-
-.page-description {
-  margin: 0;
-  color: #909399;
-  font-size: 14px;
-  line-height: 1.5;
 }
 
 /* 主要内容区域 */
 .main-content {
   margin: 0 auto;
-  padding: 24px;
 }
 
 /* API选择卡片 */
@@ -502,8 +458,6 @@ loadApis()
 }
 
 .api-selector-card .card-header {
-  padding: 10px 0px;
-  border-bottom: 1px solid #f0f2f5;
   font-weight: 600;
   color: #303133;
 }
@@ -542,8 +496,6 @@ loadApis()
 }
 
 .publish-status-card .card-header {
-  padding: 10px 0px;
-  border-bottom: 1px solid #f0f2f5;
   font-weight: 600;
   color: #303133;
 }
@@ -559,8 +511,6 @@ loadApis()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0px;
-  border-bottom: 1px solid #f0f2f5;
   font-weight: 600;
   color: #303133;
 }
@@ -604,47 +554,6 @@ loadApis()
   text-align: center;
 }
 
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .management-header {
-    flex-direction: column;
-  }
-
-  .statistics-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .action-buttons {
-    width: 100%;
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 768px) {
-  .main-content {
-    padding: 16px;
-  }
-
-  .statistics-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .header-content {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .header-actions {
-    width: 100%;
-  }
-}
-
-.page-header {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e6e6e6;
-}
-
 .page-header h2 {
   margin: 0 0 8px 0;
   color: #303133;
@@ -654,25 +563,6 @@ loadApis()
   margin: 0;
   color: #909399;
   font-size: 14px;
-}
-
-.api-selector {
-  margin-bottom: 20px;
-}
-
-.drawer-content {
-  padding: 20px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.drawer-footer {
-  margin-top: auto;
-  padding-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
 }
 
 /* 版本详情对话框样式 */
@@ -781,20 +671,6 @@ loadApis()
   color: #1890ff;
   font-family: 'Courier New', monospace;
   font-weight: 500;
-}
-
-/* 基本信息卡片样式 */
-.info-card .el-descriptions {
-  margin-top: 0;
-}
-
-.info-card .el-descriptions__label {
-  font-weight: 600;
-  color: #606266;
-}
-
-.info-card .el-descriptions__content {
-  color: #303133;
 }
 
 pre {

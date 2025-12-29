@@ -73,7 +73,12 @@ export const getRouters: any = () => {
             })
             const functions: any = res.data.functions.filter((t: any) => t.status === "1" && t.classify === 'MENU')
                 .sort((a: any, b: any) => a.sortIndex - b.sortIndex)
-            const menus: any = functions.filter((t: any) => t.status === "1" && t.classify === 'MENU')
+            const menus: any = functions.filter((t: any) => t.status === "1" && t.classify === 'MENU').map(menu => {
+                if(menu.requestUrl && menu.requestUrl === '/'){
+                    menu.requestUrl = ""
+                }
+                return menu
+            })
             menus.forEach((item: any) => {
                 mapMenu[item.id] = item
                 mapParentIds[item.parentId] = item
