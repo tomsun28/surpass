@@ -6,7 +6,6 @@
         :value="stat.value"
         :icon="stat.icon"
         :color="stat.color"
-        :growth="stat.growth"
       />
     </el-col>
   </el-row>
@@ -21,7 +20,6 @@ interface StatisticItem {
   value: number
   icon: string
   color: string
-  growth?: number
 }
 
 interface Props {

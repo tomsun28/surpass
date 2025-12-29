@@ -1,9 +1,8 @@
 export interface StatisticItem {
-  name: string
+  title: string
   value: number
-  icon?: string
-  color?: string
-  growth?: number
+  icon: string
+  color: string
 }
 
 export interface ApiAccessData {
@@ -48,14 +47,6 @@ export interface DashboardData {
   apiAccessTrend: ApiAccessData[]
   regionAccessData: RegionAccessData[]
   apiTopList: ApiTopData[]
-  
-  // 系统状态
-  systemStatus: {
-    cpuUsage: number
-    memoryUsage: number
-    diskUsage: number
-    activeSessions: number
-  }
 }
 
 export interface TimeRange {

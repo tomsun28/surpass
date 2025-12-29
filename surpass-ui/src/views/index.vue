@@ -17,69 +17,6 @@
       </div>
       <StatisticPanel :statistics="statistics" />
     </div>
-    <!-- 系统状态 -->
-    <div class="section">
-      <div class="section-header">
-        <h2 class="section-title">系统运行状态</h2>
-      </div>
-      <div class="system-status">
-        <div class="status-card">
-          <div class="status-header">
-            <div class="status-title">
-              <svg-icon icon-class="dashboard" class="status-icon" />
-              CPU使用率
-            </div>
-            <div class="status-value">{{ systemStatus.cpuUsage?.toFixed(1) || '0' }}%</div>
-          </div>
-          <el-progress
-              :percentage="systemStatus.cpuUsage || 0"
-              :stroke-width="12"
-              :color="getStatusColor(systemStatus.cpuUsage || 0)"
-          />
-        </div>
-        <div class="status-card">
-          <div class="status-header">
-            <div class="status-title">
-              <svg-icon icon-class="hdd" class="status-icon" />
-              内存使用率
-            </div>
-            <div class="status-value">{{ systemStatus.memoryUsage?.toFixed(1) || '0' }}%</div>
-          </div>
-          <el-progress
-              :percentage="systemStatus.memoryUsage || 0"
-              :stroke-width="12"
-              :color="getStatusColor(systemStatus.memoryUsage || 0)"
-          />
-        </div>
-        <div class="status-card">
-          <div class="status-header">
-            <div class="status-title">
-              <svg-icon icon-class="database" class="status-icon" />
-              磁盘使用率
-            </div>
-            <div class="status-value">{{ systemStatus.diskUsage?.toFixed(1) || '0' }}%</div>
-          </div>
-          <el-progress
-              :percentage="systemStatus.diskUsage || 0"
-              :stroke-width="12"
-              :color="getStatusColor(systemStatus.diskUsage || 0)"
-          />
-        </div>
-        <div class="status-card">
-          <div class="status-header">
-            <div class="status-title">
-              <svg-icon icon-class="user" class="status-icon" />
-              活跃会话
-            </div>
-            <div class="status-value">{{ systemStatus.activeSessions?.toLocaleString() || '0' }}</div>
-          </div>
-          <div class="status-trend">
-            <span class="trend-text">较昨日 +12.5%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- API访问统计 -->
     <div class="section">
       <div class="section-header">
@@ -160,58 +97,44 @@ import ApiTopList from './dashboard/components/ApiTopList.vue'
 
 const { dashboardData, fetchDashboardData } = useDashboard()
 
-const systemStatus = computed(() => dashboardData.value.systemStatus)
-
 const statistics = computed(() => [
   {
     title: '应用数量',
     value: dashboardData.value.appCount,
     icon: 'appstore-add',
-    color: '#1890ff',
-    growth: -12.5
+    color: '#1890ff'
   },
   {
     title: '接口总数',
     value: dashboardData.value.apiCount,
     icon: 'api',
-    color: '#74e2ca',
-    growth: 12.5
+    color: '#74e2ca'
   },
   {
     title: '角色数量',
     value: dashboardData.value.roleCount,
     icon: 'anticon-group',
-    color: '#52c41a',
-    growth: 8.3
+    color: '#52c41a'
   },
   {
     title: '用户数量',
     value: dashboardData.value.userCount,
     icon: 'user',
-    color: '#faad14',
-    growth: 15.2
+    color: '#faad14'
   },
   {
-    title: '客户数量',
+    title: '客户端',
     value: dashboardData.value.clientCount,
     icon: 'user2',
-    color: '#722ed1',
-    growth: 5.7
+    color: '#722ed1'
   },
   {
     title: '数据源',
     value: dashboardData.value.datasourceCount,
     icon: 'database',
-    color: '#ff4d4f',
-    growth: 3.4
+    color: '#ff4d4f'
   }
 ])
-
-const getStatusColor = (percentage: number) => {
-  if (percentage < 60) return '#52c41a'
-  if (percentage < 80) return '#faad14'
-  return '#ff4d4f'
-}
 
 const refreshData = async () => {
   await fetchDashboardData()

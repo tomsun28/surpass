@@ -1,5 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue'
-import { getStatisticsDashboard, getSystemStatus } from '@/api/dashboard-statistics'
+import { getStatisticsDashboard } from '@/api/dashboard-statistics'
 import type { DashboardData } from '../types'
 
 export function useDashboard() {
@@ -16,13 +16,7 @@ export function useDashboard() {
     apiSuccessRate: 0,
     apiAccessTrend: [],
     regionAccessData: [],
-    apiTopList: [],
-    systemStatus: {
-      cpuUsage: 0,
-      memoryUsage: 0,
-      diskUsage: 0,
-      activeSessions: 0
-    }
+    apiTopList: []
   })
 
   const loading = ref(false)
@@ -34,14 +28,12 @@ export function useDashboard() {
     error.value = null
     
     try {
-      const [dashboardResponse, systemResponse] = await Promise.all([
-        getStatisticsDashboard(),
-        getSystemStatus()
+      const [dashboardResponse] = await Promise.all([
+        getStatisticsDashboard()
       ])
       
       dashboardData.value = {
-        ...dashboardResponse.data,
-        systemStatus: systemResponse.data
+        ...dashboardResponse.data
       }
     } catch (err: any) {
       error.value = err.message || '获取数据失败'
@@ -66,13 +58,7 @@ export function useDashboard() {
       apiSuccessRate: 98.7,
       apiAccessTrend: generateMockTrendData(),
       regionAccessData: generateMockRegionData(),
-      apiTopList: generateMockApiTopData(),
-      systemStatus: {
-        cpuUsage: 24.5,
-        memoryUsage: 65.3,
-        diskUsage: 72.8,
-        activeSessions: 342
-      }
+      apiTopList: generateMockApiTopData()
     }
   }
 

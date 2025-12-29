@@ -17,11 +17,6 @@
         <div class="statistic-title">{{ title }}</div>
       </div>
     </div>
-    <div v-if="growth !== undefined" class="statistic-growth">
-      <span :class="['growth-text', growth >= 0 ? 'positive' : 'negative']">
-        {{ growth >= 0 ? '↑' : '↓' }} {{ Math.abs(growth) }}%
-      </span>
-    </div>
   </div>
 </template>
 
@@ -34,7 +29,6 @@ interface Props {
   value: number
   icon: string
   color: string
-  growth?: number
 }
 
 defineProps<Props>()
@@ -88,24 +82,6 @@ defineProps<Props>()
     }
   }
 
-  .statistic-growth {
-    margin-top: 8px;
-    text-align: right;
 
-    .growth-text {
-      font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 12px;
-      background-color: rgba(255, 255, 255, 0.2);
-
-      &.positive {
-        color: #FFFFFF;
-      }
-
-      &.negative {
-        color: #333333;
-      }
-    }
-  }
 }
 </style>
