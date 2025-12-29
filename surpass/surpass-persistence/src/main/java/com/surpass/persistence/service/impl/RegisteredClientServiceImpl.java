@@ -17,6 +17,7 @@ import com.surpass.persistence.service.RegisteredClientService;
 import com.surpass.util.StringGenerator;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.hutool.core.bean.BeanUtil;
 import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.dromara.mybatis.jpa.query.LambdaQuery;
@@ -25,6 +26,8 @@ import org.dromara.mybatis.jpa.update.LambdaUpdateWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -83,7 +86,16 @@ public class RegisteredClientServiceImpl extends JpaServiceImpl<RegisteredClient
 
 	@Override
 	public RegisteredClient findByClientId(String clientId) {
-		return this.getMapper().findByClientId(clientId);
+		RegisteredClient client = this.getMapper().findByClientId(clientId);
+		if(StringUtils.isNotBlank(client.getIpWhiteList())) {
+			List<String> ipList =Arrays.asList(StringUtils.split(client.getIpWhiteList(),","));
+			HashSet<String>ipSets = new HashSet<>();
+			for(String ipAddr : ipList) {
+				ipSets.add(ipAddr);
+			}
+			client.setIpAddrSet(ipSets);
+		}
+		return client;
 	}
 
 	@Override

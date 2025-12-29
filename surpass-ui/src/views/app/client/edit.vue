@@ -71,9 +71,9 @@
           </el-col>
         </el-row>
 
-        <el-form-item prop="ipWhitelist" label="IP白名单">
+        <el-form-item prop="ipWhiteList" label="IP白名单">
           <el-input
-              v-model="form.ipWhitelist"
+              v-model="form.ipWhiteList"
               type="textarea"
               :rows="3"
               placeholder="多个IP用逗号分隔，例如：192.168.1.1,192.168.1.2"/>
@@ -157,7 +157,7 @@ const data: any = reactive({
     contactPhone: null,
     contactEmail: null,
     department: null,
-    ipWhitelist: null,
+    ipWhiteList: null,
     accessTokenValidity: 7200,
     refreshTokenValidity: 86400,
     expireTime: null,
@@ -284,7 +284,7 @@ function reset(): any {
     contactPhone: null,
     contactEmail: null,
     department: null,
-    ipWhitelist: null,
+    ipWhiteList: null,
     description: null
   };
   clientRef?.value?.resetFields();

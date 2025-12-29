@@ -9,6 +9,7 @@ import org.dromara.mybatis.jpa.entity.JpaEntity;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * @description:
@@ -84,4 +85,6 @@ public class RegisteredClient extends JpaEntity implements Serializable {
 
     @Column
     private Date modifiedDate;
+    
+    private Set<String> ipAddrSet;
 }
