@@ -33,6 +33,10 @@ public class ConstsBoolean {
     public static final int 	FALSE 	= 0;
 
     public static  final int 	TRUE 	= 1;
+    
+    public static final String 	YES 	= "y";
+
+    public static  final String NO 		= "n";
 
     private int 				value 	= FALSE;
 

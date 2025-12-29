@@ -1,10 +1,12 @@
 package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.RegisteredClient;
+import com.surpass.constants.ConstsBoolean;
 import com.surpass.entity.ApiRequestUri;
 import com.surpass.entity.ClientPermission;
 import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
+import com.surpass.entity.history.HistoryOpenapi;
 import com.surpass.persistence.service.AppService;
 import com.surpass.persistence.service.AuthzClientService;
 import com.surpass.persistence.service.ClientPermissionService;
@@ -44,9 +46,11 @@ public class AuthzClientServiceImpl implements AuthzClientService {
     PathMatcher pathMatcher = new AntPathMatcher();
    
 	@Override
-	public boolean enforce(ApiRequestUri apiRequestUri,String clientId) {
+	public boolean enforce(ApiRequestUri apiRequestUri,String clientId,HistoryOpenapi history) {
 		App app = appService.findByContextPath(apiRequestUri.getContextPath());
         if(app != null) {
+        	history.setAppId(app.getId());
+        	history.setAppName(app.getAppName());
         	RegisteredClient client = clientService.findByClientId(clientId);
             ClientPermission clientPermission = new ClientPermission();
             clientPermission.setClientId(client.getId());
@@ -67,7 +71,12 @@ public class AuthzClientServiceImpl implements AuthzClientService {
 		                        return false;
 		                    }).collect(Collectors.toList());
             	log.debug("permsList {}",permsList);
-            	return CollectionUtils.isNotEmpty(permsList);
+            	if(CollectionUtils.isNotEmpty(permsList)) {
+            		history.setAccess(ConstsBoolean.YES);
+            		history.setResourceId(permsList.get(0).getId());
+            		history.setResourceName(permsList.get(0).getName());
+            		return true;
+            	}
             }
         }
 		return false;
