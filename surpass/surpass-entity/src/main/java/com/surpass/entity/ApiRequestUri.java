@@ -25,4 +25,9 @@ public class ApiRequestUri {
 	 */
 	String httpMethod;
 	
+	/**
+	 * 客户端ip地址
+	 */
+	String ipAddr;
+	
 }

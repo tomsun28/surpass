@@ -500,6 +500,7 @@ public final class WebContext {
         			.contextPath(contextPath)
         			.resourcePath(resourcePath)
         			.httpMethod(request.getMethod())
+        			.ipAddr(getRequestIpAddress(request))
         			.build();
     }
 

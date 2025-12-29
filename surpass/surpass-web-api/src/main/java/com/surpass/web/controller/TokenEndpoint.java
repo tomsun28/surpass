@@ -7,6 +7,9 @@ import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.entity.Message;
 import com.surpass.entity.RegisteredClient;
 import com.surpass.persistence.service.RegisteredClientService;
+import com.surpass.web.WebContext;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,13 +41,33 @@ public class TokenEndpoint {
     			@RequestParam(ConstsToken.CLIENT_ID) String clientId,
     			@RequestParam(ConstsToken.CLIENT_SECRET) String clientSecret,
     			@RequestParam(name=ConstsToken.GRANT_TYPE,required=false) String grantType,
-    			@RequestParam(name=ConstsToken.REFRESH_TOKEN,required=false) String refreshToken) {
+    			@RequestParam(name=ConstsToken.REFRESH_TOKEN,required=false) String refreshToken,
+    			HttpServletRequest request) {
     	RegisteredClient client = clientService.findByClientId(clientId);
     	Message<AccessToken> message = new Message<>(Message.FAIL);
     	
     	if(client == null) {
     		message.setMessage("invalid_client_id");
-    	}else if(passwordReciprocal.matches(clientSecret, client.getClientSecret())){
+    	}else if(StringUtils.isBlank(client.getIpWhiteList())) {//未设置ip白名单
+    		grantToken(clientId,clientSecret,grantType,refreshToken,client,message);
+    	}else if(StringUtils.isNotBlank(client.getIpWhiteList())) {//设置ip白名单
+    		String ipAddr = WebContext.getRequestIpAddress(request);
+    		if(client.getIpAddrSet().contains(ipAddr)) {
+    			grantToken(clientId,clientSecret,grantType,refreshToken,client,message);
+    		}else {
+    			message.setMessage("invalid_ipaddress_"+ipAddr);
+    		}
+    	}
+    	if(message.getCode() == Message.SUCCESS) {
+    		client.setLastLoginTime(new Date());
+    		clientService.updateLastLoginTime(client);
+    	}
+    	log.debug("accessToken {}",message);
+        return message;
+    }
+    
+    void grantToken(String clientId , String clientSecret,String grantType,String refreshToken,RegisteredClient client,Message<AccessToken> message){
+    	if(passwordReciprocal.matches(clientSecret, client.getClientSecret())){
     		if(StringUtils.equalsIgnoreCase("refresh_token", grantType)) {
         		String refreshTokenDecoder = null;
         		try{
@@ -69,11 +92,5 @@ public class TokenEndpoint {
     	}else {
     		message.setMessage("invalid_client_secret");
     	}
-    	if(message.getCode() == Message.SUCCESS) {
-    		client.setLastLoginTime(new Date());
-    		clientService.updateLastLoginTime(client);
-    	}
-    	log.debug("accessToken {}",message);
-        return message;
     }
 }
