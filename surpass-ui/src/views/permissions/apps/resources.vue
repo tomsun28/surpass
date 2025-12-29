@@ -23,18 +23,18 @@
       </div>
     </el-card>
     <el-card class="common-card">
-      <el-row :gutter="20">
-        <el-col :span="6">
-          <el-tree
-              ref="resTreeRef"
-              node-key="key"
-              :data="dataOptions"
-              :props="defaultProps"
-              @node-click="handleNodeClick"
-              :expand-on-click-node="false"
-              highlight-current
-              v-slot="{ node, data }"
-          >
+      <div class="common-card-content">
+        <el-tree
+            style="width: 320px;border-right: 1px solid #ebeef5;margin-right: 20px;"
+            ref="resTreeRef"
+            node-key="key"
+            :data="dataOptions"
+            :props="defaultProps"
+            @node-click="handleNodeClick"
+            :expand-on-click-node="false"
+            highlight-current
+            v-slot="{ node, data }"
+        >
             <span>
               <span v-if="node.label?.length<=20">{{ node.label }}</span>
               <span v-else>
@@ -43,9 +43,8 @@
                 </el-tooltip>
               </span>
             </span>
-          </el-tree>
-        </el-col>
-        <el-col :span="18">
+        </el-tree>
+        <div style="flex:1;">
           <div class="btn-form" style="margin-bottom: 10px">
             <el-button
                 type="primary"
@@ -96,8 +95,8 @@
               v-model:limit="queryParams.pageSize"
               @pagination="getList"
           />
-        </el-col>
-      </el-row>
+        </div>
+      </div>
     </el-card>
 
     <!-- 添加或修改参数配置对话框 -->
@@ -488,11 +487,23 @@ getList();
   margin-bottom: 15px;
 }
 
+.common-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+
+}
+
+:deep(.el-tree-node__content) {
+  padding: 14px 0
+}
+
 ::v-deep(.common-card form .el-form-item--default) {
   margin-bottom: 0;
 }
 
-:deep(.icon-body){
+:deep(.icon-body) {
   padding: 5px 0 !important;
 }
 </style>

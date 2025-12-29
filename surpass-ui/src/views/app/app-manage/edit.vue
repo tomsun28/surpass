@@ -6,7 +6,7 @@
     </template>
     <template #default>
       <el-form :model="form" :rules="rules" ref="appRef" label-width="110px" inline-message>
-        <el-form-item prop="appName" label="应用编码" :required="true">
+        <el-form-item prop="appCode" label="应用编码" :required="true">
           <el-input v-model="form.appCode"/>
         </el-form-item>
         <el-form-item prop="appName" label="应用名称" :required="true">
@@ -82,12 +82,43 @@ const data: any = reactive({
   rules: {
     appCode: [
       {required: true, message: "请输入应用编码", trigger: "blur"},
+      {
+        pattern: /^[a-zA-Z][a-zA-Z0-9_]{1,49}$/, // 等价于 min=2, max=50
+        message: "应用编码必须以英文开头，仅允许字母、数字和下划线，长度2~50位",
+        trigger: "blur"
+      }
     ],
     appName: [
       {required: true, message: "请输入应用名称", trigger: "blur"},
     ],
     contextPath: [
-      {required: true, message: "请输入应用上下文路径", trigger: "blur"},
+      {
+        required: true,
+        message: "请输入应用上下文路径",
+        trigger: "blur"
+      },
+      {
+        validator: (rule, value, callback) => {
+          if (!value) {
+            return callback(); // required 已保证非空，此步可省略
+          }
+          const path = value.trim();
+          // 必须以 / 开头
+          if (!path.startsWith('/')) {
+            return callback(new Error('上下文路径必须以 "/" 开头'));
+          }
+          // 不能以 / 结尾（且不能是单独的 "/"）
+          if (path === '/' || path.endsWith('/')) {
+            return callback(new Error('上下文路径不能以 "/" 结尾，例如：/app 而非 /app/'));
+          }
+          // 可选：禁止连续斜杠（如 /app//api）
+          if (/\/{2,}/.test(path)) {
+            return callback(new Error('上下文路径不能包含连续的 "/"'));
+          }
+          callback();
+        },
+        trigger: "blur"
+      }
     ]
   }
 })
