@@ -66,4 +66,16 @@ public class ResponseTemplateRenderer {
             return false;
         }
     }
+    
+    public String getDefaultResponseTemplate() {
+        return "{\"code\":0,\"data\":#{data},\"message\":\"success\"}";
+    }
+
+    public String renderErrorResponse(String message) {
+        try {
+            return "{\"code\":1,\"data\":null,\"message\":\"" + message + "\"}";
+        } catch (Exception e) {
+            return "{\"code\":1,\"data\":null,\"message\":\"系统错误\"}";
+        }
+    }
 }

@@ -27,7 +27,7 @@ public class ApiGatewayController {
 
     private final ApiExecuteService apiExecuteService;
 
-    private final ResponseTemplateRenderer responseTemplateRenderer;
+    private final ResponseTemplateRenderer responseRenderer;
 
     /**
      * 通用GET请求
@@ -124,8 +124,9 @@ public class ApiGatewayController {
             // 2. 执行API
             Object result = apiExecuteService.execute(apiRequestUri, method.name(), paramMap);
             // 3. 渲染响应
-            Object response = responseTemplateRenderer.renderResponse(
-                    getDefaultResponseTemplate(), result);
+            Object response = responseRenderer.renderResponse(
+            		responseRenderer.getDefaultResponseTemplate(), result);
+            
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(response);
@@ -133,19 +134,8 @@ public class ApiGatewayController {
             log.error("API网关处理失败: {} {}", method, request.getRequestURI(), e);
             return ResponseEntity.badRequest()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(renderErrorResponse("API执行失败: " + e.getMessage()));
+                    .body(responseRenderer.renderErrorResponse("API执行失败: " + e.getMessage()));
         }
     }
 
-    private String getDefaultResponseTemplate() {
-        return "{\"code\":0,\"data\":#{data},\"message\":\"success\"}";
-    }
-
-    private String renderErrorResponse(String message) {
-        try {
-            return "{\"code\":1,\"data\":null,\"message\":\"" + message + "\"}";
-        } catch (Exception e) {
-            return "{\"code\":1,\"data\":null,\"message\":\"系统错误\"}";
-        }
-    }
 }
