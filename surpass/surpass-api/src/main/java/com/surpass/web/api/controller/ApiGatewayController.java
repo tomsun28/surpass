@@ -2,7 +2,7 @@ package com.surpass.web.api.controller;
 
 import com.surpass.constants.ConstsApiAttribute;
 import com.surpass.entity.ApiRequestUri;
-import com.surpass.persistence.util.DynamicExecutionService;
+import com.surpass.persistence.service.ApiExecuteService;
 import com.surpass.persistence.util.ResponseTemplateRenderer;
 import com.surpass.web.WebContext;
 
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ApiGatewayController {
 
-    private final DynamicExecutionService dynamicExecutionService;
+    private final ApiExecuteService apiExecuteService;
 
     private final ResponseTemplateRenderer responseTemplateRenderer;
 
@@ -122,7 +122,7 @@ public class ApiGatewayController {
             // 1.获取URL上下文
             ApiRequestUri apiRequestUri = explainRequestUri(request);
             // 2. 执行API
-            Object result = dynamicExecutionService.executeApi(apiRequestUri, method.name(), paramMap);
+            Object result = apiExecuteService.execute(apiRequestUri, method.name(), paramMap);
             // 3. 渲染响应
             Object response = responseTemplateRenderer.renderResponse(
                     getDefaultResponseTemplate(), result);
