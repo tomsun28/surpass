@@ -31,7 +31,6 @@ import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import com.surpass.authn.token.AccessToken;
 import com.surpass.authn.token.TokenManager;
 import com.surpass.authn.web.AuthorizationUtils;
-import com.surpass.constants.ConstsApiAttribute;
 import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.entity.ApiRequestUri;
 import com.surpass.persistence.service.AuthzClientService;
@@ -91,9 +90,6 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
                 AuthorizationUtils.setAuthentication(authenticationToken);
                 
                 ApiRequestUri apiRequestUri = WebContext.explainRequestUri(request);
-                request.setAttribute(ConstsApiAttribute.API_REQUEST_PATH, apiRequestUri.getRequestPath());
-                request.setAttribute(ConstsApiAttribute.API_REQUEST_CONTEXT_PATH, apiRequestUri.getContextPath());
-                request.setAttribute(ConstsApiAttribute.API_REQUEST_RESOURCE_PATH, apiRequestUri.getResourcePath());
                 logger.debug("ApiRequestUri {} ",apiRequestUri);
                 return authzClientService.enforce(apiRequestUri,token.getClientId());
             }

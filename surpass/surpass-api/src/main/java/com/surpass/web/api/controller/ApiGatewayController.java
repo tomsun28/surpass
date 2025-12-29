@@ -1,6 +1,5 @@
 package com.surpass.web.api.controller;
 
-import com.surpass.constants.ConstsApiAttribute;
 import com.surpass.entity.ApiRequestUri;
 import com.surpass.persistence.service.ApiExecuteService;
 import com.surpass.persistence.util.ResponseTemplateRenderer;
@@ -89,25 +88,6 @@ public class ApiGatewayController {
     }
     
     /**
-     * 解析URL上下文
-     * @param request
-     * @return
-     */
-    private ApiRequestUri explainRequestUri(HttpServletRequest request) {
-        ApiRequestUri apiRequestUri;
-        if(request.getAttribute(ConstsApiAttribute.API_REQUEST_PATH) != null) {
-            apiRequestUri = ApiRequestUri.builder()
-                .requestPath(request.getAttribute(ConstsApiAttribute.API_REQUEST_PATH).toString())// 1. 获取请求路径
-                .contextPath(request.getAttribute(ConstsApiAttribute.API_REQUEST_CONTEXT_PATH).toString())// 2.应用上下文
-                .resourcePath(request.getAttribute(ConstsApiAttribute.API_REQUEST_RESOURCE_PATH).toString())// 3.资源上下文
-                .build();
-        }else {
-            apiRequestUri = WebContext.explainRequestUri(request);
-        }
-        return apiRequestUri;
-    }
-
-    /**
      * 请求处理
      * @param method
      * @param request
@@ -120,7 +100,7 @@ public class ApiGatewayController {
                     Map<String, Object> paramMap) {
         try {
             // 1.获取URL上下文
-            ApiRequestUri apiRequestUri = explainRequestUri(request);
+            ApiRequestUri apiRequestUri = WebContext.explainRequestUri(request);
             // 2. 执行API
             Object result = apiExecuteService.execute(apiRequestUri, method.name(), paramMap);
             // 3. 渲染响应
