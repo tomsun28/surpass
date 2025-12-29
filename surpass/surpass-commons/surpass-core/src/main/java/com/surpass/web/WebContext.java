@@ -499,6 +499,7 @@ public final class WebContext {
         			.requestPath(requestPath)
         			.contextPath(contextPath)
         			.resourcePath(resourcePath)
+        			.httpMethod(request.getMethod())
         			.build();
     }
 

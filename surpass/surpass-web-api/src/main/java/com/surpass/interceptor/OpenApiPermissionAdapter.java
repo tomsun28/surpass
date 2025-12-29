@@ -18,7 +18,6 @@
 package com.surpass.interceptor;
 
 import java.util.ArrayList;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +34,7 @@ import com.surpass.authn.web.AuthorizationUtils;
 import com.surpass.constants.ConstsApiAttribute;
 import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.entity.ApiRequestUri;
+import com.surpass.persistence.service.AuthzClientService;
 import com.surpass.util.AuthorizationHeader;
 import com.surpass.util.AuthorizationHeaderUtils;
 import com.surpass.web.WebContext;
@@ -58,6 +58,9 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
     TokenManager tokenManager;
     
     @Autowired
+    AuthzClientService authzClientService;
+    
+    @Autowired
     PasswordReciprocal passwordReciprocal;
     
     /*
@@ -69,12 +72,12 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
     public boolean preHandle(HttpServletRequest request,HttpServletResponse response, Object handler) throws Exception {
         logger.trace("API Permission Adapter pre handle");
          AuthorizationHeader headerCredential = AuthorizationHeaderUtils.resolve(request);
-         
+         AccessToken token = null;
         //判断Authorization
         if(headerCredential != null && StringUtils.isNotBlank(headerCredential.getCredential()) && headerCredential.isBearer() ){
             UsernamePasswordAuthenticationToken authenticationToken = null;
             String accessToken = passwordReciprocal.decoder(headerCredential.getCredential());
-            AccessToken token = tokenManager.get(accessToken);
+            token = tokenManager.get(accessToken);
             if(token != null ) {
                 ArrayList<SimpleGrantedAuthority> grantedAuthoritys = new ArrayList<>();
                 grantedAuthoritys.add(new SimpleGrantedAuthority("ROLE_USER"));
@@ -86,13 +89,13 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
             
             if(authenticationToken !=null && authenticationToken.isAuthenticated()) {
                 AuthorizationUtils.setAuthentication(authenticationToken);
-                ApiRequestUri apiRequestUri =WebContext.explainRequestUri(request);
+                
+                ApiRequestUri apiRequestUri = WebContext.explainRequestUri(request);
                 request.setAttribute(ConstsApiAttribute.API_REQUEST_PATH, apiRequestUri.getRequestPath());
                 request.setAttribute(ConstsApiAttribute.API_REQUEST_CONTEXT_PATH, apiRequestUri.getContextPath());
                 request.setAttribute(ConstsApiAttribute.API_REQUEST_RESOURCE_PATH, apiRequestUri.getResourcePath());
                 logger.debug("ApiRequestUri {} ",apiRequestUri);
-               
-                return true;
+                return authzClientService.enforce(apiRequestUri,token.getClientId());
             }
         }
         

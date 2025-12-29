@@ -1,7 +1,6 @@
 package com.surpass.persistence.service.impl;
 
 import cn.hutool.core.lang.UUID;
-import cn.hutool.crypto.digest.BCrypt;
 import com.surpass.entity.Message;
 import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.util.List;
 
 /**
@@ -36,8 +34,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements AppService {
     private static final Logger logger = LoggerFactory.getLogger(AppServiceImpl.class);
-
-    private final AppMapper appMapper;
 
     private final AppResourcesService appResourcesService;
 
@@ -142,4 +138,11 @@ public class AppServiceImpl extends JpaServiceImpl<AppMapper, App> implements Ap
             throw new BusinessException(50001, "该应用上下文路径已被使用，请重新输入");
         }
     }
+
+	@Override
+	public App findByContextPath(String contextPath) {
+		LambdaQuery<App> wrapper = new LambdaQuery<>();
+		wrapper.eq(App::getContextPath, contextPath);
+		return super.get(wrapper);
+	}
 }

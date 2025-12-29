@@ -20,5 +20,9 @@ public class ApiRequestUri {
 	 * 资源上下文
 	 */
 	String resourcePath;
+	/**
+	 * 请求方法
+	 */
+	String httpMethod;
 	
 }
