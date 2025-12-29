@@ -2,12 +2,12 @@ package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.ApiRequestUri;
 import com.surpass.entity.api.ApiVersion;
-import com.surpass.entity.api.DataSource;
+import com.surpass.entity.api.ApiDataSource;
 import com.surpass.entity.app.AppResources;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.service.ApiVersionService;
 import com.surpass.persistence.service.AppResourcesService;
-import com.surpass.persistence.service.DataSourceService;
+import com.surpass.persistence.service.ApiDataSourceService;
 import com.surpass.persistence.service.ISqlRepository;
 import com.surpass.persistence.service.ApiExecuteService;
 
@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.sql.DataSource;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class ApiExecuteServiceImpl  implements ApiExecuteService{
 
     private final AppResourcesService appResourcesService;
 
-    private final DataSourceService dataSourceService;
+    private final ApiDataSourceService dataSourceService;
     
     private final DynamicRoutingDataSource dynamicRoutingDataSource;
 
@@ -94,7 +96,7 @@ public class ApiExecuteServiceImpl  implements ApiExecuteService{
     }
     
     private void switchDataSource(String dataSourceId) {
-        DataSource dataSource = dataSourceService.get(dataSourceId);
+        ApiDataSource dataSource = dataSourceService.get(dataSourceId);
         if (Objects.isNull(dataSource)) {
             throw new BusinessException(50001, "数据源不存在");
         }
@@ -102,7 +104,7 @@ public class ApiExecuteServiceImpl  implements ApiExecuteService{
         try {
             DataSourceSwitch.change(dataSourceName);
         } catch (Exception e) {
-            javax.sql.DataSource newDs = dataSourceService.buildDataSource(dataSource);
+            DataSource newDs = dataSourceService.buildDataSource(dataSource);
             boolean added = dynamicRoutingDataSource.addDataSource(dataSource.getName(), newDs);
             if (!added) {
                 throw new BusinessException(50001, e.getMessage());

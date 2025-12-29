@@ -1,9 +1,9 @@
 package com.surpass.persistence.mapper;
 
-import com.surpass.entity.api.DataSource;
+import com.surpass.entity.api.ApiDataSource;
 import org.apache.ibatis.annotations.Mapper;
 import org.dromara.mybatis.jpa.IJpaMapper;
 
 @Mapper
-public interface DataSourceMapper extends IJpaMapper<DataSource> {
+public interface ApiDataSourceMapper extends IJpaMapper<ApiDataSource> {
 }

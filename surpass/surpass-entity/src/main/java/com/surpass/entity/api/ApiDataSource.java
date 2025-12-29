@@ -19,7 +19,7 @@ import java.util.Date;
 @Entity
 @Table(name = "surpass_datasource")
 @Data
-public class DataSource extends JpaEntity implements Serializable {
+public class ApiDataSource extends JpaEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -3630932571014858686L;

@@ -1,11 +1,11 @@
 package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
-import com.surpass.entity.api.DataSource;
+import com.surpass.entity.api.ApiDataSource;
 import com.surpass.enums.DataSourceStatus;
 import com.surpass.exception.BusinessException;
-import com.surpass.persistence.mapper.DataSourceMapper;
-import com.surpass.persistence.service.DataSourceService;
+import com.surpass.persistence.mapper.ApiDataSourceMapper;
+import com.surpass.persistence.service.ApiDataSourceService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.mybatis.jpa.datasource.DynamicRoutingDataSource;
@@ -27,14 +27,14 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, DataSource> implements DataSourceService {
+public class ApiDataSourceServiceImpl extends JpaServiceImpl<ApiDataSourceMapper, ApiDataSource> implements ApiDataSourceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataSourceServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiDataSourceServiceImpl.class);
 
     private final DynamicRoutingDataSource dynamicRoutingDataSource;
 
     @Override
-    public Message<String> saveDataSource(DataSource config) {
+    public Message<String> saveDataSource(ApiDataSource config) {
 
         // 1. 校验是否重复（你已有）
         checkDuplicateName(config);
@@ -59,13 +59,13 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
 
 
     @Override
-    public Message<String> updateDataSource(DataSource dataSource) {
+    public Message<String> updateDataSource(ApiDataSource dataSource) {
 
         // 1. 检查重名（排除自身）
         checkDuplicateName(dataSource);
 
         // 2. 查询原来的配置
-        DataSource oldCfg = super.get(dataSource.getId());
+        ApiDataSource oldCfg = super.get(dataSource.getId());
         if (oldCfg == null) {
             return Message.failed("数据源不存在");
         }
@@ -105,7 +105,7 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
     public Message<String> deleteDataSource(String id) {
 
         // 1. 根据 id 查询数据源配置
-        DataSource cfg = super.get(id);
+        ApiDataSource cfg = super.get(id);
         if (cfg == null) {
             return Message.failed("数据源不存在");
         }
@@ -131,7 +131,7 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
     }
 
     @Override
-    public boolean testConnection(DataSource dataSource) {
+    public boolean testConnection(ApiDataSource dataSource) {
         try {
             // 解密密码进行测试 - 暂时禁用
             // String decryptedPassword = decryptPassword(dataSource.getPassword());
@@ -159,7 +159,7 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
 
     @Override
     public void updateStatus(String id, DataSourceStatus status) {
-        DataSource dataSource = super.get(id);
+        ApiDataSource dataSource = super.get(id);
         if (Objects.isNull(dataSource)) {
             throw new BusinessException(50001, "数据源不存在");
         }
@@ -167,11 +167,11 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
         super.update(dataSource);
     }
 
-    private void checkDuplicateName(DataSource dataSource) {
-        LambdaQuery<DataSource> wrapper = new LambdaQuery<>();
-        wrapper.eq(DataSource::getName, dataSource.getName());
+    private void checkDuplicateName(ApiDataSource dataSource) {
+        LambdaQuery<ApiDataSource> wrapper = new LambdaQuery<>();
+        wrapper.eq(ApiDataSource::getName, dataSource.getName());
         if (StringUtils.isNotBlank(dataSource.getId())) {
-            wrapper.notEq(DataSource::getId, dataSource.getId());
+            wrapper.notEq(ApiDataSource::getId, dataSource.getId());
         }
 
         if (super.count(wrapper) > 0) {
@@ -180,7 +180,7 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
     }
 
 
-    private void addDynamicDataSource(DataSource cfg) {
+    private void addDynamicDataSource(ApiDataSource cfg) {
 
         // 1. 使用 Spring Boot 的 DataSourceBuilder 构建数据源
         javax.sql.DataSource ds = org.springframework.boot.jdbc.DataSourceBuilder
@@ -201,7 +201,7 @@ public class DataSourceServiceImpl extends JpaServiceImpl<DataSourceMapper, Data
     }
 
     @Override
-    public javax.sql.DataSource buildDataSource(DataSource cfg) {
+    public javax.sql.DataSource buildDataSource(ApiDataSource cfg) {
         // 1. 使用 Spring Boot 的 DataSourceBuilder 构建数据源
         javax.sql.DataSource ds = org.springframework.boot.jdbc.DataSourceBuilder
                 .create()
