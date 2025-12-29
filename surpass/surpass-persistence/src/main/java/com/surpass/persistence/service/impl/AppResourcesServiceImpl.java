@@ -6,7 +6,6 @@ import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
 import com.surpass.entity.app.dto.AppResourcesPageDto;
-import com.surpass.entity.idm.Organizations;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.AppMapper;
 import com.surpass.persistence.mapper.AppResourcesMapper;
@@ -30,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static com.surpass.persistence.util.ResourceClassify.MENU;
 import static com.surpass.persistence.util.ResourceClassify.OPEN_API;
 
 /**
