@@ -52,17 +52,15 @@ public class ApiExecuteServiceImpl  implements ApiExecuteService{
             if (Objects.isNull(apiVersion)) {
                 throw new BusinessException(50001, "API未发布");
             }
-            
-            // 3. 获取数据源名称
-            DataSource dataSource = dataSourceService.get(byPathAndMethod.getDatasourceId());
-            if (Objects.isNull(dataSource)) {
-                throw new BusinessException(50001, "数据源不存在");
-            }
 
+            // 3. 切换数据源
+            switchDataSource(byPathAndMethod.getDatasourceId());
+            
             // 4. 获取SQL
             String sql = apiVersion.getSqlTemplate().trim();
             String sqlUpperCase = sql.toUpperCase();
-            switchDataSource(dataSource);
+            
+            
             
             // 判断是否分页
             if (sqlUpperCase.startsWith("SELECT") && apiVersion.getSupportsPaging() != null && apiVersion.getSupportsPaging().equals(1)) {
@@ -95,7 +93,11 @@ public class ApiExecuteServiceImpl  implements ApiExecuteService{
         }
     }
     
-    private void switchDataSource(DataSource dataSource) {
+    private void switchDataSource(String dataSourceId) {
+        DataSource dataSource = dataSourceService.get(dataSourceId);
+        if (Objects.isNull(dataSource)) {
+            throw new BusinessException(50001, "数据源不存在");
+        }
         String dataSourceName = dataSource.getName();
         try {
             DataSourceSwitch.change(dataSourceName);
