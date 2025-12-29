@@ -18,4 +18,6 @@ public class AppResourcesPageDto extends JpaPage {
     private String classify;
 
     private String clientId;
+
+    private String roleId;
 }

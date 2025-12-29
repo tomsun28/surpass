@@ -2,15 +2,17 @@ package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
 import com.surpass.entity.ClientPermission;
+import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.entity.app.dto.ClientAuthzDto;
 import com.surpass.persistence.mapper.ClientPermissionMapper;
 import com.surpass.persistence.service.ClientPermissionService;
+import lombok.extern.slf4j.Slf4j;
+
 import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
  * @time: 2025/12/11 10:17
  */
 
+@Slf4j
 @Service
 public class ClientPermissionServiceImpl extends JpaServiceImpl<ClientPermissionMapper, ClientPermission> implements ClientPermissionService {
 
@@ -107,5 +110,10 @@ public class ClientPermissionServiceImpl extends JpaServiceImpl<ClientPermission
 
         return Message.ok(query);
     }
+
+	@Override
+	public List<AppResources> queryPermissions(ClientPermission clientPermission) {
+		return this.getMapper().queryPermissions(clientPermission);
+	}
 
 }
