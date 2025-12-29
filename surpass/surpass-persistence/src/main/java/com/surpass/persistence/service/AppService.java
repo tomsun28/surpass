@@ -15,6 +15,8 @@ public interface AppService extends IJpaService<App> {
     Message<String> updateApp(AppChangeDto dto);
 
     App findByClientId(String clientId);
+    
+    App findByContextPath(String contextPath);
 
     String issueToken(App app);
 

@@ -1,9 +1,12 @@
 package com.surpass.persistence.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.dromara.mybatis.jpa.IJpaMapper;
 
 import com.surpass.entity.ClientPermission;
+import com.surpass.entity.app.AppResources;
 
 /**
  * @description:
@@ -14,4 +17,6 @@ import com.surpass.entity.ClientPermission;
 @Mapper
 public interface ClientPermissionMapper extends IJpaMapper<ClientPermission> {
 
+	public List<AppResources> queryPermissions(ClientPermission clientPermission);
+	
 }
