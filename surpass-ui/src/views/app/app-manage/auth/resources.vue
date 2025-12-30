@@ -414,12 +414,12 @@
 import {ref, reactive, computed, toRefs} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import * as dataSourceApi from '@/api/api-service/dataSource.ts'
-import * as appResourcesApi from '@/api/app/resources.js'
-import modal from "@/plugins/modal.js";
-import {set2String} from "@/utils/index.js";
+import * as dataSourceApi from '@/api/api-service/dataSource'
+import * as appResourcesApi from '@/api/app/resources'
+import modal from "@/plugins/modal";
+import {set2String} from "@/utils/index";
 import {useI18n} from "vue-i18n";
-import * as proxy from "@/utils/Dict.js";
+import * as proxy from "@/utils/Dict";
 import IconSelect from "@/components/IconSelect/index.vue";
 import DictTag from "@/components/DictTag/index.vue";
 

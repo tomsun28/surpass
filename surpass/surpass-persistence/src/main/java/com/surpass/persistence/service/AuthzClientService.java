@@ -1,6 +1,7 @@
 package com.surpass.persistence.service;
 
 import com.surpass.entity.ApiRequestUri;
+import com.surpass.entity.history.HistoryOpenapi;
 
 public interface AuthzClientService{
     /**
@@ -9,5 +10,5 @@ public interface AuthzClientService{
      * @param clientId
      * @return
      */
-    public boolean enforce(ApiRequestUri apiRequestUri ,String clientId);
+    public boolean enforce(ApiRequestUri apiRequestUri ,String clientId,HistoryOpenapi history);
 }

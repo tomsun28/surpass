@@ -1,7 +1,7 @@
 import useDictStore from '@/store/modules/dict'
 import distData from '@/utils/DistData'
 import {Ref, ref, toRefs} from "vue";
-import type {DictItem} from '@/types/dict'
+import type {DictItem} from '@/types/Dict'
 
 /**
  * 获取字典数据
