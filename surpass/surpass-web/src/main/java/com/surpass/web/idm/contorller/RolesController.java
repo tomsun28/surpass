@@ -29,9 +29,11 @@ import com.surpass.constants.ConstsAct;
 import com.surpass.constants.ConstsActResult;
 import com.surpass.constants.ConstsEntryType;
 import com.surpass.entity.Message;
+import com.surpass.entity.RoleAppResourcesPermission;
 import com.surpass.entity.idm.UserInfo;
 import com.surpass.entity.permissions.Roles;
 import com.surpass.entity.permissions.dto.RolesPageDto;
+import com.surpass.persistence.service.RoleAppResourcesPermissionService;
 import com.surpass.persistence.service.RolesService;
 import com.surpass.persistence.service.HistorySystemLogsService;
 import com.surpass.validate.AddGroup;
@@ -70,6 +72,9 @@ public class RolesController {
 
 	@Autowired
 	HistorySystemLogsService historySystemLogsService;
+
+	@Autowired
+	RoleAppResourcesPermissionService roleAppResourcesPermissionService;
 
 	@GetMapping(value = { "/fetch" }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Message<JpaPageResults<Roles>> fetch(
@@ -150,6 +155,11 @@ public class RolesController {
 	public Message<Roles> delete(@RequestParam("ids") List<String> ids,@CurrentUser UserInfo currentUser) {
 		logger.debug("-delete ids : {}" , ids);
 		ids.removeAll(Arrays.asList("ROLE_ALL_USER","ROLE_ADMINISTRATORS","-1"));
+		//删除角色应用资源关联
+		LambdaQuery<RoleAppResourcesPermission> wrapper = new LambdaQuery<>();
+		wrapper.in(RoleAppResourcesPermission::getId, ids);
+		roleAppResourcesPermissionService.delete(wrapper);
+		//删除角色
 		if (groupsService.deleteBatch(ids)) {
 			historySystemLogsService.log(
 					ConstsEntryType.ROLE,

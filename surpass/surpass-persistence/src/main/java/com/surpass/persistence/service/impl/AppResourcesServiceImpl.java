@@ -2,6 +2,7 @@ package com.surpass.persistence.service.impl;
 
 import com.surpass.entity.Message;
 import com.surpass.entity.ClientPermission;
+import com.surpass.entity.RoleAppResourcesPermission;
 import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
@@ -9,8 +10,10 @@ import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.AppMapper;
 import com.surpass.persistence.mapper.AppResourcesMapper;
+import com.surpass.persistence.mapper.RoleAppResourcesPermissionMapper;
 import com.surpass.persistence.service.AppResourcesService;
 import com.surpass.persistence.service.ClientPermissionService;
+import com.surpass.persistence.service.RoleAppResourcesPermissionService;
 import com.surpass.persistence.util.ResourceClassify;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -46,6 +49,8 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
     private final AppMapper appMapper;
 
     private final ClientPermissionService registeredClientRelationService;
+
+    private final RoleAppResourcesPermissionService roleAppResourcesPermissionService;
 
     @Override
     public Message<String> create(AppResourcesChangeDto dto) {
@@ -140,6 +145,10 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
         LambdaQuery<ClientPermission> registeredClientRelationLambdaQuery = new LambdaQuery<>();
         registeredClientRelationLambdaQuery.in(ClientPermission::getResourceId, resourcesIds);
         registeredClientRelationService.delete(registeredClientRelationLambdaQuery);
+        //删除资源角色关联
+        LambdaQuery<RoleAppResourcesPermission> roleAppResourcesPermissionLambdaQuery = new LambdaQuery<>();
+        roleAppResourcesPermissionLambdaQuery.in(RoleAppResourcesPermission::getResourceId, resourcesIds);
+        roleAppResourcesPermissionService.delete(roleAppResourcesPermissionLambdaQuery);
         //删除资源
         boolean result = super.softDelete(resourcesIds);
         return result ? Message.ok("删除成功") : Message.failed("删除失败");
