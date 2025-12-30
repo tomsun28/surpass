@@ -3,7 +3,7 @@
     <div class="top-box">
       <div class="title">
         <img :src="staticAppInfo.logo" alt=""/>
-        {{ staticAppInfo.consoleTitle || t('appTitle') }}
+        {{ t('appTitle') }}
       </div>
       <div class="right">
       </div>
