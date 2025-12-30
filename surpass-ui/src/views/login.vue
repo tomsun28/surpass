@@ -85,11 +85,11 @@
           </div>
         </div>
       </el-form-item>
-      <div class="form-footer">
+<!--      <div class="form-footer">
         <router-link to="/register" class="register-link">
           注册
         </router-link>
-      </div>
+      </div>-->
     </el-form>
     <!--  底部  -->
     <Footer></Footer>

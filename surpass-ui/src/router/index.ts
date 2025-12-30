@@ -52,11 +52,11 @@ export const constantRoutes: any = [
         component: () => import('@/views/forgot.vue'),
         hidden: true
     },
-    {
+    /*{
         path: '/register',
         component: () => import('@/views/register.vue'),
         hidden: true
-    },
+    },*/
     {
         path: "/:pathMatch(.*)*",
         component: () => import('@/views/system/error/404.vue'),
