@@ -22,10 +22,15 @@
 
 package com.surpass.persistence.mapper;
 
+import com.surpass.entity.app.AppResources;
+import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.entity.history.HistoryOpenapi;
 
+import com.surpass.entity.history.dto.HistoryOpenapiPageDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.dromara.mybatis.jpa.IJpaMapper;
+
+import java.util.List;
 
 /**
  * @author Crystal.sea
@@ -33,5 +38,6 @@ import org.dromara.mybatis.jpa.IJpaMapper;
  */
 @Mapper
 public interface HistoryOpenapiMapper extends IJpaMapper<HistoryOpenapi> {
+    List<HistoryOpenapi> pageList(HistoryOpenapiPageDto dto);
 
 }

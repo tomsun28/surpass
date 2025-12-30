@@ -39,3 +39,12 @@ export function systemLogs(query : any): any {
     params: query
   })
 }
+
+export function getOpenApiLogs(query : any): any {
+  return request({
+    url: '/historys/openapi/fetch',
+    method: 'get',
+    params: query
+  })
+}
+

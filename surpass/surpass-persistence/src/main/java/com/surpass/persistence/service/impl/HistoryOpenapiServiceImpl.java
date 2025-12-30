@@ -24,6 +24,10 @@ package com.surpass.persistence.service.impl;
 
 import java.util.Date;
 
+import com.surpass.entity.Message;
+import com.surpass.entity.app.AppResources;
+import com.surpass.entity.history.dto.HistoryOpenapiPageDto;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +36,12 @@ import com.surpass.persistence.mapper.HistoryOpenapiMapper;
 import com.surpass.persistence.service.HistoryOpenapiService;
 import com.surpass.web.WebContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class HistoryOpenapiServiceImpl  extends JpaServiceImpl<HistoryOpenapiMapper,HistoryOpenapi> implements HistoryOpenapiService {
+
 	private static Logger logger = LoggerFactory.getLogger(HistoryOpenapiServiceImpl.class);
 
 	@Override
@@ -44,6 +50,13 @@ public class HistoryOpenapiServiceImpl  extends JpaServiceImpl<HistoryOpenapiMap
         //Thread insert HistoryOpenapi
         new Thread(new HistoryOpenapiRunnable(this,historyOpenapi)).start();
     }
+
+	@Override
+	public Message<JpaPageResults<HistoryOpenapi>> page(HistoryOpenapiPageDto dto) {
+		dto.build();
+		JpaPageResults<HistoryOpenapi> jpaPageResults = (JpaPageResults<HistoryOpenapi>) this.buildPageResults(dto, getMapper().pageList(dto));
+		return Message.ok(jpaPageResults);
+	}
 
 	public class HistoryOpenapiRunnable implements Runnable{
 

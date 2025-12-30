@@ -18,10 +18,17 @@
 
 package com.surpass.persistence.service;
 
+import com.surpass.entity.Message;
+import com.surpass.entity.app.AppResources;
+import com.surpass.entity.app.dto.AppResourcesPageDto;
 import com.surpass.entity.history.HistoryOpenapi;
 
+import com.surpass.entity.history.dto.HistoryOpenapiPageDto;
+import org.dromara.mybatis.jpa.entity.JpaPageResults;
 import org.dromara.mybatis.jpa.service.IJpaService;
 
 public interface HistoryOpenapiService  extends IJpaService<HistoryOpenapi> {
 	public void insertHistory(HistoryOpenapi historyOpenapi) ;
+
+	Message<JpaPageResults<HistoryOpenapi>> page(HistoryOpenapiPageDto dto);
 }
