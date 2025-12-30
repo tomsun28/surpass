@@ -37,6 +37,8 @@ import com.surpass.constants.ConstsBoolean;
 import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.entity.ApiRequestUri;
 import com.surpass.entity.history.HistoryOpenapi;
+import com.surpass.ip2location.IpLocationParser;
+import com.surpass.ip2location.Region;
 import com.surpass.persistence.service.AuthzClientService;
 import com.surpass.persistence.service.HistoryOpenapiService;
 import com.surpass.util.AuthorizationHeader;
@@ -70,6 +72,9 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
     @Autowired
     PasswordReciprocal passwordReciprocal;
     
+    @Autowired
+    IpLocationParser ipLocationParser;
+    
     /*
      * 请求前处理
      *  (non-Javadoc)
@@ -83,6 +88,8 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
         long startTime = System.currentTimeMillis();
         AuthorizationHeader headerCredential = AuthorizationHeaderUtils.resolve(request);
         ApiRequestUri apiRequestUri = WebContext.explainRequestUri(request);
+        String ipAddress = WebContext.getRequestIpAddress(request);
+        Region region =ipLocationParser.region(ipAddress);
         HistoryOpenapi history = new HistoryOpenapi();
         history.setRequestMethod(apiRequestUri.getHttpMethod());
         history.setRequestUri(apiRequestUri.getRequestPath());
@@ -91,6 +98,11 @@ public class OpenApiPermissionAdapter  implements AsyncHandlerInterceptor  {
         history.setAuthned(ConstsBoolean.NO);
         history.setAccess(ConstsBoolean.NO);
         history.setRequestId(WebContext.genId());
+        history.setIpAddr(ipAddress);
+        history.setCountry(region.getCountry());
+        history.setProvince(region.getProvince());
+        history.setCity(region.getCity());
+        history.setLocation(region.getAddr());
         AccessToken token = null;
         //判断Authorization
         if(headerCredential != null && StringUtils.isNotBlank(headerCredential.getCredential()) && headerCredential.isBearer() ){

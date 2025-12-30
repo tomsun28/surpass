@@ -82,6 +82,21 @@ public class HistoryOpenapi extends JpaEntity implements Serializable {
 
     @Column
     String requestMethod;
+    
+    @Column
+    String ipAddr;
+    
+    @Column
+    String country;
+    
+    @Column
+    String province;
+    
+    @Column
+    String city;
+    
+    @Column
+    String location;
 
     @Column
     String authned;
