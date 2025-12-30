@@ -25,7 +25,7 @@
     </div>
     
     <div class="region-table">
-      <el-table :data="regionData" style="width: 100%" height="200">
+      <el-table :data="regionData" style="width: 100%" height="280">
         <el-table-column prop="province" label="省份" width="120" align="center">
           <template #default="{ row }">
             <div class="province-cell">

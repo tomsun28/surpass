@@ -11,7 +11,7 @@
       </div>
     </div>
     
-    <el-table :data="apiList" style="width: 100%" height="400">
+    <el-table :data="apiList" style="width: 100%" height="700">
       <el-table-column type="index" label="排名" width="80" align="center">
         <template #default="{ $index }">
           <div class="rank-cell" :class="getRankClass($index + 1)">

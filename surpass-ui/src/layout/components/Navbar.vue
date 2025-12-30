@@ -13,18 +13,18 @@
       <div class="right-menu-item avatar-box">
         <el-dropdown placement="bottom">
           <div class="avatar-wrapper">
-            <img :src="userStore.avatar" class="user-avatar" alt=""/>
+            <!--<img :src="userStore.avatar" class="user-avatar" alt=""/>-->
             <span style="margin-left: 5px">{{ userStore.name }}</span>
             <span>({{ userStore.username }})</span>
           </div>
           <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item>
-                <router-link to="/user/profile">
-                  <svg-icon icon-class="user"></svg-icon>
-                  <span style="margin-left: 5px">个人中心</span>
-                </router-link>
-              </el-dropdown-item>
+             <el-dropdown-menu> 
+<!--              <el-dropdown-item> -->
+<!--                <router-link to="/user/profile"> -->
+<!--                  <svg-icon icon-class="user"></svg-icon>-->
+<!--                  <span style="margin-left: 5px">个人中心</span>-->
+<!--                </router-link>-->
+<!--             </el-dropdown-item> -->
 <!--              <el-dropdown-item>-->
 <!--                <svg-icon icon-class="setting"></svg-icon>-->
 <!--                <span style="margin-left: 5px">个人设置</span>-->
