@@ -31,7 +31,6 @@ import com.surpass.authn.provider.AbstractAuthenticationProvider;
 import com.surpass.authn.secretkey.SecretKeyManager;
 import com.surpass.configuration.ApplicationConfig;
 import com.surpass.configuration.LoginConfig;
-import com.surpass.entity.Institutions;
 import com.surpass.entity.Message;
 import com.surpass.entity.config.ConfigLoginPolicy;
 import com.surpass.persistence.service.LoginService;
@@ -90,8 +89,7 @@ public class LoginEndpoint {
 		logger.debug("/login.");
 		LoginConfigDto conf = new LoginConfigDto();
 		ConfigLoginPolicy loginPolicy = loginService.getConfigLoginPolicy();
-		Institutions inst = (Institutions) WebContext.getAttribute(WebConstants.CURRENT_INST);
-		conf.setInst(inst);
+
 		conf.setCaptcha(loginPolicy.getCaptchaMgt().toUpperCase());
 		conf.setState(authTokenService.genRandomJwt());
 		LoginSecretKey loginSecretKey = secretKeyManager.getSecretKey();

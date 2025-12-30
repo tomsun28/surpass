@@ -34,9 +34,9 @@ router.beforeEach(async (to: any, from: any, next: any) => {
                 try {
                     const res = await loginPreGet();
                     if (res.code === 0) {
-                        const staticAppInfo: any = res.data.inst;
-                        staticAppInfo.logo = logoUrl;
-                        appStore().setAppInfo(staticAppInfo);
+                        //const staticAppInfo: any = res.data.inst;
+                        //staticAppInfo.logo = logoUrl;
+                        //appStore().setAppInfo(staticAppInfo);
                     }
                     await userStore.currentUser();
                     const accessRoutes = await usePermissionStore().generateRoutes();

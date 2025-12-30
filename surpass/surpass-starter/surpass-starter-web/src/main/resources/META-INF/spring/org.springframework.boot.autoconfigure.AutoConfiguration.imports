@@ -4,7 +4,6 @@ com.surpass.autoconfigure.DataSourceAutoConfiguration
 com.surpass.autoconfigure.MvcAutoConfiguration
 com.surpass.autoconfigure.MvcCorsAutoConfiguration
 com.surpass.autoconfigure.MvcDateTimeAutoConfiguration
-com.surpass.autoconfigure.MvcInstAutoConfiguration
 com.surpass.autoconfigure.MvcResourceAutoConfiguration
 com.surpass.autoconfigure.MvcRestrictHostAutoConfiguration
 com.surpass.autoconfigure.RedisAutoConfiguration

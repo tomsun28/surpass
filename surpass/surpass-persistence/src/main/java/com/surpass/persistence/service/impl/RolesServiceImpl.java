@@ -25,15 +25,12 @@ package com.surpass.persistence.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dromara.mybatis.jpa.query.LambdaQuery;
 import org.dromara.mybatis.jpa.service.impl.JpaServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.surpass.constants.ConstsRoles;
-import com.surpass.constants.ConstsStatus;
-import com.surpass.entity.Institutions;
 import com.surpass.entity.permissions.Roles;
 import com.surpass.persistence.mapper.RolesMapper;
 import com.surpass.persistence.service.RolesService;
@@ -46,8 +43,6 @@ public class RolesServiceImpl  extends JpaServiceImpl<RolesMapper,Roles> impleme
     @Autowired
     RoleMemberServiceImpl groupMemberService;
 
-    @Autowired
-    InstitutionsServiceImpl institutionsService;
 
     @Autowired
     RolesMapper groupsMapper;
@@ -109,17 +104,12 @@ public class RolesServiceImpl  extends JpaServiceImpl<RolesMapper,Roles> impleme
     }
 
 	public void refreshAllDynamicRoles(){
-		 LambdaQuery<Institutions> queryWrapper = new LambdaQuery<Institutions>();
-		 queryWrapper.eq(Institutions::getStatus, ConstsStatus.ACTIVE);
-		List<Institutions> instList = institutionsService.query(queryWrapper);
-		for(Institutions inst : instList) {
-			Roles group = new Roles();
-		    List<Roles>  groupsList = queryDynamicRoles(group);
-	        for(Roles r : groupsList) {
-	            logger.debug("group {}" , groupsList);
-	            refreshDynamicRoles(r);
-	        }
-		}
+		Roles group = new Roles();
+	    List<Roles>  groupsList = queryDynamicRoles(group);
+        for(Roles r : groupsList) {
+            logger.debug("group {}" , groupsList);
+            refreshDynamicRoles(r);
+        }
 	}
 
 }

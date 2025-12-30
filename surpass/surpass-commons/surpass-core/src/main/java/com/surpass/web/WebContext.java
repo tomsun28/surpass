@@ -46,7 +46,6 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.surpass.entity.ApiRequestUri;
-import com.surpass.entity.Institutions;
 import com.surpass.util.DateUtils;
 import com.surpass.util.IdGenerator;
 
@@ -262,10 +261,6 @@ public final class WebContext {
      */
     public static String getParameter(String name) {
         return  getRequest().getParameter(name);
-    }
-
-    public static Institutions getInst() {
-        return (Institutions)getAttribute(WebConstants.CURRENT_INST);
     }
 
     /**

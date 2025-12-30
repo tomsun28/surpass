@@ -223,7 +223,7 @@ function getCookie(): any {
 function getState(): any {
   loginPreGet().then((res: any) => {
     if (res.code === 0) {
-      staticAppInfo.value = res.data.inst
+      //staticAppInfo.value = res.data.inst
       staticAppInfo.value.logo = logoUrl
       // import(`/${res.data.inst.logo}`).then((logo: any) =>  {
       //   staticAppInfo.value.logo = logo.default

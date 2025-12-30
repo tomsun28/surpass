@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.surpass.entity.ChangePassword;
-import com.surpass.entity.Institutions;
 import com.surpass.entity.history.HistorySystemLogs;
 import com.surpass.entity.idm.Organizations;
 import com.surpass.entity.idm.UserInfo;
@@ -86,10 +85,6 @@ public class HistorySystemLogsServiceImpl  extends JpaServiceImpl<HistorySystemL
 			}else if(entity instanceof Permission model) {
 				targetId = model.getId();
 				targetName =  model.getRoleId();
-				message = buildMsg(model);
-			}else if(entity instanceof Institutions model) {
-				targetId = model.getId();
-				targetName =  model.getFullName();
 				message = buildMsg(model);
 			}else if(entity instanceof String) {
 				message = entity.toString();
@@ -184,13 +179,4 @@ public class HistorySystemLogsServiceImpl  extends JpaServiceImpl<HistorySystemL
 				.toString();
 	}
 
-	public String buildMsg(Institutions inst) {
-		return new StringBuilder()
-				.append(inst.getFullName())
-				.append("[")
-				.append(inst.getId())
-				.append(inst.getDomain())
-				.append("]")
-				.toString();
-	}
 }

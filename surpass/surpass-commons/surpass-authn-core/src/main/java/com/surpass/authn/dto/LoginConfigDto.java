@@ -21,17 +21,13 @@
 package com.surpass.authn.dto;
 
 import com.surpass.authn.jwt.AuthJwt;
-import com.surpass.entity.Institutions;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 public class LoginConfigDto{
-	/**
-	 * 机构信息
-	 */
-	Institutions inst;
+
 	/**
 	 * 验证码
 	 */

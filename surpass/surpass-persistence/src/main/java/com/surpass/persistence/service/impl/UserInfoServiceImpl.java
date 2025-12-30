@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Repository;
 import com.surpass.configuration.ApplicationConfig;
 import com.surpass.crypto.password.PasswordReciprocal;
 import com.surpass.entity.ChangePassword;
@@ -65,10 +64,7 @@ public class UserInfoServiceImpl extends JpaServiceImpl<UserInfoMapper, UserInfo
 
     @Autowired
     UserInfoMapper userInfoMapper;
-
-    @Autowired
-    InstitutionsMapper institutionsMapper;
-
+    
     @Autowired
     RolesMapper rolesMapper;
 
