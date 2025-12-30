@@ -1,4 +1,4 @@
-package com.surpass.persistence.util;
+package com.surpass.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

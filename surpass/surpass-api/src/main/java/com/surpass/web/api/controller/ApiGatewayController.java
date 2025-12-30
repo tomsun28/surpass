@@ -2,7 +2,7 @@ package com.surpass.web.api.controller;
 
 import com.surpass.entity.ApiRequestUri;
 import com.surpass.persistence.service.ApiExecuteService;
-import com.surpass.persistence.util.ResponseTemplateRenderer;
+import com.surpass.web.ResponseTemplateRenderer;
 import com.surpass.web.WebContext;
 
 import jakarta.servlet.http.HttpServletRequest;

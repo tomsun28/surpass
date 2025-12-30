@@ -1,8 +1,8 @@
-package com.surpass.persistence.util;
-
-import com.surpass.exception.BusinessException;
+package com.surpass.enums;
 
 import java.util.Arrays;
+
+import com.surpass.exception.ServiceException;
 
 /**
  * @description:
@@ -30,6 +30,6 @@ public enum ResourceClassify {
         return Arrays.stream(values())
                 .filter(e -> e.code.equals(code))
                 .findFirst()
-                .orElseThrow(() -> new BusinessException(50001, "非法的资源类型"));
+                .orElseThrow(() -> new ServiceException("非法的资源类型",50001));
     }
 }

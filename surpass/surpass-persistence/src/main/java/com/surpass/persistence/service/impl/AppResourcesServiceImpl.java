@@ -7,6 +7,7 @@ import com.surpass.entity.app.App;
 import com.surpass.entity.app.AppResources;
 import com.surpass.entity.app.dto.AppResourcesChangeDto;
 import com.surpass.entity.app.dto.AppResourcesPageDto;
+import com.surpass.enums.ResourceClassify;
 import com.surpass.exception.BusinessException;
 import com.surpass.persistence.mapper.AppMapper;
 import com.surpass.persistence.mapper.AppResourcesMapper;
@@ -14,7 +15,7 @@ import com.surpass.persistence.mapper.RoleAppResourcesPermissionMapper;
 import com.surpass.persistence.service.AppResourcesService;
 import com.surpass.persistence.service.ClientPermissionService;
 import com.surpass.persistence.service.RoleAppResourcesPermissionService;
-import com.surpass.persistence.util.ResourceClassify;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +31,9 @@ import org.dromara.mybatis.jpa.update.LambdaUpdateWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import static com.surpass.enums.ResourceClassify.OPEN_API;
 
-import static com.surpass.persistence.util.ResourceClassify.OPEN_API;
+import java.util.*;
 
 /**
  * @description:
