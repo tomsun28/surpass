@@ -28,9 +28,11 @@ import com.surpass.entity.history.HistoryOpenapi;
 
 import com.surpass.entity.history.dto.HistoryOpenapiPageDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.dromara.mybatis.jpa.IJpaMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Crystal.sea
@@ -39,5 +41,16 @@ import java.util.List;
 @Mapper
 public interface HistoryOpenapiMapper extends IJpaMapper<HistoryOpenapi> {
     List<HistoryOpenapi> pageList(HistoryOpenapiPageDto dto);
-
+    
+    Long selectCountByCondition(@Param("params") Map<String, Object> params);
+    
+    List<Map<String, Object>> selectApiStatistics(@Param("params") Map<String, Object> params);
+    
+    List<Map<String, Object>> selectApiAccessTrendByHour(@Param("params") Map<String, Object> params);
+    
+    List<Map<String, Object>> selectApiAccessTrendByDay(@Param("params") Map<String, Object> params);
+    
+    List<Map<String, Object>> selectApiAccessTrendByMonth(@Param("params") Map<String, Object> params);
+    
+    List<Map<String, Object>> selectRegionAccessData(@Param("params") Map<String, Object> params);
 }

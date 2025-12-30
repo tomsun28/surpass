@@ -13,13 +13,18 @@
       </transition>
     </router-view>
     <iframe-toggle/>
+
+
   </section>
+  <Footer position="relative"></Footer>
+
 </template>
 
 <script setup>
 import iframeToggle from "./IframeToggle/index"
 import useTagsViewStore from '@/store/modules/tagsView'
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
+import Footer from "@/components/Footer/index.vue";
 const route = useRoute();
 const tagsViewStore = useTagsViewStore()
 </script>

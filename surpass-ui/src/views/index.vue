@@ -5,13 +5,7 @@
       <div class="section-header">
         <h2 class="section-title">数据概览</h2>
         <div class="section-actions">
-          <el-button type="primary" size="small" @click="refreshData">
-            <svg-icon icon-class="refresh" class="refresh-icon" />
-            刷新数据
-          </el-button>
-          <el-button size="small" @click="exportData">
-            <svg-icon icon-class="download" class="download-icon" />
-            导出报表
+          <el-button type="primary" icon="refresh" @click="refreshData">
           </el-button>
         </div>
       </div>
@@ -138,11 +132,6 @@ const statistics = computed(() => [
 
 const refreshData = async () => {
   await fetchDashboardData()
-}
-
-const exportData = () => {
-  // 导出报表功能
-  console.log('导出报表')
 }
 
 onMounted(() => {

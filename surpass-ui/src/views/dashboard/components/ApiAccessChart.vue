@@ -19,6 +19,7 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import * as echarts from 'echarts'
 import { getApiAccessTrend } from '@/api/dashboard-statistics'
 import type { ApiAccessData, TimeRange } from '../types'
+import {parseTime} from "@/utils/Surpass";
 
 const chartRef = ref<HTMLDivElement>()
 const chart = ref<echarts.ECharts>()
@@ -46,7 +47,7 @@ const handleTimeRangeChange = async () => {
 const fetchData = async () => {
   const params: TimeRange = {
     startTime: getStartTime(),
-    endTime: new Date().toISOString(),
+    endTime: parseTime(new Date(), '{y}-{m}-{d}'),
     type: timeRange.value
   }
   
@@ -73,7 +74,7 @@ const getStartTime = (): string => {
       now.setMonth(now.getMonth() - 1)
       break
   }
-  return now.toISOString()
+  return parseTime(now, '{y}-{m}-{d}')
 }
 
 const updateChart = () => {

@@ -33,7 +33,7 @@
         <el-table-column header-align="center" label="操作" width="120" fixed="right">
           <template #default="{ row }">
             <el-tooltip content="测试连接" placement="top">
-              <el-button link icon="Position" @click="testConnection(row)"></el-button>
+              <el-button link><svg-icon icon-class="control" @click="testConnection(row)"></svg-icon></el-button>
             </el-tooltip>
             <el-tooltip content="编辑" placement="top">
               <el-button link icon="Edit" type="primary" @click="editDataSource(row)"></el-button>
@@ -73,7 +73,6 @@
             <el-option label="PostgreSQL" value="org.postgresql.Driver"/>
             <el-option label="Oracle" value="oracle.jdbc.OracleDriver"/>
             <el-option label="SQL Server" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-            <el-option label="H2" value="org.h2.Driver"/>
           </el-select>
         </el-form-item>
 
@@ -125,6 +124,7 @@
 import {ref, reactive, onMounted, computed} from 'vue'
 import {ElLoading, ElMessage, ElMessageBox} from 'element-plus'
 import * as dataSourceApi from '@/api/api-service/dataSource.ts'
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 const URL_PATTERNS = {
   'com.mysql.cj.jdbc.Driver': /^jdbc:mysql:\/\/(?:[a-zA-Z0-9._-]+|\[[0-9a-fA-F:]+\])(?::\d{1,5})?\/[a-zA-Z0-9_\-]+.*$/i,

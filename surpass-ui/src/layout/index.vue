@@ -9,6 +9,7 @@
       </el-aside>
       <el-main>
         <app-main/>
+
         <settings ref="settingRef"/>
       </el-main>
     </el-container>
@@ -25,6 +26,7 @@ import {AppMain, Navbar, Settings} from './components'
 import useAppStore from '@/store/modules/app'
 import useSettingsStore from '@/store/modules/settings'
 import {useRoute} from "vue-router";
+import Footer from "@/components/Footer/index.vue";
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()

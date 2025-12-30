@@ -7,45 +7,186 @@
         h.*
         FROM
         surpass_history_openapi h
-        WHERE
-        1 = 1
+        <where>
+            <!-- 请求ID -->
+            <if test="requestId != null and requestId != ''">
+                AND h.request_id LIKE CONCAT('%', #{requestId}, '%')
+            </if>
 
-        <!-- 请求ID -->
-        <if test="requestId != null and requestId != ''">
-            AND h.request_id LIKE CONCAT('%', #{requestId}, '%')
-        </if>
+            <!-- Client ID -->
+            <if test="clientId != null and clientId != ''">
+                AND h.client_id LIKE CONCAT('%', #{clientId}, '%')
+            </if>
 
-        <!-- Client ID -->
-        <if test="clientId != null and clientId != ''">
-            AND h.client_id LIKE CONCAT('%', #{clientId}, '%')
-        </if>
+            <!-- 应用名称 -->
+            <if test="appName != null and appName != ''">
+                AND h.app_name LIKE CONCAT('%', #{appName}, '%')
+            </if>
 
-        <!-- 应用名称 -->
-        <if test="appName != null and appName != ''">
-            AND h.app_name LIKE CONCAT('%', #{appName}, '%')
-        </if>
+            <!-- 资源名称 -->
+            <if test="resourceName != null and resourceName != ''">
+                AND h.resource_name LIKE CONCAT('%', #{resourceName}, '%')
+            </if>
 
-        <!-- 资源名称 -->
-        <if test="resourceName != null and resourceName != ''">
-            AND h.resource_name LIKE CONCAT('%', #{resourceName}, '%')
-        </if>
+            <!-- 请求方法 -->
+            <if test="requestMethod != null and requestMethod != ''">
+                AND h.request_method = #{requestMethod}
+            </if>
 
-        <!-- 请求方法 -->
-        <if test="requestMethod != null and requestMethod != ''">
-            AND h.request_method = #{requestMethod}
-        </if>
+            <!-- 开始时间 -->
+            <if test="startTime != null">
+                AND h.access_time <![CDATA[ >= ]]> #{startTime}
+            </if>
 
-        <!-- 开始时间 -->
-        <if test="startTime != null">
-            AND h.access_time <![CDATA[ >= ]]> #{startTime}
-        </if>
-
-        <!-- 结束时间 -->
-        <if test="endTime != null">
-            AND h.access_time <![CDATA[ <= ]]> #{endTime}
-        </if>
+            <!-- 结束时间 -->
+            <if test="endTime != null">
+                AND h.access_time <![CDATA[ <= ]]> #{endTime}
+            </if>
+        </where>
 
         ORDER BY
         h.access_time DESC
+    </select>
+
+    <select id="selectCountByCondition" parameterType="map" resultType="long">
+        SELECT COUNT(*) FROM surpass_history_openapi h
+        <where>
+            <!-- 省份 -->
+            <if test="params.province != null and params.province != ''">
+                AND h.province = #{params.province}
+            </if>
+
+            <!-- 访问状态 -->
+            <if test="params.access != null and params.access != ''">
+                AND h.access = #{params.access}
+            </if>
+
+            <!-- 开始时间 -->
+            <if test="params.startTime != null">
+                AND h.access_time <![CDATA[ >= ]]> #{params.startTime}
+            </if>
+
+            <!-- 结束时间 -->
+            <if test="params.endTime != null">
+                AND h.access_time <![CDATA[ <= ]]> #{params.endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectApiStatistics" parameterType="map" resultType="map">
+        SELECT
+            h.resource_name,
+            h.resource_uri,
+            COUNT(*) as count,
+            SUM(h.access_cost) as totalCost,
+            SUM(CASE WHEN h.access = 'y' THEN 1 ELSE 0 END) as successCount
+        FROM surpass_history_openapi h
+        <where>
+            <!-- 开始时间 -->
+            <if test="params.startTime != null">
+                AND h.access_time <![CDATA[ >= ]]> #{params.startTime}
+            </if>
+
+            <!-- 结束时间 -->
+            <if test="params.endTime != null">
+                AND h.access_time <![CDATA[ <= ]]> #{params.endTime}
+            </if>
+        </where>
+
+        GROUP BY h.resource_name, h.resource_uri
+        ORDER BY count DESC
+        LIMIT 10
+    </select>
+
+    <select id="selectApiAccessTrendByHour" parameterType="map" resultType="map">
+        SELECT
+            DATE_FORMAT(h.access_time, '%H:00') as date,
+            COUNT(*) as count,
+            SUM(CASE WHEN h.access = 'y' THEN 1 ELSE 0 END) as success,
+            SUM(CASE WHEN h.access = 'n' THEN 1 ELSE 0 END) as failed,
+            COALESCE(AVG(h.access_cost), 0) as avgResponseTime
+        FROM surpass_history_openapi h
+        <where>
+            <!-- 开始时间 -->
+            <if test="params.startTime != null">
+                AND h.access_time <![CDATA[ >= ]]> #{params.startTime}
+            </if>
+
+            <!-- 结束时间 -->
+            <if test="params.endTime != null">
+                AND h.access_time <![CDATA[ <= ]]> #{params.endTime}
+            </if>
+        </where>
+        GROUP BY date
+        ORDER BY date
+    </select>
+
+    <select id="selectApiAccessTrendByDay" parameterType="map" resultType="map">
+        SELECT
+            DATE(h.access_time) as date,
+            COUNT(*) as count,
+            SUM(CASE WHEN h.access = 'y' THEN 1 ELSE 0 END) as success,
+            SUM(CASE WHEN h.access = 'n' THEN 1 ELSE 0 END) as failed,
+            COALESCE(AVG(h.access_cost), 0) as avgResponseTime
+        FROM surpass_history_openapi h
+        <where>
+            <!-- 开始时间 -->
+            <if test="params.startTime != null">
+                AND h.access_time <![CDATA[ >= ]]> #{params.startTime}
+            </if>
+
+            <!-- 结束时间 -->
+            <if test="params.endTime != null">
+                AND h.access_time <![CDATA[ <= ]]> #{params.endTime}
+            </if>
+        </where>
+        GROUP BY date
+        ORDER BY date
+    </select>
+
+    <select id="selectApiAccessTrendByMonth" parameterType="map" resultType="map">
+        SELECT
+            DATE_FORMAT(h.access_time, '%Y-%m') as date,
+            COUNT(*) as count,
+            SUM(CASE WHEN h.access = 'y' THEN 1 ELSE 0 END) as success,
+            SUM(CASE WHEN h.access = 'n' THEN 1 ELSE 0 END) as failed,
+            COALESCE(AVG(h.access_cost), 0) as avgResponseTime
+        FROM surpass_history_openapi h
+        <where>
+            <!-- 开始时间 -->
+            <if test="params.startTime != null">
+                AND h.access_time <![CDATA[ >= ]]> #{params.startTime}
+            </if>
+
+            <!-- 结束时间 -->
+            <if test="params.endTime != null">
+                AND h.access_time <![CDATA[ <= ]]> #{params.endTime}
+            </if>
+        </where>
+        GROUP BY date
+        ORDER BY date
+    </select>
+    
+    <select id="selectRegionAccessData" parameterType="map" resultType="map">
+        SELECT
+            h.province,
+            COUNT(*) as totalCount,
+            COUNT(DISTINCT h.ip_addr) as userCount,
+            SUM(CASE WHEN h.access = 'y' THEN 1 ELSE 0 END) as successCount
+        FROM surpass_history_openapi h
+        <where>
+            h.province IS NOT NULL
+            AND h.province != ''
+            <!-- 开始时间 -->
+            <if test="params.startTime != null">
+                AND h.access_time <![CDATA[ >= ]]> #{params.startTime}
+            </if>
+            <!-- 结束时间 -->
+            <if test="params.endTime != null">
+                AND h.access_time <![CDATA[ <= ]]> #{params.endTime}
+            </if>
+        </where>
+        GROUP BY h.province
+        ORDER BY totalCount DESC
     </select>
 </mapper>

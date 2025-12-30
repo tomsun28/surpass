@@ -9,7 +9,7 @@
           <AutoCounter
               :startAmount="0"
               :endAmount="value"
-              :duration="2000"
+              :duration="2"
               :autoinit="true"
               class="value"
           />

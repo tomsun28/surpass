@@ -82,6 +82,7 @@ import * as echarts from 'echarts'
 import chinaJson from '@/assets/china-map.json'
 import { getRegionAccessData } from '@/api/dashboard-statistics'
 import type { RegionAccessData, TimeRange } from '../types'
+import {parseTime} from "@/utils/Surpass";
 
 const mapRef = ref<HTMLDivElement>()
 const chart = ref<echarts.ECharts>()
@@ -119,7 +120,7 @@ const handleTimeRangeChange = async () => {
 const fetchData = async () => {
   const params: TimeRange = {
     startTime: getStartTime(),
-    endTime: new Date().toISOString(),
+    endTime: parseTime(new Date(), '{y}-{m}-{d}'),
     type: timeRange.value
   }
   
@@ -151,7 +152,7 @@ const getStartTime = (): string => {
       now.setMonth(now.getMonth() - 1)
       break
   }
-  return now.toISOString()
+  return parseTime(now, '{y}-{m}-{d}')
 }
 
 const updateChart = () => {

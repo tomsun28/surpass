@@ -163,7 +163,6 @@ export function useDashboard() {
   }
 
   onMounted(() => {
-    fetchDashboardData()
     startAutoRefresh()
   })
 

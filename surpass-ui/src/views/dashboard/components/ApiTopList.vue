@@ -74,6 +74,7 @@
 import { ref, onMounted } from 'vue'
 import { getApiTopList } from '@/api/dashboard-statistics'
 import type { ApiTopData, TimeRange } from '../types'
+import {parseTime} from "@/utils/Surpass";
 
 const timeRange = ref<'day' | 'week' | 'month'>('day')
 const apiList = ref<ApiTopData[]>([])
@@ -85,7 +86,7 @@ const handleTimeRangeChange = async () => {
 const fetchData = async () => {
   const params: TimeRange = {
     startTime: getStartTime(),
-    endTime: new Date().toISOString(),
+    endTime: parseTime(new Date(), '{y}-{m}-{d}'),
     type: timeRange.value
   }
   
@@ -114,7 +115,7 @@ const getStartTime = (): string => {
       now.setMonth(now.getMonth() - 1)
       break
   }
-  return now.toISOString()
+  return parseTime(now, '{y}-{m}-{d}')
 }
 
 const getRankClass = (rank: number) => {
