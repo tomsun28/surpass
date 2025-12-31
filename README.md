@@ -1,3 +1,14 @@
+<p align="center">
+        <img src="https://img.shields.io/github/v/release/tomsun28/surpass" />
+
+        <img src="https://img.shields.io/badge/JDK-v17%2B-brightgreen" />
+
+        <img src="https://img.shields.io/badge/MySQL-8.4.2%2B-brightgreen" />
+
+        <img src="https://img.shields.io/github/license/tomsun28/surpass" />
+
+</p>
+
 
 ## Surpass API开放平台
 
