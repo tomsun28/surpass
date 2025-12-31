@@ -17,7 +17,6 @@
 
   </section>
   <Footer position="relative"></Footer>
-
 </template>
 
 <script setup>

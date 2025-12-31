@@ -274,24 +274,6 @@ onMounted(() => {
   }
 }
 
-/* 动画效果 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.page-header,
-.tab-navigation,
-.content-wrapper {
-  animation: fadeIn 0.5s ease-out;
-}
-
 .page-header {
   animation-delay: 0.1s;
 }
