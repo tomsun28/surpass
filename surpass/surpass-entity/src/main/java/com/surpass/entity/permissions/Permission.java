@@ -54,9 +54,15 @@ public class Permission  extends JpaEntity implements Serializable {
 
     @Column
     String roleId;
+    
+    @Column
+    String appId;
 
     @Column
     String resourceId;
+    
+    @Column
+    int category = 1;
 
     @Column
     int status = ConstsStatus.ACTIVE;

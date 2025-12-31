@@ -17,7 +17,7 @@ import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "surpass_role_app_resources_permission")
+@Table(name = "surpass_permission")
 @Data
 public class RoleAppResourcesPermission extends JpaEntity implements Serializable {
 
@@ -37,6 +37,9 @@ public class RoleAppResourcesPermission extends JpaEntity implements Serializabl
 
     @Column(nullable = false, length = 45)
     private String appId;
+    
+    @Column
+    int category = 2;
 
     @Column
     private String createdBy;
