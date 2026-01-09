@@ -4,7 +4,7 @@
 
     <select id="queryPermissions" parameterType="ClientPermission" resultType="AppResources">
         SELECT r.* 
-        FROM surpass.surpass_app_resources r, 
+        FROM surpass_app_resources r, 
         	 surpass_client_permission p
 		where r.app_id =p.app_id and r.id =p.resource_id 
 			and p.client_id =#{clientId} 
