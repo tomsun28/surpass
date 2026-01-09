@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.maxkey.surpass.persistence.mapper.AppMapper">
+    <select id="findByContextPath" resultType="org.maxkey.surpass.entity.app.App"
+            parameterType="string">
+        select *
+        from surpass_app
+        where context_path = #{contxtPath}
+        and deleted = 'n'
+    </select>
+
+    <select id="getById" resultType="org.maxkey.surpass.entity.app.App" parameterType="string">
+        select *
+        from surpass_app
+        where id = #{id}
+        and deleted = 'n'
+    </select>
+</mapper>

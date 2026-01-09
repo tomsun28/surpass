@@ -24,8 +24,7 @@ package org.maxkey.util;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-
-import com.surpass.util.SnowFlakeId;
+import org.maxkey.surpass.util.SnowFlakeId;
 
 public class SonwFlakeIdTest {
 

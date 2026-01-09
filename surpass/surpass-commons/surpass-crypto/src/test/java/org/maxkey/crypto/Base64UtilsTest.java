@@ -23,9 +23,8 @@
 package org.maxkey.crypto;
 
 import org.junit.Test;
-
-import com.surpass.crypto.Base64Utils;
-import com.surpass.crypto.DigestUtils;
+import org.maxkey.surpass.crypto.Base64Utils;
+import org.maxkey.surpass.crypto.DigestUtils;
 
 public class Base64UtilsTest {
 

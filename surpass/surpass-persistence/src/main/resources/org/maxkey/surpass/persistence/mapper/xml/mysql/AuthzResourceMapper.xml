@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.maxkey.surpass.persistence.mapper.AuthzResourceMapper">
+
+
+    <select id="queryResourcesByRoleId" parameterType="QueryAppResourceDto" resultType="Resources">
+        SELECT distinct mr.*
+        FROM surpass_resources mr
+        join surpass_permission mp
+        on mr.id = mp.resource_id
+        where  mr.status ='1'
+		and mr.deleted = 'n'
+        and mp.status =1
+        and mp.role_id in (
+        <foreach collection="roleIds" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+
+</mapper>

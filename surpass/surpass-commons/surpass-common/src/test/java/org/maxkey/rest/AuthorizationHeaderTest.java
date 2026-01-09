@@ -23,9 +23,8 @@
 package org.maxkey.rest;
 
 import org.junit.Test;
-
-import com.surpass.util.AuthorizationHeader;
-import com.surpass.util.AuthorizationHeaderUtils;
+import org.maxkey.surpass.util.AuthorizationHeader;
+import org.maxkey.surpass.util.AuthorizationHeaderUtils;
 
 public class AuthorizationHeaderTest {
 

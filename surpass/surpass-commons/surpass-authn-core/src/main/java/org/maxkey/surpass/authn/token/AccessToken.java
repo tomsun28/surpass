@@ -1,0 +1,21 @@
+package org.maxkey.surpass.authn.token;
+
+import org.maxkey.surpass.constants.ConstsToken;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Data;
+
+@Data
+public class AccessToken {
+	@JsonProperty(ConstsToken.CLIENT_ID)
+	String clientId;
+	@JsonProperty(ConstsToken.ACCESS_TOKEN)
+	String accessToken;
+	@JsonProperty(ConstsToken.EXPIRES_IN)
+	int expiresIn = 3600 * 2;
+	@JsonProperty(ConstsToken.REFRESH_TOKEN)
+	String refreshToken;
+	@JsonProperty(ConstsToken.REFRESH_TOKEN_EXPRISE)
+	int refreshTokenExprise = 3600 * 12;
+}

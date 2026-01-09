@@ -25,8 +25,7 @@ package org.maxkey.util;
 import java.util.UUID;
 
 import org.junit.Test;
-
-import com.surpass.util.StringGenerator;
+import org.maxkey.surpass.util.StringGenerator;
 
 public class StringGeneratorTest {
 	@Test

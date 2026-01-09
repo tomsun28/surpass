@@ -21,9 +21,10 @@ package org.maxkey.util;
 
 import java.util.Date;
 
+import org.maxkey.surpass.json.JsonStringSerializer;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.surpass.json.JsonStringSerializer;
 
 public class Students {
 

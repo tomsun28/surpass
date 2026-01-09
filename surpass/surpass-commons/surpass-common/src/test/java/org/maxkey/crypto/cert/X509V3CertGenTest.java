@@ -31,8 +31,7 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-
-import com.surpass.crypto.cert.X509V3CertGen;
+import org.maxkey.surpass.crypto.cert.X509V3CertGen;
 
 public class X509V3CertGenTest {
 

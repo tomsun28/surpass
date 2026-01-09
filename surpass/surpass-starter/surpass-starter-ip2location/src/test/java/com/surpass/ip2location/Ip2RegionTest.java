@@ -27,7 +27,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.lionsoul.ip2region.xdb.Searcher;
-import com.surpass.ip2location.offline.Ip2regionV2;
+import org.maxkey.surpass.ip2location.offline.Ip2regionV2;
 import org.springframework.util.StreamUtils;
 
 public class Ip2RegionTest {

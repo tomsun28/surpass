@@ -25,10 +25,9 @@ package org.maxkey.mail;
 import java.util.Properties;
 
 import org.junit.Test;
+import org.maxkey.surpass.uuid.UUID;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
-import com.surpass.uuid.UUID;
 
 public class MailTest {
 

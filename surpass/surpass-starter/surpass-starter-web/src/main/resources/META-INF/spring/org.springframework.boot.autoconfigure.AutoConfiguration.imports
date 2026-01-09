@@ -1,8 +1,8 @@
-com.surpass.autoconfigure.ApplicationAutoConfiguration
-com.surpass.autoconfigure.DataSourceAutoConfiguration
-com.surpass.autoconfigure.MvcAutoConfiguration
-com.surpass.autoconfigure.MvcCorsAutoConfiguration
-com.surpass.autoconfigure.MvcDateTimeAutoConfiguration
-com.surpass.autoconfigure.MvcResourceAutoConfiguration
-com.surpass.autoconfigure.MvcRestrictHostAutoConfiguration
-com.surpass.autoconfigure.RedisAutoConfiguration
+org.maxkey.surpass.autoconfigure.ApplicationAutoConfiguration
+org.maxkey.surpass.autoconfigure.DataSourceAutoConfiguration
+org.maxkey.surpass.autoconfigure.MvcAutoConfiguration
+org.maxkey.surpass.autoconfigure.MvcCorsAutoConfiguration
+org.maxkey.surpass.autoconfigure.MvcDateTimeAutoConfiguration
+org.maxkey.surpass.autoconfigure.MvcResourceAutoConfiguration
+org.maxkey.surpass.autoconfigure.MvcRestrictHostAutoConfiguration
+org.maxkey.surpass.autoconfigure.RedisAutoConfiguration

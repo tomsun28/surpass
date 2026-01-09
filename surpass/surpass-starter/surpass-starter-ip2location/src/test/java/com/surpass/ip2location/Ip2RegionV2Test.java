@@ -23,7 +23,7 @@
 package com.surpass.ip2location;
 
 import org.lionsoul.ip2region.xdb.Searcher;
-import com.surpass.ip2location.offline.Ip2regionV2;
+import org.maxkey.surpass.ip2location.offline.Ip2regionV2;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
 

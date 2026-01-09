@@ -24,7 +24,7 @@ package org.maxkey.util;
 
 import java.util.HashMap;
 
-import com.surpass.util.ObjectTransformer;
+import org.maxkey.surpass.util.ObjectTransformer;
 
 public class ObjectTransformerTest {
 

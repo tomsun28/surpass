@@ -23,10 +23,9 @@
 package org.maxkey.crypto.password;
 
 import org.junit.Test;
+import org.maxkey.surpass.crypto.ReciprocalUtils;
+import org.maxkey.surpass.crypto.password.PasswordReciprocal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.surpass.crypto.ReciprocalUtils;
-import com.surpass.crypto.password.PasswordReciprocal;
 
 public class PasswordReciprocalTest {
 

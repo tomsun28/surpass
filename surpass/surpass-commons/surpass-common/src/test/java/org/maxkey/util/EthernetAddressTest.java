@@ -22,7 +22,7 @@
 
 package org.maxkey.util;
 
-import com.surpass.util.EthernetAddress;
+import org.maxkey.surpass.util.EthernetAddress;
 
 public class EthernetAddressTest {
 

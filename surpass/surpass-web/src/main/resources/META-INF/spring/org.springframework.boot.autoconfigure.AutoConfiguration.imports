@@ -1,2 +1,2 @@
-com.surpass.autoconfigure.SurpassConfig
-com.surpass.autoconfigure.SurpassMvcConfig
+org.maxkey.surpass.autoconfigure.SurpassConfig
+org.maxkey.surpass.autoconfigure.SurpassMvcConfig

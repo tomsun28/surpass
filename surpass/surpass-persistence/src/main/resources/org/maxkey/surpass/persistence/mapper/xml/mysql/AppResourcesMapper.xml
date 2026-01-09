@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.maxkey.surpass.persistence.mapper.AppResourcesMapper">
+    <select id="pageList" parameterType="org.maxkey.surpass.entity.app.dto.AppResourcesPageDto"
+            resultType="org.maxkey.surpass.entity.app.AppResources">
+        SELECT
+        m.*,
+        p.name AS parent_name
+        FROM surpass_app_resources m
+        LEFT JOIN surpass_app_resources p ON m.parent_id = p.id AND p.deleted = 'n'
+        WHERE m.deleted = 'n'
+        <if test="appId != null and appId != ''">
+            AND m.app_id = #{appId}
+        </if>
+        <if test="classify != null and classify != ''">
+            AND m.classify = #{classify}
+        </if>
+        <if test="name != null and name != ''">
+            AND m.name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        ORDER BY m.sort_index ASC, m.created_date DESC
+    </select>
+
+    <select id="selectAllDescendantIds" resultType="string">
+        WITH RECURSIVE resource_tree AS (
+            -- 起点：当前节点的直接子节点
+            SELECT
+                id,
+                parent_id
+            FROM surpass_app_resources
+            WHERE parent_id = #{rootId}
+              AND deleted = 'n'
+
+            UNION ALL
+
+            -- 递归：继续向下找
+            SELECT
+                r.id,
+                r.parent_id
+            FROM surpass_app_resources r
+                     INNER JOIN resource_tree rt
+                                ON r.parent_id = rt.id
+            WHERE r.deleted = 'n'
+        )
+        SELECT id FROM resource_tree
+    </select>
+
+</mapper>

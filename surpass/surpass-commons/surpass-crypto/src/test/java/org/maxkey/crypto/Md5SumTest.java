@@ -25,7 +25,7 @@ package org.maxkey.crypto;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import com.surpass.crypto.Md5Sum;
+import org.maxkey.surpass.crypto.Md5Sum;
 
 public class Md5SumTest {
 

@@ -28,9 +28,8 @@ package org.maxkey.crypto.signature;
 import java.util.Map;
 
 import org.junit.Test;
-
-import com.surpass.crypto.KeyPairUtil;
-import com.surpass.crypto.signature.RsaSigner;
+import org.maxkey.surpass.crypto.KeyPairUtil;
+import org.maxkey.surpass.crypto.signature.RsaSigner;
 
 
 public final class RsaSignerTest  {

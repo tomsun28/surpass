@@ -22,7 +22,7 @@
 
 package org.maxkey.crypto.password;
 
-import com.surpass.crypto.password.SM3PasswordEncoder;
+import org.maxkey.surpass.crypto.password.SM3PasswordEncoder;
 
 public class SM3PasswordEncoderTest {
 

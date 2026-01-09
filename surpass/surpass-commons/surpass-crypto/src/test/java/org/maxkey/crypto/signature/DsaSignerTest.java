@@ -25,9 +25,8 @@ package org.maxkey.crypto.signature;
 import java.util.Map;
 
 import org.junit.Test;
-
-import com.surpass.crypto.KeyPairUtil;
-import com.surpass.crypto.signature.DsaSigner;
+import org.maxkey.surpass.crypto.KeyPairUtil;
+import org.maxkey.surpass.crypto.signature.DsaSigner;
 
 public final class DsaSignerTest {
 	@Test

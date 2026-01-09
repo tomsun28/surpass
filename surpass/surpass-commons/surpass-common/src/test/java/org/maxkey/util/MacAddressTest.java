@@ -22,7 +22,7 @@
 
 package org.maxkey.util;
 
-import com.surpass.util.MacAddress;
+import org.maxkey.surpass.util.MacAddress;
 
 public class MacAddressTest {
 

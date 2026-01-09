@@ -21,8 +21,8 @@ package org.maxkey.util;
 
 import java.util.Date;
 
-import com.surpass.util.JsonUtils;
-import com.surpass.uuid.UUID;
+import org.maxkey.surpass.util.JsonUtils;
+import org.maxkey.surpass.uuid.UUID;
 
 public class JsonFormatTest {
 

@@ -25,11 +25,11 @@ package org.maxkey.crypto.signature;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.maxkey.surpass.crypto.Base64Utils;
+import org.maxkey.surpass.crypto.jwt.Hmac512Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.surpass.crypto.Base64Utils;
-import com.surpass.crypto.jwt.Hmac512Service;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;

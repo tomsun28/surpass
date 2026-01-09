@@ -24,8 +24,7 @@ package org.maxkey.crypto;
 
 import java.time.Instant;
 import org.junit.Test;
-
-import com.surpass.crypto.DigestUtils;
+import org.maxkey.surpass.crypto.DigestUtils;
 
 public class DigestUtilsTest {
 /*

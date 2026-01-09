@@ -25,8 +25,7 @@ package org.maxkey.crypto;
 import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
-
-import com.surpass.crypto.password.PasswordReciprocal;
+import org.maxkey.surpass.crypto.password.PasswordReciprocal;
 
 public class ReciprocalUtilsTest {
 	@Test

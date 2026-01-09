@@ -23,8 +23,7 @@
 package org.maxkey.util;
 
 import org.junit.Test;
-
-import com.surpass.pretty.impl.XMLHelper;
+import org.maxkey.surpass.pretty.impl.XMLHelper;
 
 public class XMLHelperTest {
 

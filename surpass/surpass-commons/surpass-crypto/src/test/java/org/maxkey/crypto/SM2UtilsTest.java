@@ -25,8 +25,7 @@ import java.security.KeyPair;
 import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
-
-import com.surpass.crypto.SM2Utils;
+import org.maxkey.surpass.crypto.SM2Utils;
 
 public class SM2UtilsTest {
 

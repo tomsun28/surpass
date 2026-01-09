@@ -25,8 +25,8 @@ package org.maxkey.util;
 import java.security.Provider;
 import java.security.Security;
 
-import com.surpass.crypto.password.PasswordReciprocal;
-import com.surpass.util.Instance;
+import org.maxkey.surpass.crypto.password.PasswordReciprocal;
+import org.maxkey.surpass.util.Instance;
 
 
 public class InstanceTest {

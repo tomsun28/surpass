@@ -21,8 +21,7 @@
 package org.maxkey.util;
 
 import org.junit.Test;
-
-import com.surpass.util.StrUtils;
+import org.maxkey.surpass.util.StrUtils;
 
 
 public class StrUtilsTest {

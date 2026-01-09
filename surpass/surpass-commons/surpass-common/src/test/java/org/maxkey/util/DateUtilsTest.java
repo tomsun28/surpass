@@ -24,7 +24,7 @@ package org.maxkey.util;
 
 import java.util.Date;
 
-import com.surpass.util.DateUtils;
+import org.maxkey.surpass.util.DateUtils;
 
 public class DateUtilsTest {
 

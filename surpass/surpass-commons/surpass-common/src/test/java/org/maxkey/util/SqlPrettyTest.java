@@ -23,8 +23,7 @@
 package org.maxkey.util;
 
 import org.junit.Test;
-
-import com.surpass.pretty.PrettyFactory;
+import org.maxkey.surpass.pretty.PrettyFactory;
 
 public class SqlPrettyTest {
 

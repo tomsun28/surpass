@@ -27,9 +27,8 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 
 import org.apache.commons.codec.binary.Base64;
-
-import com.surpass.crypto.HexUtils;
-import com.surpass.crypto.HmacSha256;
+import org.maxkey.surpass.crypto.HexUtils;
+import org.maxkey.surpass.crypto.HmacSha256;
 
 public class HmacSha256Test {
 

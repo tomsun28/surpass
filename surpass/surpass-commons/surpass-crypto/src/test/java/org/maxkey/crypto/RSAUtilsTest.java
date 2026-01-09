@@ -24,10 +24,9 @@ package org.maxkey.crypto;
 
 import java.security.KeyPair;
 import org.junit.Test;
-
-import com.surpass.crypto.Base64Utils;
-import com.surpass.crypto.HexUtils;
-import com.surpass.crypto.RSAUtils;
+import org.maxkey.surpass.crypto.Base64Utils;
+import org.maxkey.surpass.crypto.HexUtils;
+import org.maxkey.surpass.crypto.RSAUtils;
 
 
 public class RSAUtilsTest {

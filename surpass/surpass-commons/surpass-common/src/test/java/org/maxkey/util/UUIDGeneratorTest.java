@@ -26,9 +26,8 @@ import java.util.Date;
 //import java.util.UUID;
 
 import org.junit.Test;
-
-import com.surpass.util.UUIDGenerator;
-import com.surpass.uuid.UUID;
+import org.maxkey.surpass.util.UUIDGenerator;
+import org.maxkey.surpass.uuid.UUID;
 
 public class UUIDGeneratorTest {
 

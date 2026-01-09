@@ -22,7 +22,7 @@
 
 package org.maxkey.crypto;
 
-import com.surpass.crypto.password.PasswordGen;
+import org.maxkey.surpass.crypto.password.PasswordGen;
 
 public class PasswordGenTest {
 

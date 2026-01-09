@@ -24,7 +24,8 @@ package org.maxkey.crypto.signature;
 
 import java.security.SecureRandom;
 
-import com.surpass.crypto.Base64Utils;
+import org.maxkey.surpass.crypto.Base64Utils;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;

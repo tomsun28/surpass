@@ -1,2 +1,2 @@
-com.surpass.autoconfigure.AuthnProviderAutoConfiguration
-com.surpass.autoconfigure.CasAuthnAutoConfiguration
+org.maxkey.surpass.autoconfigure.AuthnProviderAutoConfiguration
+org.maxkey.surpass.autoconfigure.CasAuthnAutoConfiguration

@@ -19,7 +19,7 @@
 
 package org.maxkey.nanoid;
 
-import com.surpass.nanoid.NanoId;
+import org.maxkey.surpass.nanoid.NanoId;
 
 public class NanoIdTest {
 
