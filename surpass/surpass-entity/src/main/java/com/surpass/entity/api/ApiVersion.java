@@ -58,7 +58,7 @@ public class ApiVersion extends JpaEntity implements Serializable {
      */
     @Column(length = 1)
     @NotNull(message = "是否支持分页不能为空")
-    private Integer supportsPaging;
+    private String supportsPaging;
 
     /**
      * 允许的页记录最大值

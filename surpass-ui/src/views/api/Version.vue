@@ -4,11 +4,9 @@
     <div class="page-header">
       <div class="header-content">
         <div class="header-info">
-          <h1 class="page-title">版本管理</h1>
-          <p class="page-description">管理API版本，配置SQL模板和响应模板</p>
-        </div>
-        <div class="header-actions">
-
+          <span class="page-description">
+            <svg-icon icon-class="left"></svg-icon>返回
+          </span>
         </div>
       </div>
     </div>
@@ -158,9 +156,9 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="supportsPaging" label="分页" width="80" align="center">
+            <el-table-column prop="supportsPaging" label="操作类型" width="100" align="center">
               <template #default="{ row }">
-                {{ row.supportsPaging ? '是' : '否' }}
+                {{ getOperationTypeText(row.supportsPaging) }}
               </template>
             </el-table-column>
 
@@ -257,13 +255,47 @@
                 placeholder="请输入版本号"
             />
           </el-form-item>
+          <el-form-item label="操作类型" prop="supportsPaging">
+            <el-radio-group v-model="formData.supportsPaging" @change="handlePagingParams">
+              <el-radio-button label="1">
+                分页查询
+              </el-radio-button>
+              <el-radio-button label="2">
+                列表查询
+              </el-radio-button>
+              <el-radio-button label="3">
+                单个查询
+              </el-radio-button>
+              <el-radio-button label="4">
+                增加操作
+              </el-radio-button>
+              <el-radio-button label="5">
+                修改操作
+              </el-radio-button>
+              <el-radio-button label="6">
+                删除操作
+              </el-radio-button>
+            </el-radio-group>
+          </el-form-item>
 
+          <el-form-item label="分页大小" prop="pageSizeMax" v-if="formData.supportsPaging === '1'">
+            <el-input-number
+                style="width: 200px;"
+                v-model="formData.pageSizeMax"
+                :min="1"
+                :max="9999"
+                placeholder=""
+                controls-position="right"
+            />
+            <div class="form-item-tip">限制每页最大记录数</div>
+          </el-form-item>
           <el-form-item label="SQL模板" prop="sqlTemplate">
             <el-input
                 v-model="formData.sqlTemplate"
                 type="textarea"
                 :rows="4"
                 placeholder="请输入SQL模板，支持命名参数如 #{name}"
+                @input="syncSqlParamsToParamList"
             />
           </el-form-item>
 
@@ -347,7 +379,7 @@
             />
             <div class="template-tips">
               <p><strong>模板提示：</strong></p>
-              <p>• 使用 <code>#{data}</code> 占位符代表查询结果数据</p>
+              <p>• 使用 <code>#{data}</code> 占位符代表查询结果数据（必须包含）</p>
               <p>• 示例：<code>{"code": 0, "message": "success", "data": #{data}}</code></p>
               <p>• 支持JSON格式，系统会自动将查询结果替换到 #{data} 位置</p>
             </div>
@@ -360,43 +392,6 @@
                 :rows="2"
                 placeholder="请输入版本描述"
             />
-          </el-form-item>
-
-          <!-- 分页和限流配置 -->
-          <el-divider content-position="left">分页和限流配置</el-divider>
-
-          <el-form-item label="是否分页">
-            <el-switch
-                v-model="formData.supportsPaging"
-                :active-value="1"
-                :inactive-value="0"
-                active-text="是"
-                inactive-text="否"
-                @change="handlePagingParams"
-            />
-          </el-form-item>
-
-          <el-form-item label="最大页面大小" prop="pageSizeMax">
-            <el-input-number
-                style="width: 200px;"
-                v-model="formData.pageSizeMax"
-                :min="1"
-                :max="10000"
-                placeholder=""
-                controls-position="right"
-            />
-            <div class="form-item-tip">限制每页最大记录数</div>
-          </el-form-item>
-
-          <el-form-item label="速率限制" prop="rateLimit">
-            <el-input-number
-                style="width: 200px;"
-                v-model="formData.rateLimit"
-                :min="0"
-                placeholder="次/分钟"
-                controls-position="right"
-            />
-            <div class="form-item-tip">0表示不限制，限制API每分钟调用次数</div>
           </el-form-item>
         </el-form>
 
@@ -491,17 +486,17 @@
             <el-descriptions-item label="描述">
               {{ currentVersion.description || '无' }}
             </el-descriptions-item>
-            <el-descriptions-item label="是否分页">
-              <el-tag :type="currentVersion.supportsPaging ? 'success' : 'info'" size="small">
-                {{ currentVersion.supportsPaging ? '是' : '否' }}
+            <el-descriptions-item label="操作类型">
+              <el-tag size="small">
+                {{ getOperationTypeText(currentVersion.supportsPaging) }}
               </el-tag>
             </el-descriptions-item>
-            <el-descriptions-item label="最大页面大小" v-if="currentVersion.pageSizeMax">
+            <el-descriptions-item label="分页大小" v-if="currentVersion.supportsPaging === '1'">
               {{ currentVersion.pageSizeMax }}
             </el-descriptions-item>
-            <el-descriptions-item label="速率限制">
-              {{ currentVersion.rateLimit || '无' }} 次/分钟
-            </el-descriptions-item>
+            <!--            <el-descriptions-item label="速率限制">-->
+            <!--              {{ currentVersion.rateLimit || '无' }} 次/分钟-->
+            <!--            </el-descriptions-item>-->
           </el-descriptions>
         </el-card>
 
@@ -602,7 +597,7 @@ import {ElMessage, ElMessageBox} from 'element-plus'
 import * as publishApi from '@/api/api-service/publishApi.ts'
 import * as apiDefinitionApi from '@/api/api-service/apiDefinitionApi.ts'
 import * as apiVersionApi from '@/api/api-service/apiVersionApi.ts'
-import {getById} from "@/api/api-service/apiVersionApi.ts";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 const route = useRoute()
 
@@ -629,9 +624,9 @@ const formData = reactive({
   paramDefinition: '',
   responseTemplate: '',
   description: '',
-  supportsPaging: 0,
+  supportsPaging: '1',
   pageSizeMax: 20,
-  rateLimit: null
+  rateLimit: 0
 })
 
 // 参数列表
@@ -652,12 +647,327 @@ const ruleFormData = reactive({
 })
 
 // 表单验证规则
+const validateSqlTemplate = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error('请输入SQL'))
+    return
+  }
+
+  // 根据操作类型验证SQL语法
+  const operationType = formData.supportsPaging
+  const trimmedSql = value.trim().toUpperCase()
+
+  // 验证SQL语法
+  if (!isValidSqlSyntax(trimmedSql)) {
+    callback(new Error('SQL语法不合法'))
+    return
+  }
+
+  // 验证占位符参数名格式
+  if (!validatePlaceholderParameters(value)) {
+    callback(new Error('占位符参数名格式不正确，参数名必须以英文字母开头，可包含英文字母、数字、下划线'))
+    return
+  }
+
+  // 根据操作类型验证SQL语句类型
+  if (operationType === '1' || operationType === '2') { // 分页查询或列表查询
+    if (!trimmedSql.startsWith('SELECT')) {
+      callback(new Error('分页查询或列表查询操作类型必须使用SELECT语句'))
+      return
+    }
+  } else if (operationType === '3') { // 单个查询
+    if (!trimmedSql.startsWith('SELECT')) {
+      callback(new Error('单个查询操作类型必须使用SELECT语句'))
+      return
+    }
+  } else if (operationType === '4') { // 增加操作
+    if (!trimmedSql.startsWith('INSERT')) {
+      callback(new Error('增加操作类型必须使用INSERT语句'))
+      return
+    }
+  } else if (operationType === '5') { // 修改操作
+    if (!trimmedSql.startsWith('UPDATE')) {
+      callback(new Error('修改操作类型必须使用UPDATE语句'))
+      return
+    }
+  } else if (operationType === '6') { // 删除操作
+    if (!trimmedSql.startsWith('DELETE')) {
+      callback(new Error('删除操作类型必须使用DELETE语句'))
+      return
+    }
+  }
+
+  // ========== 新增：简单 SQL 语句结构合法性验证 ==========
+  let isValidStructure = true
+  let errorMsg = ''
+
+  if (trimmedSql.startsWith('SELECT')) {
+    // 简单判断：SELECT ... FROM ...
+    if (!/^\s*SELECT\s+.*\s+FROM\s+/i.test(value)) {
+      isValidStructure = false
+      errorMsg = 'SELECT语句缺少FROM子句'
+    }
+  } else if (trimmedSql.startsWith('INSERT')) {
+    // INSERT INTO table (...) VALUES (...)
+    if (!/^\s*INSERT\s+INTO\s+\S+/i.test(value)) {
+      isValidStructure = false
+      errorMsg = 'INSERT语句格式不正确，应为 INSERT INTO table ...'
+    }
+  } else if (trimmedSql.startsWith('UPDATE')) {
+    // UPDATE table SET ...
+    if (!/^\s*UPDATE\s+\S+\s+SET\s+/i.test(value)) {
+      isValidStructure = false
+      errorMsg = 'UPDATE语句格式不正确，应为 UPDATE table SET ...'
+    }
+  } else if (trimmedSql.startsWith('DELETE')) {
+    // DELETE FROM table ...
+    if (!/^\s*DELETE\s+FROM\s+\S+/i.test(value)) {
+      isValidStructure = false
+      errorMsg = 'DELETE语句格式不正确，应为 DELETE FROM table ...'
+    }
+  }
+
+  if (!isValidStructure) {
+    callback(new Error(errorMsg))
+    return
+  }
+
+
+  callback()
+}
+
+const isValidSqlSyntax = (sql) => {
+  // 基础SQL语法验证
+  // 检查是否有基本的SQL结构
+  if (!sql || sql.length < 6) {
+    return false
+  }
+
+  // 基本语法检查
+  const sqlWithoutComments = removeSqlComments(sql)
+
+  // 检查是否存在常见的SQL语法错误
+  // 检查括号是否匹配
+  if (!hasMatchingParentheses(sqlWithoutComments)) {
+    return false
+  }
+
+  // 检查是否包含危险字符或结构
+  if (containsDangerousSql(sqlWithoutComments)) {
+    return false
+  }
+
+  // 检查SQL语句结构
+  if (!checkSqlStructure(sqlWithoutComments)) {
+    return false
+  }
+
+  return true
+}
+
+const removeSqlComments = (sql) => {
+  // 移除SQL注释
+  let result = sql
+  // 移除单行注释 --
+  result = result.replace(/--.*$/gm, '')
+  // 移除多行注释 /* */
+  result = result.replace(/\/\*[\s\S]*?\*\//g, '')
+  return result
+}
+
+const hasMatchingParentheses = (sql) => {
+  let count = 0
+  for (let i = 0; i < sql.length; i++) {
+    if (sql[i] === '(') {
+      count++
+    } else if (sql[i] === ')') {
+      count--
+      if (count < 0) return false
+    }
+  }
+  return count === 0
+}
+
+const containsDangerousSql = (sql) => {
+  // 检查是否包含危险的SQL关键字
+  const dangerousKeywords = ['DROP', 'TRUNCATE', 'ALTER', 'CREATE', 'DELETE FROM', 'UPDATE.*SET.*WHERE.*1=1', 'EXEC', 'EXECUTE']
+  for (const keyword of dangerousKeywords) {
+    const regex = new RegExp(keyword.replace(/[.*+?^${}()|\[\]\\]/g, '\\$&'), 'i');
+    if (regex.test(sql)) {
+      return true
+    }
+  }
+  return false
+}
+
+// 检查SQL语句基本结构
+const checkSqlStructure = (sql) => {
+  // 检查是否存在基本的SQL语句结构
+  // SELECT语句检查
+  if (sql.includes('SELECT')) {
+    if (!sql.includes('FROM')) {
+      return false
+    }
+  }
+
+  // INSERT语句检查
+  if (sql.includes('INSERT')) {
+    if (!sql.includes('INTO') || !sql.includes('(')) {
+      return false
+    }
+  }
+
+  // UPDATE语句检查
+  if (sql.includes('UPDATE')) {
+    if (!sql.includes('SET')) {
+      return false
+    }
+  }
+
+  // DELETE语句检查
+  if (sql.includes('DELETE')) {
+    if (!sql.includes('FROM')) {
+      return false
+    }
+  }
+
+  return true
+}
+
+// 验证占位符参数名格式
+const validatePlaceholderParameters = (sql) => {
+  // 使用正则表达式匹配 #{参数名} 格式的参数
+  const regex = /#\{([^}]+)\}/g;
+  let match;
+
+  while ((match = regex.exec(sql)) !== null) {
+    const paramName = match[1].trim();
+
+    // 检查参数名格式：必须以英文字母开头，可包含英文字母、数字、下划线
+    if (!isValidParameterName(paramName)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// 检查参数名格式是否有效
+const isValidParameterName = (paramName) => {
+  // 参数名必须以英文字母开头，可包含英文字母、数字、下划线
+  const paramRegex = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+  return paramRegex.test(paramName);
+}
+
+// 测试函数，用于验证参数名格式
+const testParameterValidation = () => {
+  console.log('Testing parameter validation...');
+  console.log('Valid param "name":', isValidParameterName('name')); // true
+  console.log('Valid param "userName":', isValidParameterName('userName')); // true
+  console.log('Valid param "user_123":', isValidParameterName('user_123')); // true
+  console.log('Invalid param "123user":', isValidParameterName('123user')); // false
+  console.log('Invalid param "_user":', isValidParameterName('_user')); // false
+  console.log('Invalid param "user-name":', isValidParameterName('user-name')); // false
+  console.log('Invalid param "":', isValidParameterName('')); // false
+}
+
+const validateResponseTemplate = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error('请输入响应参数模板'))
+    return
+  }
+  // 检查是否包含 #{data} 占位符
+  if (!value.includes('#{data}')) {
+    callback(new Error('响应模板必须包含 #{data} 占位符'))
+    return
+  }
+  callback()
+}
+
+// 解析SQL模板中的参数
+const parseSqlParameters = (sqlTemplate) => {
+  if (!sqlTemplate) return [];
+
+  // 使用正则表达式匹配 #{参数名} 格式的参数
+  const regex = /#\{([^}]+)\}/g;
+  const matches = [];
+  let match;
+
+  while ((match = regex.exec(sqlTemplate)) !== null) {
+    // 获取参数名（去掉空格）
+    const paramName = match[1].trim();
+
+    // 检查是否已存在相同参数名
+    if (!matches.some(param => param.name === paramName)) {
+      matches.push({
+        name: paramName,
+        type: 'string', // 默认类型
+        rules: {},
+        description: '',
+        readOnly: false
+      });
+    }
+  }
+
+  return matches;
+}
+
+// 同步SQL模板参数到参数定义
+const syncSqlParamsToParamList = () => {
+  if (!formData.sqlTemplate) {
+    // 如果SQL模板为空，清空参数列表（但保留只读参数）
+    paramList.value = paramList.value.filter(param => param.readOnly);
+    return;
+  }
+
+  // 解析SQL模板中的参数
+  const sqlParams = parseSqlParameters(formData.sqlTemplate);
+
+  // 创建一个包含现有参数的映射，用于保留已有的参数配置
+  const existingParamMap = {};
+  paramList.value.forEach(param => {
+    existingParamMap[param.name] = param;
+  });
+
+  // 合并参数列表：保留只读参数和已有的参数配置
+  const newParamList = [];
+
+  // 添加只读参数（分页参数等）
+  paramList.value.filter(param => param.readOnly).forEach(param => {
+    newParamList.push(param);
+  });
+
+  // 添加SQL模板中的参数
+  sqlParams.forEach(sqlParam => {
+    // 如果参数已存在，保留原有配置
+    if (existingParamMap[sqlParam.name]) {
+      newParamList.push(existingParamMap[sqlParam.name]);
+    } else {
+      // 如果是新参数，添加默认配置
+      newParamList.push(sqlParam);
+    }
+  });
+
+  paramList.value = newParamList;
+}
+
 const formRules = {
   version: [
     {required: true, message: '请输入版本号', trigger: 'blur'}
   ],
   sqlTemplate: [
-    {required: true, message: '请输入SQL模板', trigger: 'blur'}
+    {required: true, message: '请输入SQL', trigger: 'blur'},
+    {validator: validateSqlTemplate, trigger: 'blur'},
+  ],
+  supportsPaging: [
+    {required: true, message: '请选择操作类型', trigger: 'blur'}
+  ],
+  pageSizeMax: [
+    {required: true, message: '请输入分页大小', trigger: 'blur'},
+  ],
+  responseTemplate: [
+    {required: true, message: '请输入响应参数模板', trigger: 'blur'},
+    {validator: validateResponseTemplate, trigger: 'blur'},
   ]
 }
 
@@ -751,6 +1061,9 @@ const showCreateDialog = () => {
   // 处理分页参数
   handlePagingParams()
 
+  // 同步SQL模板参数
+  syncSqlParamsToParamList()
+
   drawerVisible.value = true
 }
 
@@ -779,6 +1092,9 @@ const editVersion = async (row) => {
   // 处理分页参数
   handlePagingParams()
 
+  // 同步SQL模板参数
+  syncSqlParamsToParamList()
+
   drawerVisible.value = true
 }
 
@@ -796,9 +1112,9 @@ const resetForm = () => {
     paramDefinition: '',
     responseTemplate: '',
     description: '',
-    supportsPaging: 0,
+    supportsPaging: '0',
     pageSizeMax: 20,
-    rateLimit: null
+    rateLimit: 0
   })
   paramList.value = []
   formRef.value?.clearValidate()
@@ -1072,6 +1388,18 @@ const getStatusText = (status) => {
   return texts[status] || '未知'
 }
 
+const getOperationTypeText = (type) => {
+  const texts = {
+    '1': '分页查询',
+    '2': '列表查询',
+    '3': '单个查询',
+    '4': '增加操作',
+    '5': '修改操作',
+    '6': '删除操作'
+  }
+  return texts[type] || '未知类型'
+}
+
 // 获取参数类型标签样式
 const getParamTypeTagType = (type) => {
   const types = {
@@ -1281,7 +1609,7 @@ const handlePatternChange = (pattern) => {
 
 const handlePagingParams = () => {
   // 如果启用了分页，则确保分页参数存在
-  if (formData.supportsPaging) {
+  if (formData.supportsPaging === '1') {
     // 检查是否已经存在分页参数
     const pageNumIndex = paramList.value.findIndex(param => param.name === '_pageNum')
     const pageSizeIndex = paramList.value.findIndex(param => param.name === '_pageSize')
@@ -1323,525 +1651,13 @@ const handlePagingParams = () => {
         param.name !== '_pageNum' && param.name !== '_pageSize'
     )
   }
+
+  // 重新同步SQL模板中的参数（保持只读参数）
+  syncSqlParamsToParamList();
 }
 
 </script>
 
-<style scoped>
-.version-page {
-  background: #f5f7fa;
-  min-height: calc(100vh - 140px);
-  padding: 0;
-}
-
-/* 页面头部 */
-.page-header {
-  background: #fff;
-  padding: 24px;
-  border-bottom: 1px solid #e4e7ed;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin: 0 auto;
-}
-
-.header-info {
-  flex: 1;
-}
-
-.page-title {
-  margin: 0 0 8px 0;
-  font-size: 24px;
-  font-weight: 600;
-  color: #303133;
-  line-height: 1.2;
-}
-
-.page-description {
-  margin: 0;
-  color: #909399;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.header-actions {
-  flex-shrink: 0;
-}
-
-/* 主要内容区域 */
-.main-content {
-  margin: 0 auto;
-  padding: 24px;
-}
-
-/* API选择卡片 */
-.api-selector-card {
-  margin-bottom: 24px;
-  border-radius: 12px;
-  border: 1px solid #e4e7ed;
-}
-
-.api-selector-card .card-header {
-  padding: 10px 0px;
-  border-bottom: 1px solid #f0f2f5;
-  font-weight: 600;
-  color: #303133;
-}
-
-.api-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.api-name {
-  font-weight: 500;
-  color: #303133;
-}
-
-.api-path {
-  font-size: 12px;
-  color: #909399;
-  background: #f5f7fa;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-/* 版本管理区域 */
-.version-management {
-  margin-top: 24px;
-}
-
-/* 管理头部 */
-.management-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  gap: 24px;
-}
-
-/* 统计卡片 */
-.statistics-cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  flex: 1;
-}
-
-.stat-card {
-  border-radius: 12px;
-  border: none;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-}
-
-.stat-card.total {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.stat-card.draft {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
-}
-
-.stat-card.pending {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
-}
-
-.stat-card.published {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
-}
-
-.stat-content {
-  display: flex;
-  align-items: center;
-  padding: 20px;
-}
-
-.stat-icon {
-  margin-right: 16px;
-  font-size: 32px;
-  opacity: 0.9;
-}
-
-.stat-info {
-  flex: 1;
-}
-
-.stat-value {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* 操作按钮 */
-.action-buttons {
-  display: flex;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-/* 版本列表卡片 */
-.version-list-card {
-  border-radius: 12px;
-  border: 1px solid #e4e7ed;
-  overflow: hidden;
-}
-
-.version-list-card .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0px;
-  border-bottom: 1px solid #f0f2f5;
-  font-weight: 600;
-  color: #303133;
-}
-
-.list-info {
-  font-size: 14px;
-  color: #909399;
-}
-
-.total-count {
-  background: #f5f7fa;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-/* 表格样式 */
-.version-number {
-  font-weight: 600;
-  color: #409eff;
-  font-size: 14px;
-}
-
-.sql-preview {
-  max-width: 300px;
-}
-
-.sql-preview code {
-  background: #f5f7fa;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 12px;
-  color: #606266;
-  line-height: 1.4;
-}
-
-.description-text {
-  color: #606266;
-  line-height: 1.5;
-}
-
-.action-buttons-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-
-.action-buttons-group .el-button {
-  margin: 0;
-}
-
-/* 空状态 */
-.empty-state {
-  padding: 60px 0;
-}
-
-.no-api-selected {
-  padding: 80px 0;
-  text-align: center;
-}
-
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .management-header {
-    flex-direction: column;
-  }
-
-  .statistics-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .action-buttons {
-    width: 100%;
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 768px) {
-  .main-content {
-    padding: 16px;
-  }
-
-  .statistics-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .header-content {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .header-actions {
-    width: 100%;
-  }
-}
-
-.page-header {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e6e6e6;
-}
-
-.page-header h2 {
-  margin: 0 0 8px 0;
-  color: #303133;
-}
-
-.page-header p {
-  margin: 0;
-  color: #909399;
-  font-size: 14px;
-}
-
-.api-selector {
-  margin-bottom: 20px;
-}
-
-.action-bar {
-  margin-bottom: 20px;
-}
-
-.version-statistics {
-  margin-bottom: 20px;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-}
-
-.drawer-content {
-  padding: 20px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.read-only-param input {
-  color: #909399 !important;
-  background-color: #f5f7fa !important;
-}
-
-.read-only-param input:focus {
-  border-color: #dcdfe6 !important;
-}
-
-.drawer-footer {
-  margin-top: auto;
-  padding-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.param-definition-container {
-  width: 100%;
-}
-
-.param-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.param-header span {
-  font-weight: bold;
-  color: #606266;
-}
-
-.template-tips {
-  margin-top: 8px;
-  padding: 12px;
-  background: #f0f9ff;
-  border: 1px solid #e1f5fe;
-  border-radius: 4px;
-  font-size: 12px;
-  color: #666;
-}
-
-.template-tips p {
-  margin: 4px 0;
-}
-
-.template-tips code {
-  background: #e8f4fd;
-  padding: 2px 4px;
-  border-radius: 2px;
-  color: #1890ff;
-  font-family: 'Courier New', monospace;
-}
-
-/* 版本详情对话框样式 */
-.version-detail-dialog .el-dialog__body {
-  padding: 0;
-}
-
-.version-detail-content {
-  padding: 20px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.version-detail-content .el-card {
-  margin-bottom: 20px;
-  border: 1px solid #ebeef5;
-}
-
-.version-detail-content .el-card:last-child {
-  margin-bottom: 0;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-  color: #303133;
-}
-
-.version-number {
-  font-size: 16px;
-  font-weight: bold;
-  color: #409eff;
-}
-
-.code-block {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.code-block pre {
-  margin: 0;
-  padding: 16px;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  color: #24292e;
-  background: transparent;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-.code-block code.sql {
-  color: #d73a49;
-}
-
-.code-block code.json {
-  color: #032f62;
-}
-
-.code-block code.json .data-placeholder {
-  color: #e36209;
-  font-weight: bold;
-}
-
-.param-table {
-  margin-top: 0;
-}
-
-.param-table .el-table {
-  border-radius: 6px;
-}
-
-.param-table .el-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-.empty-state {
-  padding: 40px 0;
-}
-
-/* 响应模板提示样式 */
-.response-card .template-tips {
-  margin-top: 12px;
-  padding: 12px;
-  background: #f0f9ff;
-  border: 1px solid #e1f5fe;
-  border-radius: 6px;
-  font-size: 12px;
-  color: #666;
-}
-
-.response-card .template-tips p {
-  margin: 4px 0;
-}
-
-.response-card .template-tips code {
-  background: #e8f4fd;
-  padding: 2px 6px;
-  border-radius: 3px;
-  color: #1890ff;
-  font-family: 'Courier New', monospace;
-  font-weight: 500;
-}
-
-/* 基本信息卡片样式 */
-.info-card .el-descriptions {
-  margin-top: 0;
-}
-
-.info-card .el-descriptions__label {
-  font-weight: 600;
-  color: #606266;
-}
-
-.info-card .el-descriptions__content {
-  color: #303133;
-}
-
-pre {
-  background: #f5f7fa;
-  padding: 8px;
-  border-radius: 4px;
-  margin: 0;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-.form-item-tip {
-  font-size: 12px;
-  color: #909399;
-  margin-top: 4px;
-}
+<style scoped lang="scss">
+@import "./css/version.css";
 </style>

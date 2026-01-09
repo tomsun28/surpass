@@ -1,48 +1,19 @@
 <template>
-  <el-card class="common-card query-box">
-    <div class="queryForm">
-      <el-form :model="queryParams" ref="queryRef" :inline="true"
-               @submit.native.prevent>
-        <el-form-item label="资源名称">
-          <el-input
-              v-model="queryParams.name"
-              clearable
-              style="width: 200px"
-              @keyup.enter="loadApis"
-          />
-        </el-form-item>
-        <el-form-item label="资源类型">
-          <el-select v-model="queryParams.classify" clearable style="width: 200px" @change="loadApis">
-            <el-option
-                v-for="dict in resources_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="loadApis">{{ t('org.button.query') }}</el-button>
-          <el-button @click="resetQuery">{{ t('org.button.reset') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-  </el-card>
   <div class="resource-management">
     <!-- 主内容区域 -->
     <div class="main-content">
       <!-- 左侧资源树 -->
       <el-card class="tree-card">
-        <template #header>
-          <div class="tree-header">
-            <span class="tree-title">资源结构</span>
-            <el-tooltip content="刷新树结构" placement="top">
-              <el-button class="refresh-btn" type="text" @click="loadTree">
-                <svg-icon icon-class="refresh"/>
-              </el-button>
-            </el-tooltip>
-          </div>
-        </template>
+        <!--        <template #header>-->
+        <!--          <div class="tree-header">-->
+        <!--            <span class="tree-title">资源结构</span>-->
+        <!--            <el-tooltip content="刷新树结构" placement="top">-->
+        <!--              <el-button class="refresh-btn" type="text" @click="loadTree">-->
+        <!--                <svg-icon icon-class="refresh"/>-->
+        <!--              </el-button>-->
+        <!--            </el-tooltip>-->
+        <!--          </div>-->
+        <!--        </template>-->
 
         <div class="tree-container">
           <el-tree
@@ -60,7 +31,7 @@
           >
                 <span class="tree-node">
                   <!-- 资源图标 -->
-                  <svg-icon :icon-class="getResourceIcon(data.classify)" class="resource-icon"/>
+                  <svg-icon :icon-class="getResourceIcon(data.classify, data.resStyle)" class="resource-icon"/>
 
                   <!-- 资源名称 -->
                   <span class="tree-label">
@@ -94,32 +65,51 @@
       </el-card>
       <!-- 右侧资源列表 -->
       <el-card class="list-card">
-        <template #header>
-          <div class="list-header">
-            <div class="header-left">
-              <span class="list-title">资源列表</span>
-              <el-tag v-if="queryParams.parentId" type="info" size="small">
-                当前选中: {{ getSelectedNodeName() }}
-              </el-tag>
-            </div>
-            <div class="header-right">
-              <el-button type="primary" icon="plus" @click="showCreateDialog">
-                新增资源
-              </el-button>
-              <el-button
-                  type="danger"
-                  :disabled="ids.length === 0"
-                  @click="onBatchDelete"
-                  icon="delete"
-              >
-                批量删除
-              </el-button>
-              <el-button @click="refreshList" icon="refresh">
-                刷新
-              </el-button>
-            </div>
+        <div class="list-header">
+          <el-button type="primary" @click="showCreateDialog">
+            新增资源
+          </el-button>
+          <el-button
+              type="danger"
+              :disabled="ids.length === 0"
+              @click="onBatchDelete"
+          >
+            批量删除
+          </el-button>
+          <el-button @click="refreshList">
+            刷新
+          </el-button>
+        </div>
+
+        <el-card class="common-card query-box">
+          <div class="queryForm">
+            <el-form :model="queryParams" ref="queryRef" :inline="true"
+                     @submit.native.prevent>
+              <el-form-item label="资源名称">
+                <el-input
+                    v-model="queryParams.name"
+                    clearable
+                    style="width: 200px"
+                    @keyup.enter="loadApis"
+                />
+              </el-form-item>
+              <el-form-item label="资源类型">
+                <el-select v-model="queryParams.classify" clearable style="width: 200px" @change="loadApis">
+                  <el-option
+                      v-for="dict in resources_type"
+                      :key="dict.value"
+                      :label="dict.label"
+                      :value="dict.value"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="loadApis">{{ t('org.button.query') }}</el-button>
+                <el-button @click="resetQuery">{{ t('org.button.reset') }}</el-button>
+              </el-form-item>
+            </el-form>
           </div>
-        </template>
+        </el-card>
 
         <!-- 资源列表 -->
         <div class="resource-list">
@@ -224,12 +214,12 @@
           label-width="100px"
       >
         <el-row :gutter="20">
+          <!-- 左列：基础信息 -->
           <el-col :span="12">
             <el-form-item label="资源名称" prop="name">
               <el-input v-model="formData.name" placeholder="请输入资源名称"/>
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
+
             <el-form-item label="资源类型">
               <el-radio-group v-model="formData.classify">
                 <el-radio
@@ -242,79 +232,6 @@
               </el-radio-group>
             </el-form-item>
 
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12" v-if="formData.classify !== 'button'">
-            <el-form-item label="请求地址" prop="path">
-              <el-input v-model="formData.path" placeholder="请输入资源路径，如：/users"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="数据源" prop="datasourceId" v-if="formData.classify === 'openApi'">
-              <el-select
-                  v-model="formData.datasourceId"
-                  placeholder="请选择数据源"
-                  style="width: 100%"
-                  :loading="dataSourceLoading"
-              >
-                <el-option
-                    v-for="ds in dataSourceList"
-                    :key="ds.id"
-                    :label="ds.name"
-                    :value="ds.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12" v-if="formData.classify === 'api' || formData.classify === 'openApi'">
-            <el-form-item label="请求方式" prop="method">
-              <el-select v-model="formData.method" placeholder="" clearable style="width: 100%">
-                <el-option
-                    v-for="dict in method_type"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="formData.classify === 'api' || formData.classify === 'openApi'">
-            <el-form-item label="请求参数">
-              <el-input v-model="formData.params" placeholder=""/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="权限标识">
-              <el-input v-model="formData.permission" placeholder=""/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="formData.classify === 'button'">
-            <el-form-item label="操作类型">
-              <el-select v-model="formData.actionType" placeholder="" clearable style="width: 100%">
-                <el-option
-                    v-for="dict in action_type"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="资源样式" v-if="formData.classify === 'menu'">
-              <el-input readonly v-model="formData.resStyle" placeholder=""/>
-              <icon-select style="padding-left: 0;padding-right: 0" v-model="formData.resStyle"
-                           @selected="(name) => {formData.resStyle = name}"></icon-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item label="父级菜单" prop="parentId">
               <el-tree-select
                   clearable
@@ -326,72 +243,146 @@
                   :placeholder="t('org.placeholder.parent')"
               />
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12" v-if="formData.classify === 'openApi'">
-            <el-form-item label="是否开放">
-              <el-switch
-                  v-model="formData.isOpen"
-                  active-value="y"
-                  inactive-value="n"
-              ></el-switch>
+
+            <el-form-item label="权限标识">
+              <el-input v-model="formData.permission" placeholder="请输入权限标识"/>
             </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="formData.classify === 'menu'">
-            <el-form-item label="外部链接">
-              <el-switch
-                  v-model="formData.isFrame"
-                  active-value="y"
-                  inactive-value="n"
-              ></el-switch>
+
+            <el-form-item v-if="formData.classify === 'button'" label="操作类型">
+              <el-select v-model="formData.actionType" placeholder="请选择操作类型" clearable style="width: 100%">
+                <el-option
+                    v-for="dict in action_type"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12" v-if="formData.classify === 'menu'">
-            <el-form-item label="是否缓存">
-              <el-switch
-                  v-model="formData.isCache"
-                  active-value="y"
-                  inactive-value="n"
-              ></el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="formData.classify === 'menu'">
-            <el-form-item label="是否可见">
-              <el-switch
-                  v-model="formData.isVisible"
-                  active-value="y"
-                  inactive-value="n"
-              ></el-switch>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
+
             <el-form-item label="状态" prop="status">
               <el-switch
                   v-model="formData.status"
                   active-value="1"
                   inactive-value="0"
-              ></el-switch>
+              />
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
+
             <el-form-item :label="$t('jbx.text.sortIndex')" prop="sortIndex">
-              <el-input v-model="formData.sortIndex" placeholder=""/>
+              <el-input v-model="formData.sortIndex" placeholder="请输入排序值"/>
+            </el-form-item>
+            <el-form-item
+                v-if="formData.classify === 'menu'"
+                label="外部链接"
+            >
+              <el-switch
+                  v-model="formData.isFrame"
+                  active-value="y"
+                  inactive-value="n"
+              />
+            </el-form-item>
+
+            <el-form-item
+                v-if="formData.classify === 'menu'"
+                label="是否缓存"
+            >
+              <el-switch
+                  v-model="formData.isCache"
+                  active-value="y"
+                  inactive-value="n"
+              />
+            </el-form-item>
+
+            <el-form-item
+                v-if="formData.classify === 'menu'"
+                label="是否可见"
+            >
+              <el-switch
+                  v-model="formData.isVisible"
+                  active-value="y"
+                  inactive-value="n"
+              />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="20">
+
+          <!-- 右列：详细配置 -->
+          <el-col :span="12">
+            <el-form-item v-if="formData.classify !== 'button'" label="请求地址" prop="path">
+              <el-input v-model="formData.path" placeholder="请输入资源路径，如：/users"/>
+            </el-form-item>
+
+            <el-form-item
+                v-if="formData.classify === 'api' || formData.classify === 'openApi'"
+                label="请求方式"
+                prop="method"
+            >
+              <el-select v-model="formData.method" placeholder="请选择请求方式" clearable style="width: 100%">
+                <el-option
+                    v-for="dict in method_type"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item
+                v-if="formData.classify === 'api' || formData.classify === 'openApi'"
+                label="请求参数"
+            >
+              <el-input v-model="formData.params" placeholder="请输入请求参数"/>
+            </el-form-item>
+
+            <el-form-item
+                v-if="formData.classify === 'openApi'"
+                label="数据源"
+                prop="datasourceId"
+            >
+              <el-select
+                  v-model="formData.datasourceId"
+                  placeholder="请选择数据源" style="width: 100%"
+                  :loading="dataSourceLoading"
+              >
+                <el-option
+                    v-for="ds in dataSourceList"
+                    :key="ds.id"
+                    :label="ds.name"
+                    :value="ds.id"
+                />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item
+                v-if="formData.classify === 'menu'"
+                label="资源样式"
+            >
+              <el-input readonly v-model="formData.resStyle" placeholder="请选择资源样式"/>
+              <icon-select
+                  style="padding-left: 0; padding-right: 0"
+                  v-model="formData.resStyle"
+                  @selected="(name) => {formData.resStyle = name}"
+              />
+            </el-form-item>
+
+            <el-form-item
+                v-if="formData.classify === 'openApi'"
+                label="是否开放"
+            >
+              <el-switch
+                  v-model="formData.isOpen"
+                  active-value="y"
+                  inactive-value="n"
+              />
+            </el-form-item>
+          </el-col>
+
+          <!-- 描述放在最下方，跨两列 -->
           <el-col :span="24">
             <el-form-item label="描述" prop="description">
               <el-input
                   v-model="formData.description"
                   type="textarea"
                   :rows="3"
-                  placeholder="请输入API描述"
+                  placeholder="请输入资源描述"
               />
             </el-form-item>
           </el-col>
@@ -738,14 +729,15 @@ const resourceTagType = (classify) => {
   return map[classify] || ''
 }
 
-const getResourceIcon = (classify) => {
+const getResourceIcon = (classify, icon) => {
   const map = {
     menu: 'menu',
     button: 'button',
     api: 'api',
-    openApi: 'openapi'
+    openApi: 'api'
   }
-  return map[classify] || 'resource'
+  console.log('getResourceIcon', classify, icon)
+  return icon || map[classify] || 'resource'
 }
 
 const getSelectedNodeName = () => {
@@ -858,10 +850,12 @@ watch(
       }
 
       .tree-container {
-        height: 100%;
+        min-height: 600px;
+        max-height: 100%;
         overflow: auto;
+        padding-top: 20px;
 
-        :deep(.el-tree-node__content){
+        :deep(.el-tree-node__content) {
           padding: 20px 12px;
         }
 
@@ -931,60 +925,14 @@ watch(
       display: flex;
       flex-direction: column;
 
+      .list-header {
+        margin-bottom: 20px;
+      }
+
       :deep(.el-card__header) {
         padding: 8px 20px;
         border-bottom: 1px solid #f0f2f5;
         background: linear-gradient(135deg, #fafbfc 0%, #f5f7fa 100%);
-
-        .list-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-
-          .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
-            .list-icon {
-              width: 18px;
-              height: 18px;
-              color: #409eff;
-            }
-
-            .list-title {
-              font-weight: 600;
-            }
-
-            .el-tag {
-              height: 24px;
-              line-height: 22px;
-            }
-          }
-
-          .header-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            .el-button {
-              padding: 8px 16px;
-              border-radius: 6px;
-              font-weight: 500;
-
-              .svg-icon {
-                width: 14px;
-                height: 14px;
-                margin-right: 6px;
-              }
-
-              &:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 2px 8px rgba(64, 158, 255, 0.2);
-              }
-            }
-          }
-        }
       }
 
       .resource-list {
@@ -1020,24 +968,6 @@ watch(
       }
     }
   }
-}
-
-/* 动画效果 */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.query-card,
-.tree-card,
-.list-card {
-  animation: fadeInUp 0.5s ease-out;
 }
 
 .query-card {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="left-menu-box">
     <el-scrollbar :class="sideTheme" wrap-class="scrollbar-wrapper">
       <!-- 加载状态 -->
       <div v-if="!permissionStore.routesLoaded || !sidebarRouters || sidebarRouters.length === 0"
@@ -191,6 +191,8 @@ watch(() => permissionStore.routesLoaded, (loaded) => {
 })
 </script>
 <style scoped lang="scss">
+@import "@/assets/styles/variables.module";
+
 .loading-container {
   padding: 20px;
 }

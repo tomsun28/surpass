@@ -167,7 +167,8 @@ public class AppResourcesServiceImpl extends JpaServiceImpl<AppResourcesMapper, 
                         r.getName(),
                         r.getSortIndex()
                 ).setExtra(Map.of(
-                        "classify", r.getClassify()
+                        "classify", r.getClassify(),
+                        "resStyle", r.getResStyle() == null ? "" : r.getResStyle()
                 )))
                 .toList();
 

@@ -411,7 +411,7 @@ public class SwaggerApiController {
         // 如果是GET请求，添加查询参数
         if ("GET".equalsIgnoreCase(apiDefinition.getMethod())) {
             // 添加分页参数
-            if (apiVersion.getSupportsPaging() != null && apiVersion.getSupportsPaging() == 1) {
+            if (apiVersion.getSupportsPaging() != null && "1".equals(apiVersion.getSupportsPaging())) {
                 QueryParameter pageNum = new QueryParameter();
                 pageNum.setName("_pageNum");
                 pageNum.setSchema(new IntegerSchema());

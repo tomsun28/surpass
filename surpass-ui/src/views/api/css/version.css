@@ -1,0 +1,471 @@
+.version-page {
+    background: #f5f7fa;
+    min-height: calc(100vh - 140px);
+    padding: 0;
+}
+
+/* 页面头部 */
+.page-header {
+    background: #fff;
+    padding: 12px;
+    border-bottom: 1px solid #e4e7ed;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0 auto;
+}
+
+.header-info {
+    flex: 1;
+}
+
+.page-description {
+    color: #909399;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* 主要内容区域 */
+.main-content {
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* API选择卡片 */
+.api-selector-card {
+    margin-bottom: 24px;
+    border-radius: 12px;
+    border: 1px solid #e4e7ed;
+}
+
+.api-selector-card .card-header {
+    padding: 10px 0px;
+    border-bottom: 1px solid #f0f2f5;
+    font-weight: 600;
+    color: #303133;
+}
+
+.api-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.api-name {
+    font-weight: 500;
+    color: #303133;
+}
+
+.api-path {
+    font-size: 12px;
+    color: #909399;
+    background: #f5f7fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* 版本管理区域 */
+.version-management {
+    margin-top: 24px;
+}
+
+/* 管理头部 */
+.management-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 24px;
+}
+
+/* 统计卡片 */
+.statistics-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    flex: 1;
+}
+
+.stat-card {
+    border-radius: 12px;
+    border: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-card.total {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.stat-card.draft {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.stat-card.pending {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.stat-card.published {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+}
+
+.stat-content {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+.stat-icon {
+    margin-right: 16px;
+    font-size: 32px;
+    opacity: 0.9;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* 操作按钮 */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* 版本列表卡片 */
+.version-list-card {
+    border-radius: 12px;
+    border: 1px solid #e4e7ed;
+    overflow: hidden;
+}
+
+.version-list-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0px;
+    border-bottom: 1px solid #f0f2f5;
+    font-weight: 600;
+    color: #303133;
+}
+
+.list-info {
+    font-size: 14px;
+    color: #909399;
+}
+
+.total-count {
+    background: #f5f7fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* 表格样式 */
+.version-number {
+    font-weight: 600;
+    color: #409eff;
+    font-size: 14px;
+}
+
+.sql-preview {
+    max-width: 300px;
+}
+
+.sql-preview code {
+    background: #f5f7fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    color: #606266;
+    line-height: 1.4;
+}
+
+.description-text {
+    color: #606266;
+    line-height: 1.5;
+}
+
+.action-buttons-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.action-buttons-group .el-button {
+    margin: 0;
+}
+
+/* 空状态 */
+.empty-state {
+    padding: 60px 0;
+}
+
+.no-api-selected {
+    padding: 80px 0;
+    text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .management-header {
+        flex-direction: column;
+    }
+
+    .statistics-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .action-buttons {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 16px;
+    }
+
+    .statistics-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .header-content {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+}
+
+.page-header {
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.drawer-content {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.read-only-param input {
+    color: #909399 !important;
+    background-color: #f5f7fa !important;
+}
+
+.read-only-param input:focus {
+    border-color: #dcdfe6 !important;
+}
+
+.drawer-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.param-definition-container {
+    width: 100%;
+}
+
+.param-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.param-header span {
+    font-weight: bold;
+    color: #606266;
+}
+
+.template-tips {
+    margin-top: 8px;
+    padding: 12px;
+    background: #f0f9ff;
+    border: 1px solid #e1f5fe;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+}
+
+.template-tips p {
+    margin: 4px 0;
+}
+
+.template-tips code {
+    background: #e8f4fd;
+    padding: 2px 4px;
+    border-radius: 2px;
+    color: #1890ff;
+    font-family: 'Courier New', monospace;
+}
+
+/* 版本详情对话框样式 */
+.version-detail-dialog .el-dialog__body {
+    padding: 0;
+}
+
+.version-detail-content {
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.version-detail-content .el-card {
+    margin-bottom: 20px;
+    border: 1px solid #ebeef5;
+}
+
+.version-detail-content .el-card:last-child {
+    margin-bottom: 0;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    color: #303133;
+}
+
+.version-number {
+    font-size: 16px;
+    font-weight: bold;
+    color: #409eff;
+}
+
+.code-block {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.code-block pre {
+    margin: 0;
+    padding: 16px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #24292e;
+    background: transparent;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.code-block code.sql {
+    color: #d73a49;
+}
+
+.code-block code.json {
+    color: #032f62;
+}
+
+.code-block code.json .data-placeholder {
+    color: #e36209;
+    font-weight: bold;
+}
+
+.param-table {
+    margin-top: 0;
+}
+
+.param-table .el-table {
+    border-radius: 6px;
+}
+
+.param-table .el-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.empty-state {
+    padding: 40px 0;
+}
+
+/* 响应模板提示样式 */
+.response-card .template-tips {
+    margin-top: 12px;
+    padding: 12px;
+    background: #f0f9ff;
+    border: 1px solid #e1f5fe;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #666;
+}
+
+.response-card .template-tips p {
+    margin: 4px 0;
+}
+
+.response-card .template-tips code {
+    background: #e8f4fd;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #1890ff;
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+}
+
+/* 基本信息卡片样式 */
+.info-card .el-descriptions {
+    margin-top: 0;
+}
+
+.info-card .el-descriptions__label {
+    font-weight: 600;
+    color: #606266;
+}
+
+.info-card .el-descriptions__content {
+    color: #303133;
+}
+
+pre {
+    background: #f5f7fa;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.form-item-tip {
+    font-size: 12px;
+    color: #909399;
+    margin-top: 4px;
+}
