@@ -5,7 +5,8 @@
       <div class="header-content">
         <div class="header-info">
           <span class="page-description">
-            <svg-icon icon-class="left"></svg-icon>返回
+            <svg-icon icon-class="left"></svg-icon>
+            <span>返回</span>
           </span>
         </div>
       </div>
@@ -168,7 +169,6 @@
               </template>
             </el-table-column>
 
-
             <el-table-column header-align="center" prop="createdDate" label="创建时间" width="180"/>
 
             <el-table-column header-align="center" align="center" label="操作" width="220" fixed="right">
@@ -318,17 +318,16 @@
                     />
                   </template>
                 </el-table-column>
-                <el-table-column prop="type" label="类型" width="120">
+                <el-table-column prop="type" label="类型" width="140">
                   <template #default="{ row }">
                     <el-select
                         v-model="row.type"
                         placeholder="选择类型"
                         :disabled="row.readOnly"
                     >
-                      <el-option label="字符串" value="string"/>
-                      <el-option label="数字" value="number"/>
-                      <el-option label="布尔值" value="boolean"/>
-                      <el-option label="数组" value="array"/>
+                      <template v-for="(type, index) in paramInfoList" :key="index">
+                        <el-option :label="type.label" :value="type.value"></el-option>
+                      </template>
                     </el-select>
                   </template>
                 </el-table-column>
@@ -414,7 +413,7 @@
         <el-form-item label="必填">
           <el-switch v-model="ruleFormData.required"/>
         </el-form-item>
-        <div v-if="currentEditingParam?.type === 'string'">
+        <div v-if="currentEditingParam?.type === 'String'">
           <el-form-item label="最小长度">
             <el-input-number v-model="ruleFormData.minLength" :min="0" controls-position="right"/>
           </el-form-item>
@@ -425,7 +424,7 @@
             <el-input v-model="ruleFormData.enumValues" placeholder="多个值用逗号分隔，如: admin,user,guest"/>
           </el-form-item>
         </div>
-        <div v-if="currentEditingParam?.type === 'number'">
+        <div v-if="currentEditingParam?.type === 'Integer'">
           <el-form-item label="最小值">
             <el-input-number v-model="ruleFormData.minValue" controls-position="right"/>
           </el-form-item>
@@ -532,7 +531,7 @@
               <el-table-column prop="type" label="类型" width="100" align="center">
                 <template #default="{ row }">
                   <el-tag :type="getParamTypeTagType(row.type)" size="small">
-                    {{ row.type }}
+                    {{ getParamTypeObj(row.type).label }}
                   </el-tag>
                 </template>
               </el-table-column>
@@ -591,7 +590,7 @@
 </template>
 
 <script setup>
-import {ref, reactive, onMounted, computed} from 'vue'
+import {computed, onMounted, reactive, ref} from 'vue'
 import {useRoute} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import * as publishApi from '@/api/api-service/publishApi.ts'
@@ -615,6 +614,33 @@ const apiList = ref([])
 const versionList = ref([])
 const currentVersion = ref(null)
 const versionStatistics = ref(null)
+
+const paramInfoList = ref([
+  {
+    "value": "Integer",
+    "label": "整数"
+  },
+  {
+    "value": "String",
+    "label": "字符串"
+  },
+  {
+    "value": "Boolean",
+    "label": "布尔"
+  },
+  {
+    "value": "Float",
+    "label": "浮点"
+  },
+  {
+    "value": "Array[Integer]",
+    "label": "整型数组"
+  },
+  {
+    "value": "Array[String]",
+    "label": "字符数组"
+  }
+])
 
 const formData = reactive({
   id: null,
@@ -859,18 +885,6 @@ const isValidParameterName = (paramName) => {
   return paramRegex.test(paramName);
 }
 
-// 测试函数，用于验证参数名格式
-const testParameterValidation = () => {
-  console.log('Testing parameter validation...');
-  console.log('Valid param "name":', isValidParameterName('name')); // true
-  console.log('Valid param "userName":', isValidParameterName('userName')); // true
-  console.log('Valid param "user_123":', isValidParameterName('user_123')); // true
-  console.log('Invalid param "123user":', isValidParameterName('123user')); // false
-  console.log('Invalid param "_user":', isValidParameterName('_user')); // false
-  console.log('Invalid param "user-name":', isValidParameterName('user-name')); // false
-  console.log('Invalid param "":', isValidParameterName('')); // false
-}
-
 const validateResponseTemplate = (rule, value, callback) => {
   if (!value) {
     callback(new Error('请输入响应参数模板'))
@@ -901,7 +915,7 @@ const parseSqlParameters = (sqlTemplate) => {
     if (!matches.some(param => param.name === paramName)) {
       matches.push({
         name: paramName,
-        type: 'string', // 默认类型
+        type: 'String', // 默认类型
         rules: {},
         description: '',
         readOnly: false
@@ -1129,7 +1143,7 @@ const handleDrawerClose = () => {
 const addParam = () => {
   paramList.value.push({
     name: '',
-    type: 'string',
+    type: 'String',
     rules: {},
     description: ''
   })
@@ -1403,13 +1417,17 @@ const getOperationTypeText = (type) => {
 // 获取参数类型标签样式
 const getParamTypeTagType = (type) => {
   const types = {
-    'string': 'success',
-    'number': 'warning',
-    'boolean': 'danger',
-    'array': 'info',
-    'object': 'primary'
+    'String': 'success',
+    'Integer': 'warning',
+    'Boolean': 'danger',
+    'Array[Integer]': 'info',
+    'Array[String]': 'primary'
   }
   return types[type] || 'info'
+}
+// 获取参数类型标签样式
+const getParamTypeObj = (type) => {
+  return paramInfoList.value.find(item => item.value === type) || {label: type, value: type}
 }
 
 // 格式化响应模板显示
@@ -1618,7 +1636,7 @@ const handlePagingParams = () => {
     if (pageNumIndex === -1) {
       paramList.value.unshift({
         name: '_pageNum',
-        type: 'number',
+        type: 'Integer',
         rules: {required: true, minValue: 1},
         description: '页码',
         readOnly: true
@@ -1626,7 +1644,7 @@ const handlePagingParams = () => {
     } else {
       // 确保只读属性设置正确
       paramList.value[pageNumIndex].readOnly = true
-      paramList.value[pageNumIndex].type = 'number'
+      paramList.value[pageNumIndex].type = 'Integer'
       paramList.value[pageNumIndex].rules = {required: true, minValue: 1}
     }
 
@@ -1634,7 +1652,7 @@ const handlePagingParams = () => {
     if (pageSizeIndex === -1) {
       paramList.value.unshift({
         name: '_pageSize',
-        type: 'number',
+        type: 'Integer',
         rules: {required: true, minValue: 1, maxValue: formData.pageSizeMax || 10000},
         description: '每页条数',
         readOnly: true
@@ -1642,7 +1660,7 @@ const handlePagingParams = () => {
     } else {
       // 确保只读属性设置正确
       paramList.value[pageSizeIndex].readOnly = true
-      paramList.value[pageSizeIndex].type = 'number'
+      paramList.value[pageSizeIndex].type = 'Integer'
       paramList.value[pageSizeIndex].rules = {required: true, minValue: 1, maxValue: formData.pageSizeMax || 10000}
     }
   } else {
