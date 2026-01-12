@@ -61,8 +61,6 @@ public class ApiExecuteServiceImpl  implements ApiExecuteService{
             String sql = apiVersion.getSqlTemplate().trim();
             String sqlUpperCase = sql.toUpperCase();
             
-            
-            
             // 判断是否分页
             if (sqlUpperCase.startsWith("SELECT") && apiVersion.getSupportsPaging() != null && apiVersion.getSupportsPaging().equals(1)) {
                 int pageNum = Integer.parseInt(params.getOrDefault(DEFAULT_PAGE_NUM_KEY, "1").toString());
@@ -91,6 +89,8 @@ public class ApiExecuteServiceImpl  implements ApiExecuteService{
         } catch (Exception e) {
             log.error("执行API失败: {} {}", method, apiRequestUri.getRequestPath(), e);
             throw new BusinessException(50001, "API执行失败: " + e.getMessage());
+        }finally {
+        	DataSourceSwitch.switchToDefault();
         }
     }
     
