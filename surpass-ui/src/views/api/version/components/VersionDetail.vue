@@ -143,28 +143,44 @@ const props = defineProps({
     type: Array,
     default: () => [
       {
-        "value": "Integer",
-        "label": "整数"
-      },
-      {
         "value": "String",
-        "label": "字符串"
+        "label": "字符串(String)"
       },
       {
-        "value": "Boolean",
-        "label": "布尔"
+        "value": "Byte",
+        "label": "字节(Byte)"
+      },
+      {
+        "value": "Short",
+        "label": "短整型(Short)"
+      },
+      {
+        "value": "Integer",
+        "label": "整数(Integer)"
+      },
+      {
+        "value": "Long",
+        "label": "长整数(Long)"
       },
       {
         "value": "Float",
-        "label": "浮点"
+        "label": "单精度浮点(Float)"
+      },
+      {
+        "value": "Double",
+        "label": "双精度浮点(Double)"
+      },
+      {
+        "value": "Boolean",
+        "label": "布尔(Boolean)"
       },
       {
         "value": "Array[Integer]",
-        "label": "整型数组"
+        "label": "整型数组(Array[Integer])"
       },
       {
         "value": "Array[String]",
-        "label": "字符数组"
+        "label": "字符数组(Array[String])"
       }
     ]
   }
@@ -219,9 +235,9 @@ const getOperationTypeText = (type) => {
     '1': '分页查询',
     '2': '列表查询',
     '3': '单个查询',
-    '4': '增加操作',
-    '5': '修改操作',
-    '6': '删除操作'
+    '4': '增加',
+    '5': '修改',
+    '6': '删除'
   }
   return texts[type] || '未知类型'
 }

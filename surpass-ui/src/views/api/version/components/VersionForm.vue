@@ -3,7 +3,7 @@
       :title="dialogTitle"
       :model-value="drawerVisible"
       direction="rtl"
-      size="50%"
+      size="60%"
       :before-close="handleDrawerClose"
       @update:model-value="$emit('update:visible', $event)"
   >
@@ -33,22 +33,22 @@
               @change="handlePagingParams"
           >
             <el-radio-button label="1">
-              分页查询
+              分页
             </el-radio-button>
             <el-radio-button label="2">
-              列表查询
+              列表
             </el-radio-button>
             <el-radio-button label="3">
-              单个查询
+              单记录
             </el-radio-button>
             <el-radio-button label="4">
-              增加操作
+              增加
             </el-radio-button>
             <el-radio-button label="5">
-              修改操作
+              修改
             </el-radio-button>
             <el-radio-button label="6">
-              删除操作
+              删除
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -84,7 +84,7 @@
               </el-button>
             </div>
             <el-table :data="paramList" border style="width: 100%; margin-top: 10px;">
-                <el-table-column prop="name" label="参数名" width="120">
+                <el-table-column prop="name" label="参数名" width="180">
                 <template #default="{ row, $index }">
                   <el-input
                       :model-value="row.name"
@@ -95,7 +95,7 @@
                   />
                 </template>
               </el-table-column>
-              <el-table-column prop="type" label="类型" width="140">
+              <el-table-column prop="type" label="类型" width="200">
                 <template #default="{ row, $index }">
                   <el-select
                       :model-value="row.type"
@@ -221,28 +221,44 @@ const props = defineProps({
     type: Array,
     default: () => [
       {
-        "value": "Integer",
-        "label": "整数"
-      },
-      {
         "value": "String",
-        "label": "字符串"
+        "label": "字符串(String)"
       },
       {
-        "value": "Boolean",
-        "label": "布尔"
+        "value": "Byte",
+        "label": "字节(Byte)"
+      },
+      {
+        "value": "Short",
+        "label": "短整型(Short)"
+      },
+      {
+        "value": "Integer",
+        "label": "整数(Integer)"
+      },
+      {
+        "value": "Long",
+        "label": "长整数(Long)"
       },
       {
         "value": "Float",
-        "label": "浮点"
+        "label": "单精度浮点(Float)"
+      },
+      {
+        "value": "Double",
+        "label": "双精度浮点(Double)"
+      },
+      {
+        "value": "Boolean",
+        "label": "布尔(Boolean)"
       },
       {
         "value": "Array[Integer]",
-        "label": "整型数组"
+        "label": "整型数组(Array[Integer])"
       },
       {
         "value": "Array[String]",
-        "label": "字符数组"
+        "label": "字符数组(Array[String])"
       }
     ]
   },
@@ -615,11 +631,12 @@ const handleDrawerClose = () => {
 
 const addParam = () => {
   const newParamList = [...props.paramList, {
-    name: '',
+    name: 'param',
     type: 'String',
     rules: {},
     description: ''
   }]
+  console.log("newParamList ",newParamList);
   emit('update:paramList', newParamList)
 }
 
@@ -631,6 +648,7 @@ const removeParam = (index) => {
   }
   const newParamList = [...props.paramList]
   newParamList.splice(index, 1)
+  console.log("newParamList ",newParamList);
   emit('update:paramList', newParamList)
 }
 
