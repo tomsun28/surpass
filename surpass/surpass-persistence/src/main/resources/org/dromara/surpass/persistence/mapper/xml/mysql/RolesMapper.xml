@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.surpass.persistence.mapper.RolesMapper">
+
+    <sql id="where_statement">
+        deleted = 'n'
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="roleName != null and roleName != ''">
+            and rolename like '%${roleName}%'
+        </if>
+    </sql>
+
+
+    <select id="fetchPageResults" parameterType="Roles" resultType="Roles">
+        select
+        *
+        from
+        surpass_roles
+        where
+        <include refid="where_statement"/>
+    </select>
+
+    <select id="queryDynamicRoles" parameterType="Roles" resultType="Roles">
+        select
+        *
+        from
+        surpass_roles
+        where category = 'dynamic'
+        <include refid="where_statement"/>
+    </select>
+
+    <select id="queryRolesByUserId" parameterType="string" resultType="Roles">
+        select distinct r.*
+        from surpass_userinfo u,
+             surpass_roles r,
+             surpass_role_member rm
+        where rm.memberid = #{value}
+          and u.id = #{value}
+          and rm.type in ('USER', 'USER-DYNAMIC')
+          and rm.roleid = r.id
+          and rm.memberid = u.id
+          and u.deleted = 'n'
+          and r.deleted = 'n'
+    </select>
+
+
+</mapper>

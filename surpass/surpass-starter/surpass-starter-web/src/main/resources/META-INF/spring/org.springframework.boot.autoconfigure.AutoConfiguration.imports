@@ -1,8 +1,8 @@
-org.maxkey.surpass.autoconfigure.ApplicationAutoConfiguration
-org.maxkey.surpass.autoconfigure.DataSourceAutoConfiguration
-org.maxkey.surpass.autoconfigure.MvcAutoConfiguration
-org.maxkey.surpass.autoconfigure.MvcCorsAutoConfiguration
-org.maxkey.surpass.autoconfigure.MvcDateTimeAutoConfiguration
-org.maxkey.surpass.autoconfigure.MvcResourceAutoConfiguration
-org.maxkey.surpass.autoconfigure.MvcRestrictHostAutoConfiguration
-org.maxkey.surpass.autoconfigure.RedisAutoConfiguration
+org.dromara.surpass.autoconfigure.ApplicationAutoConfiguration
+org.dromara.surpass.autoconfigure.DataSourceAutoConfiguration
+org.dromara.surpass.autoconfigure.MvcAutoConfiguration
+org.dromara.surpass.autoconfigure.MvcCorsAutoConfiguration
+org.dromara.surpass.autoconfigure.MvcDateTimeAutoConfiguration
+org.dromara.surpass.autoconfigure.MvcResourceAutoConfiguration
+org.dromara.surpass.autoconfigure.MvcRestrictHostAutoConfiguration
+org.dromara.surpass.autoconfigure.RedisAutoConfiguration

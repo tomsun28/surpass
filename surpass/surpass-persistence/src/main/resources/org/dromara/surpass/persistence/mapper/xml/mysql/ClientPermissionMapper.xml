@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.surpass.persistence.mapper.ClientPermissionMapper">
+
+    <select id="queryPermissions" parameterType="ClientPermission" resultType="AppResources">
+        SELECT r.* 
+        FROM surpass_app_resources r, 
+        	 surpass_client_permission p
+		where r.app_id =p.app_id and r.id =p.resource_id 
+			and p.client_id =#{clientId} 
+			and p.app_id=#{appId}
+    </select>
+
+</mapper>

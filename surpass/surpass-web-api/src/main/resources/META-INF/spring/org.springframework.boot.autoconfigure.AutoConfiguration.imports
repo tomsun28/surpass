@@ -1,2 +1,2 @@
-org.maxkey.surpass.autoconfigure.SurpassConfig
-org.maxkey.surpass.autoconfigure.SurpassMvcConfig
+org.dromara.surpass.autoconfigure.SurpassConfig
+org.dromara.surpass.autoconfigure.SurpassMvcConfig
